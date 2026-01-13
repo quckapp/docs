@@ -1,0 +1,396 @@
+# Message Schema Definitions
+
+Message:
+  type: object
+  required:
+    - id
+    - channelId
+    - userId
+    - content
+    - type
+    - createdAt
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique message identifier
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    channelId:
+      type: string
+      format: uuid
+      description: Channel where message was posted
+    threadId:
+      type: string
+      format: uuid
+      description: Parent thread ID if this is a reply
+    userId:
+      type: string
+      format: uuid
+      description: Author user ID
+    user:
+      $ref: './user.yaml#/UserProfile'
+    content:
+      type: string
+      maxLength: 40000
+      description: Message content (markdown supported)
+      example: "Hello team! Check out this **important** update."
+    type:
+      type: string
+      enum: [text, system, bot, ephemeral]
+      description: Message type
+      example: "text"
+    blocks:
+      type: array
+      items:
+        $ref: '#/MessageBlock'
+      description: Rich content blocks
+    attachments:
+      type: array
+      items:
+        $ref: './file.yaml#/FileAttachment'
+      description: File attachments
+    mentions:
+      type: array
+      items:
+        $ref: '#/Mention'
+      description: User and channel mentions
+    reactions:
+      type: array
+      items:
+        $ref: '#/Reaction'
+      description: Message reactions
+    replyCount:
+      type: integer
+      description: Number of thread replies
+      example: 5
+    replyUsers:
+      type: array
+      items:
+        $ref: './user.yaml#/UserProfile'
+      maxItems: 5
+      description: Users who replied (preview)
+    lastReplyAt:
+      type: string
+      format: date-time
+      description: Timestamp of last reply
+    isEdited:
+      type: boolean
+      description: Whether message was edited
+      default: false
+    editedAt:
+      type: string
+      format: date-time
+      description: Last edit timestamp
+    isPinned:
+      type: boolean
+      description: Whether message is pinned
+      default: false
+    pinnedBy:
+      type: string
+      format: uuid
+      description: User who pinned the message
+    pinnedAt:
+      type: string
+      format: date-time
+      description: When message was pinned
+    isBookmarked:
+      type: boolean
+      description: Whether current user bookmarked this
+      default: false
+    metadata:
+      type: object
+      additionalProperties: true
+      description: Additional message metadata
+    createdAt:
+      type: string
+      format: date-time
+      example: "2024-01-15T10:30:00Z"
+    updatedAt:
+      type: string
+      format: date-time
+
+MessagePreview:
+  type: object
+  description: Condensed message for lists and previews
+  properties:
+    id:
+      type: string
+      format: uuid
+    userId:
+      type: string
+      format: uuid
+    user:
+      $ref: './user.yaml#/UserProfile'
+    content:
+      type: string
+      maxLength: 200
+      description: Truncated content
+    type:
+      type: string
+      enum: [text, system, bot]
+    hasAttachments:
+      type: boolean
+    createdAt:
+      type: string
+      format: date-time
+
+MessageBlock:
+  type: object
+  required:
+    - type
+  properties:
+    type:
+      type: string
+      enum: [section, divider, image, context, actions, header, input, file, video, code, quote, callout, table]
+      description: Block type
+    text:
+      $ref: '#/TextObject'
+    accessory:
+      $ref: '#/BlockElement'
+    elements:
+      type: array
+      items:
+        $ref: '#/BlockElement'
+    fields:
+      type: array
+      items:
+        $ref: '#/TextObject'
+      maxItems: 10
+    imageUrl:
+      type: string
+      format: uri
+    altText:
+      type: string
+    title:
+      $ref: '#/TextObject'
+    blockId:
+      type: string
+      description: Unique block identifier
+
+TextObject:
+  type: object
+  required:
+    - type
+    - text
+  properties:
+    type:
+      type: string
+      enum: [plain_text, mrkdwn]
+    text:
+      type: string
+      maxLength: 3000
+    emoji:
+      type: boolean
+      default: true
+    verbatim:
+      type: boolean
+      default: false
+
+BlockElement:
+  type: object
+  required:
+    - type
+  properties:
+    type:
+      type: string
+      enum: [button, image, static_select, multi_static_select, users_select, channels_select, overflow, datepicker, timepicker, checkbox, radio_buttons, plain_text_input]
+    text:
+      $ref: '#/TextObject'
+    actionId:
+      type: string
+    value:
+      type: string
+    url:
+      type: string
+      format: uri
+    style:
+      type: string
+      enum: [primary, danger]
+    options:
+      type: array
+      items:
+        $ref: '#/SelectOption'
+    placeholder:
+      $ref: '#/TextObject'
+
+SelectOption:
+  type: object
+  required:
+    - text
+    - value
+  properties:
+    text:
+      $ref: '#/TextObject'
+    value:
+      type: string
+      maxLength: 150
+    description:
+      $ref: '#/TextObject'
+
+Mention:
+  type: object
+  required:
+    - type
+    - id
+  properties:
+    type:
+      type: string
+      enum: [user, channel, usergroup, everyone, here]
+      description: Mention type
+    id:
+      type: string
+      description: ID of mentioned entity
+    name:
+      type: string
+      description: Display name
+    offset:
+      type: integer
+      description: Character offset in content
+    length:
+      type: integer
+      description: Length of mention text
+
+Reaction:
+  type: object
+  required:
+    - emoji
+    - count
+  properties:
+    emoji:
+      type: string
+      description: Reaction emoji
+      example: "👍"
+    name:
+      type: string
+      description: Emoji name without colons
+      example: "thumbsup"
+    count:
+      type: integer
+      description: Number of reactions
+      example: 5
+    users:
+      type: array
+      items:
+        type: string
+        format: uuid
+      description: User IDs who reacted
+    me:
+      type: boolean
+      description: Whether current user reacted
+      default: false
+
+MessageCreateRequest:
+  type: object
+  required:
+    - content
+  properties:
+    content:
+      type: string
+      maxLength: 40000
+      description: Message content
+    blocks:
+      type: array
+      items:
+        $ref: '#/MessageBlock'
+    attachments:
+      type: array
+      items:
+        type: string
+        format: uuid
+      description: File IDs to attach
+    threadId:
+      type: string
+      format: uuid
+      description: Thread ID for replies
+    replyBroadcast:
+      type: boolean
+      description: Also post reply to channel
+      default: false
+    unfurlLinks:
+      type: boolean
+      description: Enable link previews
+      default: true
+    unfurlMedia:
+      type: boolean
+      description: Enable media previews
+      default: true
+    metadata:
+      type: object
+      additionalProperties: true
+
+MessageUpdateRequest:
+  type: object
+  properties:
+    content:
+      type: string
+      maxLength: 40000
+    blocks:
+      type: array
+      items:
+        $ref: '#/MessageBlock'
+    attachments:
+      type: array
+      items:
+        type: string
+        format: uuid
+
+ScheduledMessage:
+  type: object
+  required:
+    - id
+    - channelId
+    - content
+    - scheduledFor
+  properties:
+    id:
+      type: string
+      format: uuid
+    channelId:
+      type: string
+      format: uuid
+    content:
+      type: string
+    blocks:
+      type: array
+      items:
+        $ref: '#/MessageBlock'
+    scheduledFor:
+      type: string
+      format: date-time
+      description: When to send the message
+    createdAt:
+      type: string
+      format: date-time
+
+ScheduleMessageRequest:
+  type: object
+  required:
+    - content
+    - scheduledFor
+  properties:
+    content:
+      type: string
+      maxLength: 40000
+    blocks:
+      type: array
+      items:
+        $ref: '#/MessageBlock'
+    attachments:
+      type: array
+      items:
+        type: string
+        format: uuid
+    scheduledFor:
+      type: string
+      format: date-time
+      description: ISO 8601 timestamp
+
+ReactionRequest:
+  type: object
+  required:
+    - emoji
+  properties:
+    emoji:
+      type: string
+      description: Emoji to react with
+      example: "👍"

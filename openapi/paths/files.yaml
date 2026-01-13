@@ -1,0 +1,465 @@
+# Files API Paths
+
+files:
+  get:
+    tags:
+      - Files
+    summary: List files
+    description: Get files shared in workspace
+    operationId: listFiles
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: query
+        schema:
+          type: string
+          format: uuid
+        description: Filter by channel
+      - name: userId
+        in: query
+        schema:
+          type: string
+          format: uuid
+        description: Filter by uploader
+      - name: category
+        in: query
+        schema:
+          type: string
+          enum: [image, video, audio, document, spreadsheet, presentation, archive, code, other]
+      - name: search
+        in: query
+        schema:
+          type: string
+        description: Search by filename
+      - name: dateFrom
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: dateTo
+        in: query
+        schema:
+          type: string
+          format: date
+      - $ref: '../schemas/common.yaml#/PageParam'
+      - $ref: '../schemas/common.yaml#/LimitParam'
+    responses:
+      '200':
+        description: List of files
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    $ref: '../schemas/file.yaml#/File'
+                pagination:
+                  $ref: '../schemas/common.yaml#/Pagination'
+
+file-upload-init:
+  post:
+    tags:
+      - Files
+    summary: Initialize file upload
+    description: Get a pre-signed URL for file upload
+    operationId: initFileUpload
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/file.yaml#/FileUploadRequest'
+    responses:
+      '200':
+        description: Upload URL generated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/file.yaml#/FileUploadResponse'
+      '400':
+        description: Invalid file type or size exceeds limit
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+      '413':
+        description: File too large
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+file-upload-complete:
+  post:
+    tags:
+      - Files
+    summary: Complete file upload
+    description: Mark file upload as complete after uploading to pre-signed URL
+    operationId: completeFileUpload
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: File upload completed
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/file.yaml#/File'
+      '400':
+        description: Upload not found or already completed
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+file-by-id:
+  get:
+    tags:
+      - Files
+    summary: Get file
+    description: Get file details by ID
+    operationId: getFile
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: File details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/file.yaml#/File'
+      '404':
+        description: File not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  patch:
+    tags:
+      - Files
+    summary: Update file
+    description: Update file metadata
+    operationId: updateFile
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/file.yaml#/FileUpdateRequest'
+    responses:
+      '200':
+        description: File updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/file.yaml#/File'
+
+  delete:
+    tags:
+      - Files
+    summary: Delete file
+    description: Delete a file (uploader or admin)
+    operationId: deleteFile
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: File deleted
+      '403':
+        description: Not authorized to delete
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+file-download:
+  get:
+    tags:
+      - Files
+    summary: Get download URL
+    description: Get a temporary download URL for a file
+    operationId: getFileDownloadUrl
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: disposition
+        in: query
+        schema:
+          type: string
+          enum: [inline, attachment]
+          default: attachment
+    responses:
+      '200':
+        description: Download URL
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                expiresAt:
+                  type: string
+                  format: date-time
+
+file-share:
+  post:
+    tags:
+      - Files
+    summary: Share file
+    description: Share a file with users, channels, or make public
+    operationId: shareFile
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/file.yaml#/ShareFileRequest'
+    responses:
+      '200':
+        description: File shared
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/file.yaml#/FileShare'
+
+file-shares:
+  get:
+    tags:
+      - Files
+    summary: List file shares
+    description: Get all shares for a file
+    operationId: listFileShares
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: File shares
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shares:
+                  type: array
+                  items:
+                    $ref: '../schemas/file.yaml#/FileShare'
+
+file-share-revoke:
+  delete:
+    tags:
+      - Files
+    summary: Revoke file share
+    description: Revoke a file share
+    operationId: revokeFileShare
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: shareId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Share revoked
+
+storage-quota:
+  get:
+    tags:
+      - Files
+    summary: Get storage quota
+    description: Get workspace storage usage and limits
+    operationId: getStorageQuota
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Storage quota information
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/file.yaml#/StorageQuota'
+
+external-links:
+  get:
+    tags:
+      - Files
+    summary: List shared links
+    description: Get external links shared in workspace
+    operationId: listExternalLinks
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - $ref: '../schemas/common.yaml#/PageParam'
+      - $ref: '../schemas/common.yaml#/LimitParam'
+    responses:
+      '200':
+        description: List of external links
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                links:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '../schemas/file.yaml#/ExternalLink'
+                      - type: object
+                        properties:
+                          messageId:
+                            type: string
+                            format: uuid
+                          sharedBy:
+                            $ref: '../schemas/user.yaml#/UserProfile'
+                          sharedAt:
+                            type: string
+                            format: date-time
+                pagination:
+                  $ref: '../schemas/common.yaml#/Pagination'

@@ -1,0 +1,8 @@
+{
+  "label": "Design & Architecture",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Design and architecture documents explaining how QuikApp is built."
+  }
+}

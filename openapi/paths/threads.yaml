@@ -1,0 +1,412 @@
+# Threads API Paths
+
+threads:
+  get:
+    tags:
+      - Threads
+    summary: List threads
+    description: Get threads the user is subscribed to or all threads in workspace
+    operationId: listThreads
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: query
+        schema:
+          type: string
+          format: uuid
+        description: Filter by channel
+      - name: subscribed
+        in: query
+        schema:
+          type: boolean
+        description: Only show subscribed threads
+      - name: unread
+        in: query
+        schema:
+          type: boolean
+        description: Only show threads with unread replies
+      - name: sort
+        in: query
+        schema:
+          type: string
+          enum: [recent_activity, created_at]
+          default: recent_activity
+      - $ref: '../schemas/common.yaml#/PageParam'
+      - $ref: '../schemas/common.yaml#/LimitParam'
+    responses:
+      '200':
+        description: List of threads
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/thread.yaml#/ThreadListResponse'
+
+thread-by-id:
+  get:
+    tags:
+      - Threads
+    summary: Get thread
+    description: Get a thread with its parent message
+    operationId: getThread
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Thread details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/thread.yaml#/Thread'
+      '404':
+        description: Thread not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  patch:
+    tags:
+      - Threads
+    summary: Update thread
+    description: Update thread properties (e.g., mark as resolved)
+    operationId: updateThread
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/thread.yaml#/UpdateThreadRequest'
+    responses:
+      '200':
+        description: Thread updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/thread.yaml#/Thread'
+
+thread-replies:
+  get:
+    tags:
+      - Threads
+    summary: List thread replies
+    description: Get all replies in a thread
+    operationId: listThreadReplies
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: before
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: after
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+    responses:
+      '200':
+        description: Thread replies
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/thread.yaml#/ThreadRepliesResponse'
+
+  post:
+    tags:
+      - Threads
+    summary: Reply to thread
+    description: Post a reply to a thread
+    operationId: replyToThread
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/message.yaml#/MessageCreateRequest'
+    responses:
+      '201':
+        description: Reply posted
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/thread.yaml#/ThreadReply'
+
+thread-subscribe:
+  post:
+    tags:
+      - Threads
+    summary: Subscribe to thread
+    description: Subscribe to receive notifications for thread replies
+    operationId: subscribeToThread
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/thread.yaml#/SubscribeThreadRequest'
+    responses:
+      '200':
+        description: Subscribed to thread
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/thread.yaml#/ThreadSubscription'
+
+thread-unsubscribe:
+  delete:
+    tags:
+      - Threads
+    summary: Unsubscribe from thread
+    description: Unsubscribe from thread notifications
+    operationId: unsubscribeFromThread
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Unsubscribed from thread
+
+thread-mark-read:
+  post:
+    tags:
+      - Threads
+    summary: Mark thread as read
+    description: Mark all replies in thread as read
+    operationId: markThreadRead
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Thread marked as read
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lastReadAt:
+                  type: string
+                  format: date-time
+                lastReadMessageId:
+                  type: string
+                  format: uuid
+
+thread-participants:
+  get:
+    tags:
+      - Threads
+    summary: List thread participants
+    description: Get all users who have participated in a thread
+    operationId: listThreadParticipants
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Thread participants
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participants:
+                  type: array
+                  items:
+                    $ref: '../schemas/user.yaml#/UserProfile'
+                count:
+                  type: integer
+
+mark-all-threads-read:
+  post:
+    tags:
+      - Threads
+    summary: Mark all threads as read
+    description: Mark all threads in workspace as read
+    operationId: markAllThreadsRead
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: All threads marked as read
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                markedCount:
+                  type: integer

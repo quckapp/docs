@@ -1,0 +1,356 @@
+# Notification Schema Definitions
+
+Notification:
+  type: object
+  required:
+    - id
+    - type
+    - userId
+    - createdAt
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique notification identifier
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    type:
+      type: string
+      enum:
+        - message
+        - mention
+        - reaction
+        - thread_reply
+        - channel_invite
+        - workspace_invite
+        - dm
+        - call_incoming
+        - call_missed
+        - huddle_invite
+        - file_shared
+        - reminder
+        - system
+      description: Notification type
+      example: "mention"
+    userId:
+      type: string
+      format: uuid
+      description: User receiving notification
+    title:
+      type: string
+      description: Notification title
+      example: "New mention in #general"
+    body:
+      type: string
+      description: Notification body text
+      example: "John mentioned you: Hey @alice, can you review this?"
+    icon:
+      type: string
+      description: Notification icon/emoji
+      example: "💬"
+    imageUrl:
+      type: string
+      format: uri
+      description: Avatar or preview image
+    data:
+      $ref: '#/NotificationData'
+    actions:
+      type: array
+      items:
+        $ref: '#/NotificationAction'
+      maxItems: 3
+    priority:
+      type: string
+      enum: [low, normal, high, urgent]
+      default: normal
+    isRead:
+      type: boolean
+      default: false
+    readAt:
+      type: string
+      format: date-time
+    isSilent:
+      type: boolean
+      description: Whether to show without sound/vibration
+      default: false
+    expiresAt:
+      type: string
+      format: date-time
+      description: When notification expires
+    createdAt:
+      type: string
+      format: date-time
+      example: "2024-01-15T10:30:00Z"
+
+NotificationData:
+  type: object
+  description: Context-specific notification data
+  properties:
+    workspaceId:
+      type: string
+      format: uuid
+    channelId:
+      type: string
+      format: uuid
+    channelName:
+      type: string
+    messageId:
+      type: string
+      format: uuid
+    threadId:
+      type: string
+      format: uuid
+    callId:
+      type: string
+      format: uuid
+    huddleId:
+      type: string
+      format: uuid
+    fileId:
+      type: string
+      format: uuid
+    senderId:
+      type: string
+      format: uuid
+    senderName:
+      type: string
+    senderAvatar:
+      type: string
+      format: uri
+    deepLink:
+      type: string
+      description: Deep link to open in app
+
+NotificationAction:
+  type: object
+  required:
+    - id
+    - label
+  properties:
+    id:
+      type: string
+      description: Action identifier
+      example: "reply"
+    label:
+      type: string
+      description: Button label
+      example: "Reply"
+    action:
+      type: string
+      enum: [open, reply, mark_read, dismiss, accept, decline, join]
+      description: Action type
+    data:
+      type: object
+      additionalProperties: true
+
+NotificationSettings:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+      description: Master notification toggle
+      default: true
+    desktop:
+      $ref: '#/DesktopNotificationSettings'
+    mobile:
+      $ref: '#/MobileNotificationSettings'
+    email:
+      $ref: '#/EmailNotificationSettings'
+    schedule:
+      $ref: '#/NotificationSchedule'
+    channels:
+      type: object
+      description: Per-channel notification overrides
+      additionalProperties:
+        $ref: '#/ChannelNotificationSettings'
+
+DesktopNotificationSettings:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+      default: true
+    sound:
+      type: boolean
+      default: true
+    soundName:
+      type: string
+      description: Custom notification sound
+      example: "ding"
+    showPreview:
+      type: boolean
+      description: Show message preview
+      default: true
+    flashTaskbar:
+      type: boolean
+      default: true
+    badgeCount:
+      type: boolean
+      default: true
+
+MobileNotificationSettings:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+      default: true
+    sound:
+      type: boolean
+      default: true
+    vibrate:
+      type: boolean
+      default: true
+    showPreview:
+      type: boolean
+      default: true
+    badge:
+      type: boolean
+      default: true
+    grouping:
+      type: string
+      enum: [none, channel, workspace]
+      default: channel
+
+EmailNotificationSettings:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+      default: true
+    frequency:
+      type: string
+      enum: [instant, hourly, daily, weekly]
+      default: daily
+    includeContent:
+      type: boolean
+      description: Include message content in emails
+      default: true
+    types:
+      type: array
+      items:
+        type: string
+        enum: [mentions, dms, threads, digests, announcements]
+      default: [mentions, dms]
+
+NotificationSchedule:
+  type: object
+  description: Do Not Disturb schedule
+  properties:
+    enabled:
+      type: boolean
+      default: false
+    startTime:
+      type: string
+      pattern: "^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+      description: Start time (HH:MM)
+      example: "22:00"
+    endTime:
+      type: string
+      pattern: "^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+      description: End time (HH:MM)
+      example: "08:00"
+    days:
+      type: array
+      items:
+        type: string
+        enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+      description: Days when schedule is active
+    timezone:
+      type: string
+      description: Timezone for schedule
+      example: "America/Los_Angeles"
+    allowUrgent:
+      type: boolean
+      description: Allow urgent notifications during DND
+      default: true
+
+ChannelNotificationSettings:
+  type: object
+  properties:
+    level:
+      type: string
+      enum: [all, mentions, none]
+      default: all
+    sound:
+      type: boolean
+    isMuted:
+      type: boolean
+      default: false
+    mutedUntil:
+      type: string
+      format: date-time
+
+UpdateNotificationSettingsRequest:
+  type: object
+  properties:
+    desktop:
+      $ref: '#/DesktopNotificationSettings'
+    mobile:
+      $ref: '#/MobileNotificationSettings'
+    email:
+      $ref: '#/EmailNotificationSettings'
+    schedule:
+      $ref: '#/NotificationSchedule'
+
+MarkNotificationsReadRequest:
+  type: object
+  properties:
+    notificationIds:
+      type: array
+      items:
+        type: string
+        format: uuid
+      description: Specific notification IDs to mark read
+    all:
+      type: boolean
+      description: Mark all notifications as read
+      default: false
+    before:
+      type: string
+      format: date-time
+      description: Mark all before this timestamp as read
+
+PushSubscription:
+  type: object
+  required:
+    - endpoint
+    - keys
+  properties:
+    endpoint:
+      type: string
+      format: uri
+      description: Push service endpoint
+    keys:
+      type: object
+      required:
+        - p256dh
+        - auth
+      properties:
+        p256dh:
+          type: string
+          description: Public key for encryption
+        auth:
+          type: string
+          description: Authentication secret
+    expirationTime:
+      type: string
+      format: date-time
+
+DeviceToken:
+  type: object
+  required:
+    - token
+    - platform
+  properties:
+    token:
+      type: string
+      description: Device push token
+    platform:
+      type: string
+      enum: [ios, android, web]
+    deviceId:
+      type: string
+      description: Unique device identifier
+    deviceName:
+      type: string
+      description: Device name
+      example: "iPhone 15 Pro"

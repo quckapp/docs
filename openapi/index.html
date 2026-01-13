@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuikApp API Documentation</title>
+  <link rel="icon" type="image/png" href="https://quikapp.io/favicon.png">
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+  <style>
+    html {
+      box-sizing: border-box;
+      overflow-y: scroll;
+    }
+
+    *,
+    *:before,
+    *:after {
+      box-sizing: inherit;
+    }
+
+    body {
+      margin: 0;
+      background: #fafafa;
+    }
+
+    .swagger-ui .topbar {
+      background-color: #1a1a2e;
+      padding: 10px 0;
+    }
+
+    .swagger-ui .topbar .wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .swagger-ui .topbar-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    .swagger-ui .topbar-wrapper .link {
+      display: flex;
+      align-items: center;
+    }
+
+    .swagger-ui .topbar-wrapper img {
+      height: 40px;
+    }
+
+    .swagger-ui .topbar .download-url-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    .custom-logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .custom-logo svg {
+      height: 32px;
+      width: 32px;
+    }
+
+    .swagger-ui .info .title {
+      color: #1a1a2e;
+    }
+
+    .swagger-ui .info hgroup.main a {
+      color: #1a1a2e;
+    }
+
+    .swagger-ui .opblock.opblock-get .opblock-summary-method {
+      background: #61affe;
+    }
+
+    .swagger-ui .opblock.opblock-post .opblock-summary-method {
+      background: #49cc90;
+    }
+
+    .swagger-ui .opblock.opblock-put .opblock-summary-method {
+      background: #fca130;
+    }
+
+    .swagger-ui .opblock.opblock-delete .opblock-summary-method {
+      background: #f93e3e;
+    }
+
+    .swagger-ui .opblock.opblock-patch .opblock-summary-method {
+      background: #50e3c2;
+    }
+
+    .swagger-ui .btn.authorize {
+      background-color: #49cc90;
+      border-color: #49cc90;
+      color: #fff;
+    }
+
+    .swagger-ui .btn.authorize svg {
+      fill: #fff;
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #1a1a2e;
+      }
+
+      .swagger-ui {
+        filter: invert(88%) hue-rotate(180deg);
+      }
+
+      .swagger-ui img,
+      .swagger-ui .microlight {
+        filter: invert(100%) hue-rotate(180deg);
+      }
+    }
+
+    /* Loading spinner */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+      color: #3b4151;
+    }
+
+    .loading::after {
+      content: "Loading API Documentation...";
+    }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui" class="loading"></div>
+
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+  <script>
+    window.onload = function() {
+      const ui = SwaggerUIBundle({
+        url: "./openapi.yaml",
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout",
+        validatorUrl: null,
+        displayRequestDuration: true,
+        filter: true,
+        showExtensions: true,
+        showCommonExtensions: true,
+        tryItOutEnabled: true,
+        persistAuthorization: true,
+        withCredentials: false,
+        supportedSubmitMethods: ['get', 'post', 'put', 'patch', 'delete'],
+        defaultModelsExpandDepth: 1,
+        defaultModelExpandDepth: 2,
+        docExpansion: 'list',
+        syntaxHighlight: {
+          activate: true,
+          theme: 'monokai'
+        },
+        requestSnippetsEnabled: true,
+        requestSnippets: {
+          generators: {
+            curl_bash: {
+              title: "cURL (bash)",
+              syntax: "bash"
+            },
+            curl_powershell: {
+              title: "cURL (PowerShell)",
+              syntax: "powershell"
+            },
+            curl_cmd: {
+              title: "cURL (CMD)",
+              syntax: "bash"
+            }
+          },
+          defaultExpanded: true,
+          languages: null
+        },
+        onComplete: function() {
+          document.getElementById('swagger-ui').classList.remove('loading');
+        }
+      });
+
+      window.ui = ui;
+    };
+  </script>
+</body>
+</html>

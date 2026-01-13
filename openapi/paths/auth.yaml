@@ -1,0 +1,494 @@
+# Authentication API Paths
+
+login:
+  post:
+    tags:
+      - Authentication
+    summary: Login with credentials
+    description: Authenticate user with email and password. Returns tokens and user data.
+    operationId: login
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/LoginRequest'
+    responses:
+      '200':
+        description: Login successful
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/LoginResponse'
+      '401':
+        description: Invalid credentials
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+      '403':
+        description: Account locked or MFA required
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/error.yaml#/Error'
+                - type: object
+                  properties:
+                    mfaRequired:
+                      type: boolean
+                    mfaMethods:
+                      type: array
+                      items:
+                        type: string
+      '429':
+        description: Too many login attempts
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+register:
+  post:
+    tags:
+      - Authentication
+    summary: Register new account
+    description: Create a new user account. Optionally accepts workspace invite code.
+    operationId: register
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/RegisterRequest'
+    responses:
+      '201':
+        description: Registration successful
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/LoginResponse'
+      '400':
+        description: Invalid input or password requirements not met
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ValidationError'
+      '409':
+        description: Email already registered
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+logout:
+  post:
+    tags:
+      - Authentication
+    summary: Logout current session
+    description: Invalidate current session tokens
+    operationId: logout
+    security:
+      - bearerAuth: []
+    responses:
+      '204':
+        description: Logout successful
+      '401':
+        description: Not authenticated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+refresh:
+  post:
+    tags:
+      - Authentication
+    summary: Refresh access token
+    description: Exchange refresh token for new access token
+    operationId: refreshToken
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/RefreshTokenRequest'
+    responses:
+      '200':
+        description: Token refreshed successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/TokenPair'
+      '401':
+        description: Invalid or expired refresh token
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+password-reset:
+  post:
+    tags:
+      - Authentication
+    summary: Request password reset
+    description: Send password reset link to email
+    operationId: requestPasswordReset
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/PasswordResetRequest'
+    responses:
+      '200':
+        description: Reset email sent if account exists
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "If an account exists, a reset link has been sent"
+      '429':
+        description: Too many reset requests
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+password-reset-confirm:
+  post:
+    tags:
+      - Authentication
+    summary: Confirm password reset
+    description: Set new password using reset token
+    operationId: confirmPasswordReset
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/PasswordResetConfirm'
+    responses:
+      '200':
+        description: Password reset successful
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Password has been reset successfully"
+      '400':
+        description: Invalid or expired token
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+oauth:
+  post:
+    tags:
+      - Authentication
+    summary: OAuth login/signup
+    description: Authenticate using OAuth provider (Google, GitHub, Microsoft, Apple)
+    operationId: oauthLogin
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/OAuthRequest'
+    responses:
+      '200':
+        description: OAuth authentication successful
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/LoginResponse'
+      '400':
+        description: Invalid OAuth code or configuration
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+oauth-url:
+  get:
+    tags:
+      - Authentication
+    summary: Get OAuth authorization URL
+    description: Get the authorization URL for the specified OAuth provider
+    operationId: getOAuthUrl
+    security: []
+    parameters:
+      - name: provider
+        in: query
+        required: true
+        schema:
+          type: string
+          enum: [google, github, microsoft, apple]
+      - name: redirectUri
+        in: query
+        required: true
+        schema:
+          type: string
+          format: uri
+    responses:
+      '200':
+        description: OAuth URL generated
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                state:
+                  type: string
+
+mfa-setup:
+  post:
+    tags:
+      - Authentication
+      - MFA
+    summary: Setup MFA
+    description: Initialize MFA setup and return TOTP secret
+    operationId: setupMfa
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: MFA setup initiated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/MfaSetupResponse'
+      '400':
+        description: MFA already enabled
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+mfa-verify:
+  post:
+    tags:
+      - Authentication
+      - MFA
+    summary: Verify MFA code
+    description: Verify TOTP code to complete MFA setup or login
+    operationId: verifyMfa
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/MfaVerifyRequest'
+    responses:
+      '200':
+        description: MFA verification successful
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                verified:
+                  type: boolean
+                tokens:
+                  $ref: '../schemas/auth.yaml#/TokenPair'
+      '401':
+        description: Invalid MFA code
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+mfa-disable:
+  delete:
+    tags:
+      - Authentication
+      - MFA
+    summary: Disable MFA
+    description: Disable MFA for current user (requires password confirmation)
+    operationId: disableMfa
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - password
+            properties:
+              password:
+                type: string
+                format: password
+    responses:
+      '200':
+        description: MFA disabled
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      '401':
+        description: Invalid password
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+sessions:
+  get:
+    tags:
+      - Authentication
+    summary: List active sessions
+    description: Get all active sessions for current user
+    operationId: listSessions
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: List of active sessions
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sessions:
+                  type: array
+                  items:
+                    $ref: '../schemas/auth.yaml#/Session'
+
+session-revoke:
+  delete:
+    tags:
+      - Authentication
+    summary: Revoke session
+    description: Revoke a specific session by ID
+    operationId: revokeSession
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Session revoked
+      '404':
+        description: Session not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+sessions-revoke-all:
+  delete:
+    tags:
+      - Authentication
+    summary: Revoke all other sessions
+    description: Revoke all sessions except current
+    operationId: revokeAllSessions
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: All other sessions revoked
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                revokedCount:
+                  type: integer
+
+verify-email:
+  post:
+    tags:
+      - Authentication
+    summary: Verify email address
+    description: Verify email using token from verification email
+    operationId: verifyEmail
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - token
+            properties:
+              token:
+                type: string
+    responses:
+      '200':
+        description: Email verified
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                verified:
+                  type: boolean
+      '400':
+        description: Invalid or expired token
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+resend-verification:
+  post:
+    tags:
+      - Authentication
+    summary: Resend verification email
+    description: Resend email verification link
+    operationId: resendVerification
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Verification email sent
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      '400':
+        description: Email already verified
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+      '429':
+        description: Too many requests
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'

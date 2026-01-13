@@ -1,0 +1,542 @@
+# Huddles API Paths
+
+huddles:
+  get:
+    tags:
+      - Huddles
+    summary: List active huddles
+    description: Get all active huddles in workspace
+    operationId: listHuddles
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Active huddles
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                huddles:
+                  type: array
+                  items:
+                    $ref: '../schemas/huddle.yaml#/Huddle'
+
+channel-huddle:
+  get:
+    tags:
+      - Huddles
+    summary: Get channel huddle
+    description: Get active huddle in a channel (if any)
+    operationId: getChannelHuddle
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Channel huddle (or null if none active)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                huddle:
+                  oneOf:
+                    - $ref: '../schemas/huddle.yaml#/Huddle'
+                    - type: 'null'
+
+  post:
+    tags:
+      - Huddles
+    summary: Start huddle
+    description: Start a new huddle in a channel
+    operationId: startHuddle
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/huddle.yaml#/StartHuddleRequest'
+    responses:
+      '201':
+        description: Huddle started
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/huddle.yaml#/Huddle'
+      '409':
+        description: Huddle already active in channel
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+huddle-by-id:
+  get:
+    tags:
+      - Huddles
+    summary: Get huddle
+    description: Get huddle details by ID
+    operationId: getHuddle
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Huddle details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/huddle.yaml#/Huddle'
+      '404':
+        description: Huddle not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  patch:
+    tags:
+      - Huddles
+    summary: Update huddle
+    description: Update huddle topic
+    operationId: updateHuddle
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/huddle.yaml#/UpdateHuddleRequest'
+    responses:
+      '200':
+        description: Huddle updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/huddle.yaml#/Huddle'
+
+huddle-join:
+  post:
+    tags:
+      - Huddles
+    summary: Join huddle
+    description: Join an active huddle
+    operationId: joinHuddle
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/huddle.yaml#/JoinHuddleRequest'
+    responses:
+      '200':
+        description: Joined huddle
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                huddle:
+                  $ref: '../schemas/huddle.yaml#/Huddle'
+                connectionInfo:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+                    serverUrl:
+                      type: string
+                      format: uri
+
+huddle-leave:
+  post:
+    tags:
+      - Huddles
+    summary: Leave huddle
+    description: Leave the huddle
+    operationId: leaveHuddle
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Left huddle
+
+huddle-action:
+  post:
+    tags:
+      - Huddles
+    summary: Huddle action
+    description: Perform action in huddle (mute, video, screen share, invite)
+    operationId: huddleAction
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/huddle.yaml#/HuddleActionRequest'
+    responses:
+      '200':
+        description: Action performed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+
+huddle-end:
+  post:
+    tags:
+      - Huddles
+    summary: End huddle
+    description: End the huddle for everyone (starter only)
+    operationId: endHuddle
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Huddle ended
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/huddle.yaml#/Huddle'
+      '403':
+        description: Not authorized to end huddle
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+huddle-participants:
+  get:
+    tags:
+      - Huddles
+    summary: List huddle participants
+    description: Get all participants in a huddle
+    operationId: listHuddleParticipants
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Huddle participants
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participants:
+                  type: array
+                  items:
+                    $ref: '../schemas/huddle.yaml#/HuddleParticipant'
+
+huddle-invite:
+  post:
+    tags:
+      - Huddles
+    summary: Invite to huddle
+    description: Invite a user to join the huddle
+    operationId: inviteToHuddle
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userId
+            properties:
+              userId:
+                type: string
+                format: uuid
+    responses:
+      '200':
+        description: Invite sent
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/huddle.yaml#/HuddleInvite'
+
+huddle-thread:
+  get:
+    tags:
+      - Huddles
+    summary: Get huddle thread
+    description: Get chat messages from huddle
+    operationId: getHuddleThread
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Huddle thread
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/huddle.yaml#/HuddleThread'
+
+  post:
+    tags:
+      - Huddles
+    summary: Send huddle message
+    description: Send a chat message in the huddle
+    operationId: sendHuddleMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - content
+            properties:
+              content:
+                type: string
+                maxLength: 4000
+    responses:
+      '201':
+        description: Message sent
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/message.yaml#/MessagePreview'
+
+huddle-notes:
+  get:
+    tags:
+      - Huddles
+    summary: Get huddle notes
+    description: Get shared notes from huddle
+    operationId: getHuddleNotes
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Huddle notes
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/huddle.yaml#/HuddleNote'
+
+  put:
+    tags:
+      - Huddles
+    summary: Update huddle notes
+    description: Update shared notes in huddle
+    operationId: updateHuddleNotes
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: huddleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - content
+            properties:
+              content:
+                type: string
+                maxLength: 10000
+    responses:
+      '200':
+        description: Notes updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/huddle.yaml#/HuddleNote'

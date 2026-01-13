@@ -1,0 +1,131 @@
+.categories {
+  padding: 4rem 0;
+  background: var(--ifm-background-surface-color);
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.sectionDescription {
+  text-align: center;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.categoryCard {
+  background: var(--ifm-card-background-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.categoryCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.categoryCard.expanded {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 1rem;
+}
+
+.categoryHeader:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.categoryIcon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.categoryInfo {
+  flex: 1;
+}
+
+.categoryTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--ifm-heading-color);
+}
+
+.categoryDescription {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.chevron {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-500);
+  transition: transform 0.2s ease;
+}
+
+.chevronRotated {
+  transform: rotate(180deg);
+}
+
+.categoryItems {
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  padding: 0.5rem;
+}
+
+.docItem {
+  display: block;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.docItem:hover {
+  background: var(--ifm-color-emphasis-100);
+  text-decoration: none;
+}
+
+.docTitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+}
+
+.docDescription {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+@media screen and (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .categories {
+    padding: 2rem 0;
+  }
+}

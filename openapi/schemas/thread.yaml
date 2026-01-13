@@ -1,0 +1,186 @@
+# Thread Schema Definitions
+
+Thread:
+  type: object
+  required:
+    - id
+    - channelId
+    - parentMessage
+    - replyCount
+    - createdAt
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Thread identifier (same as parent message ID)
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    channelId:
+      type: string
+      format: uuid
+      description: Channel containing the thread
+    parentMessage:
+      $ref: './message.yaml#/Message'
+    replyCount:
+      type: integer
+      description: Total number of replies
+      example: 15
+    participantCount:
+      type: integer
+      description: Number of unique participants
+      example: 5
+    participants:
+      type: array
+      items:
+        $ref: './user.yaml#/UserProfile'
+      maxItems: 10
+      description: Thread participants (preview)
+    lastReply:
+      $ref: './message.yaml#/MessagePreview'
+    lastReplyAt:
+      type: string
+      format: date-time
+      description: Timestamp of last reply
+    isSubscribed:
+      type: boolean
+      description: Whether current user is subscribed
+      default: false
+    unreadCount:
+      type: integer
+      description: Unread replies for current user
+      example: 3
+    isResolved:
+      type: boolean
+      description: Whether thread is marked resolved
+      default: false
+    resolvedBy:
+      type: string
+      format: uuid
+      description: User who resolved the thread
+    resolvedAt:
+      type: string
+      format: date-time
+    createdAt:
+      type: string
+      format: date-time
+      example: "2024-01-15T10:30:00Z"
+    updatedAt:
+      type: string
+      format: date-time
+
+ThreadSummary:
+  type: object
+  description: Condensed thread for listings
+  properties:
+    id:
+      type: string
+      format: uuid
+    channelId:
+      type: string
+      format: uuid
+    channelName:
+      type: string
+    parentMessagePreview:
+      type: string
+      maxLength: 100
+    replyCount:
+      type: integer
+    participantCount:
+      type: integer
+    lastReplyAt:
+      type: string
+      format: date-time
+    unreadCount:
+      type: integer
+    isSubscribed:
+      type: boolean
+
+ThreadSubscription:
+  type: object
+  required:
+    - threadId
+    - userId
+    - subscribed
+  properties:
+    threadId:
+      type: string
+      format: uuid
+    userId:
+      type: string
+      format: uuid
+    subscribed:
+      type: boolean
+      description: Whether user is subscribed
+    notifyOn:
+      type: string
+      enum: [all, mentions, none]
+      description: When to notify user
+      default: all
+    lastReadAt:
+      type: string
+      format: date-time
+    lastReadMessageId:
+      type: string
+      format: uuid
+
+ThreadReply:
+  allOf:
+    - $ref: './message.yaml#/Message'
+    - type: object
+      properties:
+        threadId:
+          type: string
+          format: uuid
+          description: Parent thread ID
+        replyBroadcast:
+          type: boolean
+          description: Whether reply was broadcast to channel
+          default: false
+
+ThreadListResponse:
+  type: object
+  required:
+    - threads
+    - pagination
+  properties:
+    threads:
+      type: array
+      items:
+        $ref: '#/ThreadSummary'
+    pagination:
+      $ref: './common.yaml#/Pagination'
+
+ThreadRepliesResponse:
+  type: object
+  required:
+    - replies
+    - pagination
+  properties:
+    parentMessage:
+      $ref: './message.yaml#/Message'
+    replies:
+      type: array
+      items:
+        $ref: '#/ThreadReply'
+    pagination:
+      $ref: './common.yaml#/Pagination'
+    hasMore:
+      type: boolean
+
+UpdateThreadRequest:
+  type: object
+  properties:
+    isResolved:
+      type: boolean
+      description: Mark thread as resolved/unresolved
+
+SubscribeThreadRequest:
+  type: object
+  properties:
+    subscribed:
+      type: boolean
+      description: Subscribe or unsubscribe
+      default: true
+    notifyOn:
+      type: string
+      enum: [all, mentions, none]
+      default: all

@@ -1,0 +1,227 @@
+# Presence Schema Definitions
+
+Presence:
+  type: object
+  required:
+    - userId
+    - status
+    - lastSeenAt
+  properties:
+    userId:
+      type: string
+      format: uuid
+    status:
+      type: string
+      enum: [online, away, dnd, offline]
+      description: Current presence status
+      example: "online"
+    statusText:
+      type: string
+      maxLength: 100
+      description: Custom status text
+      example: "In a meeting"
+    statusEmoji:
+      type: string
+      description: Status emoji
+      example: "📅"
+    statusExpiry:
+      type: string
+      format: date-time
+      description: When custom status expires
+    isActive:
+      type: boolean
+      description: Whether user is actively using app
+      default: false
+    lastSeenAt:
+      type: string
+      format: date-time
+      description: Last activity timestamp
+    activeDevice:
+      type: string
+      enum: [desktop, mobile, web]
+      description: Current active device
+    inCall:
+      type: boolean
+      description: Whether user is in a call
+      default: false
+    inHuddle:
+      type: boolean
+      description: Whether user is in a huddle
+      default: false
+    typing:
+      $ref: '#/TypingIndicator'
+
+TypingIndicator:
+  type: object
+  properties:
+    channelId:
+      type: string
+      format: uuid
+      description: Channel where user is typing
+    threadId:
+      type: string
+      format: uuid
+      description: Thread where user is typing
+    startedAt:
+      type: string
+      format: date-time
+
+BulkPresenceResponse:
+  type: object
+  properties:
+    presences:
+      type: object
+      additionalProperties:
+        $ref: '#/Presence'
+      description: Map of userId to presence
+
+ChannelPresence:
+  type: object
+  description: Presence info for a channel
+  properties:
+    channelId:
+      type: string
+      format: uuid
+    onlineCount:
+      type: integer
+      description: Number of online members
+    onlineMembers:
+      type: array
+      items:
+        $ref: '#/Presence'
+      maxItems: 100
+    typingUsers:
+      type: array
+      items:
+        $ref: '#/TypingUser'
+
+TypingUser:
+  type: object
+  properties:
+    userId:
+      type: string
+      format: uuid
+    user:
+      $ref: './user.yaml#/UserProfile'
+    threadId:
+      type: string
+      format: uuid
+    startedAt:
+      type: string
+      format: date-time
+
+UpdatePresenceRequest:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [online, away, dnd, offline]
+    statusText:
+      type: string
+      maxLength: 100
+    statusEmoji:
+      type: string
+    statusExpiry:
+      type: string
+      format: date-time
+    clearAfter:
+      type: string
+      enum: [never, "30min", "1h", "4h", "today", "this_week"]
+
+SetTypingRequest:
+  type: object
+  required:
+    - channelId
+  properties:
+    channelId:
+      type: string
+      format: uuid
+    threadId:
+      type: string
+      format: uuid
+
+PresenceSubscription:
+  type: object
+  description: Presence subscription for real-time updates
+  properties:
+    userIds:
+      type: array
+      items:
+        type: string
+        format: uuid
+      maxItems: 500
+      description: User IDs to subscribe to
+    channelIds:
+      type: array
+      items:
+        type: string
+        format: uuid
+      description: Channel IDs for typing indicators
+
+ActivityStatus:
+  type: object
+  description: Detailed activity status
+  properties:
+    userId:
+      type: string
+      format: uuid
+    activity:
+      type: string
+      enum: [active, idle, away, dnd, offline]
+    source:
+      type: string
+      enum: [manual, auto, schedule, mobile]
+      description: How status was set
+    idleSince:
+      type: string
+      format: date-time
+      description: When user became idle
+    devices:
+      type: array
+      items:
+        $ref: '#/DevicePresence'
+
+DevicePresence:
+  type: object
+  properties:
+    deviceId:
+      type: string
+    deviceType:
+      type: string
+      enum: [desktop, mobile, web, tablet]
+    platform:
+      type: string
+      enum: [windows, macos, linux, ios, android, web]
+    isActive:
+      type: boolean
+    lastActiveAt:
+      type: string
+      format: date-time
+    appVersion:
+      type: string
+
+PresencePreferences:
+  type: object
+  properties:
+    autoAway:
+      type: boolean
+      description: Automatically set away when idle
+      default: true
+    autoAwayTimeout:
+      type: integer
+      description: Minutes before auto-away
+      default: 10
+      minimum: 1
+      maximum: 60
+    showPresence:
+      type: boolean
+      description: Show presence to others
+      default: true
+    showTyping:
+      type: boolean
+      description: Show typing indicator to others
+      default: true
+    syncAcrossDevices:
+      type: boolean
+      description: Sync status across all devices
+      default: true

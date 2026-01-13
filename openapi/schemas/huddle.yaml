@@ -1,0 +1,202 @@
+# Huddle Schema Definitions
+# Huddles are lightweight, spontaneous audio/video conversations
+
+Huddle:
+  type: object
+  required:
+    - id
+    - channelId
+    - status
+    - startedBy
+    - startedAt
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique huddle identifier
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    channelId:
+      type: string
+      format: uuid
+      description: Channel where huddle is active
+    status:
+      type: string
+      enum: [active, ended]
+      description: Huddle status
+      example: "active"
+    startedBy:
+      type: string
+      format: uuid
+      description: User who started the huddle
+    starter:
+      $ref: './user.yaml#/UserProfile'
+    participants:
+      type: array
+      items:
+        $ref: '#/HuddleParticipant'
+      description: Current participants
+    participantCount:
+      type: integer
+      description: Number of current participants
+      example: 4
+    maxParticipants:
+      type: integer
+      description: Maximum allowed participants
+      default: 50
+    hasVideo:
+      type: boolean
+      description: Whether video is enabled
+      default: false
+    hasScreenShare:
+      type: boolean
+      description: Whether someone is screen sharing
+      default: false
+    topic:
+      type: string
+      maxLength: 200
+      description: Optional huddle topic
+    inviteLink:
+      type: string
+      format: uri
+      description: Link to join huddle
+    startedAt:
+      type: string
+      format: date-time
+      example: "2024-01-15T10:30:00Z"
+    endedAt:
+      type: string
+      format: date-time
+
+HuddleParticipant:
+  type: object
+  required:
+    - userId
+    - joinedAt
+  properties:
+    userId:
+      type: string
+      format: uuid
+    user:
+      $ref: './user.yaml#/UserProfile'
+    isAudioMuted:
+      type: boolean
+      default: false
+    isVideoEnabled:
+      type: boolean
+      default: false
+    isScreenSharing:
+      type: boolean
+      default: false
+    isSpeaking:
+      type: boolean
+      default: false
+    joinedAt:
+      type: string
+      format: date-time
+
+HuddleInvite:
+  type: object
+  required:
+    - huddleId
+    - invitedBy
+    - invitedUser
+  properties:
+    huddleId:
+      type: string
+      format: uuid
+    invitedBy:
+      type: string
+      format: uuid
+    inviter:
+      $ref: './user.yaml#/UserProfile'
+    invitedUser:
+      type: string
+      format: uuid
+    channelId:
+      type: string
+      format: uuid
+    channelName:
+      type: string
+    participantCount:
+      type: integer
+    createdAt:
+      type: string
+      format: date-time
+
+StartHuddleRequest:
+  type: object
+  properties:
+    topic:
+      type: string
+      maxLength: 200
+    enableVideo:
+      type: boolean
+      default: false
+    inviteUsers:
+      type: array
+      items:
+        type: string
+        format: uuid
+      description: User IDs to invite immediately
+
+JoinHuddleRequest:
+  type: object
+  properties:
+    audioMuted:
+      type: boolean
+      default: false
+    videoEnabled:
+      type: boolean
+      default: false
+
+HuddleActionRequest:
+  type: object
+  required:
+    - action
+  properties:
+    action:
+      type: string
+      enum: [mute, unmute, enable_video, disable_video, start_screen_share, stop_screen_share, invite, leave, end]
+      description: Action to perform
+    targetUserId:
+      type: string
+      format: uuid
+      description: User to invite (for invite action)
+
+UpdateHuddleRequest:
+  type: object
+  properties:
+    topic:
+      type: string
+      maxLength: 200
+
+HuddleThread:
+  type: object
+  description: Chat thread associated with a huddle
+  properties:
+    huddleId:
+      type: string
+      format: uuid
+    messages:
+      type: array
+      items:
+        $ref: './message.yaml#/MessagePreview'
+    messageCount:
+      type: integer
+
+HuddleNote:
+  type: object
+  description: Shared notes during huddle
+  properties:
+    huddleId:
+      type: string
+      format: uuid
+    content:
+      type: string
+      maxLength: 10000
+    lastEditedBy:
+      type: string
+      format: uuid
+    lastEditedAt:
+      type: string
+      format: date-time

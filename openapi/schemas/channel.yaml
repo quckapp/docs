@@ -1,0 +1,267 @@
+# Channel Schema Definitions
+
+Channel:
+  type: object
+  required:
+    - id
+    - workspaceId
+    - name
+    - type
+    - createdAt
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique channel identifier
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    workspaceId:
+      type: string
+      format: uuid
+      description: Parent workspace ID
+    name:
+      type: string
+      pattern: "^[a-z0-9-_]{1,80}$"
+      description: Channel name
+      example: "general"
+    displayName:
+      type: string
+      maxLength: 100
+      description: Human-readable display name
+      example: "General Discussion"
+    type:
+      type: string
+      enum: [public, private, dm, group_dm]
+      description: Channel type
+      example: "public"
+    description:
+      type: string
+      maxLength: 500
+      description: Channel description
+      example: "General discussion for the team"
+    topic:
+      type: string
+      maxLength: 250
+      description: Current channel topic
+      example: "Q1 Planning"
+    icon:
+      type: string
+      description: Channel icon emoji
+      example: "💬"
+    isArchived:
+      type: boolean
+      description: Whether the channel is archived
+      default: false
+    isDefault:
+      type: boolean
+      description: Whether this is a default channel for new members
+      default: false
+    memberCount:
+      type: integer
+      description: Number of members in the channel
+      example: 25
+    unreadCount:
+      type: integer
+      description: Unread message count for current user
+      example: 5
+    lastMessageAt:
+      type: string
+      format: date-time
+      description: Timestamp of last message
+    lastMessage:
+      $ref: './message.yaml#/MessagePreview'
+    settings:
+      $ref: '#/ChannelSettings'
+    createdBy:
+      type: string
+      format: uuid
+      description: User who created the channel
+    createdAt:
+      type: string
+      format: date-time
+      example: "2024-01-01T00:00:00Z"
+    updatedAt:
+      type: string
+      format: date-time
+
+ChannelSettings:
+  type: object
+  properties:
+    postingPermissions:
+      type: string
+      enum: [everyone, admins, specific_members]
+      description: Who can post in this channel
+      default: everyone
+    threadRepliesOnly:
+      type: boolean
+      description: Only allow replies in threads
+      default: false
+    slowMode:
+      type: integer
+      description: Seconds between posts per user (0 = disabled)
+      default: 0
+      minimum: 0
+      maximum: 3600
+    retentionDays:
+      type: integer
+      description: Message retention days (0 = workspace default)
+      default: 0
+
+ChannelMember:
+  type: object
+  required:
+    - userId
+    - channelId
+    - role
+    - joinedAt
+  properties:
+    userId:
+      type: string
+      format: uuid
+    channelId:
+      type: string
+      format: uuid
+    user:
+      $ref: './user.yaml#/UserProfile'
+    role:
+      type: string
+      enum: [member, admin, owner]
+      description: Member role in channel
+      example: "member"
+    notifications:
+      type: string
+      enum: [all, mentions, none]
+      description: Notification preference
+      default: all
+    isMuted:
+      type: boolean
+      description: Whether notifications are muted
+      default: false
+    mutedUntil:
+      type: string
+      format: date-time
+      description: Mute expiration time
+    lastReadAt:
+      type: string
+      format: date-time
+      description: Last read message timestamp
+    lastReadMessageId:
+      type: string
+      format: uuid
+      description: Last read message ID
+    joinedAt:
+      type: string
+      format: date-time
+
+DirectMessage:
+  type: object
+  description: Direct message channel between two users
+  properties:
+    id:
+      type: string
+      format: uuid
+    type:
+      type: string
+      enum: [dm]
+    participants:
+      type: array
+      items:
+        $ref: './user.yaml#/UserProfile'
+      minItems: 2
+      maxItems: 2
+    lastMessage:
+      $ref: './message.yaml#/MessagePreview'
+    unreadCount:
+      type: integer
+
+GroupDirectMessage:
+  type: object
+  description: Group direct message channel
+  properties:
+    id:
+      type: string
+      format: uuid
+    type:
+      type: string
+      enum: [group_dm]
+    name:
+      type: string
+      description: Optional group name
+    participants:
+      type: array
+      items:
+        $ref: './user.yaml#/UserProfile'
+      minItems: 3
+      maxItems: 9
+    lastMessage:
+      $ref: './message.yaml#/MessagePreview'
+    unreadCount:
+      type: integer
+
+ChannelCreateRequest:
+  type: object
+  required:
+    - name
+  properties:
+    name:
+      type: string
+      pattern: "^[a-z0-9-_]{1,80}$"
+      example: "project-alpha"
+    displayName:
+      type: string
+      maxLength: 100
+    type:
+      type: string
+      enum: [public, private]
+      default: public
+    description:
+      type: string
+      maxLength: 500
+    topic:
+      type: string
+      maxLength: 250
+    icon:
+      type: string
+    isDefault:
+      type: boolean
+      default: false
+    members:
+      type: array
+      items:
+        type: string
+        format: uuid
+      description: Initial members to add
+
+ChannelUpdateRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      pattern: "^[a-z0-9-_]{1,80}$"
+    displayName:
+      type: string
+      maxLength: 100
+    description:
+      type: string
+      maxLength: 500
+    topic:
+      type: string
+      maxLength: 250
+    icon:
+      type: string
+    isArchived:
+      type: boolean
+    settings:
+      $ref: '#/ChannelSettings'
+
+AddMembersRequest:
+  type: object
+  required:
+    - userIds
+  properties:
+    userIds:
+      type: array
+      items:
+        type: string
+        format: uuid
+      minItems: 1
+      maxItems: 100

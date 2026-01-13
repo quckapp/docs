@@ -1,0 +1,105 @@
+# Common Schema Definitions
+
+Pagination:
+  type: object
+  properties:
+    cursor:
+      type: string
+      description: Cursor for the next page
+      example: eyJpZCI6IjEyMzQ1In0=
+    hasMore:
+      type: boolean
+      description: Whether there are more results
+      example: true
+    total:
+      type: integer
+      description: Total number of items (when available)
+      example: 150
+
+PaginatedResponse:
+  type: object
+  properties:
+    data:
+      type: array
+      items: {}
+    pagination:
+      $ref: '#/Pagination'
+
+Timestamp:
+  type: string
+  format: date-time
+  description: ISO 8601 timestamp
+  example: "2024-01-15T10:30:00Z"
+
+UUID:
+  type: string
+  format: uuid
+  description: Universally unique identifier
+  example: "550e8400-e29b-41d4-a716-446655440000"
+
+Email:
+  type: string
+  format: email
+  description: Email address
+  example: "user@example.com"
+
+URL:
+  type: string
+  format: uri
+  description: URL
+  example: "https://example.com/resource"
+
+Color:
+  type: string
+  pattern: "^#[0-9A-Fa-f]{6}$"
+  description: Hex color code
+  example: "#3498db"
+
+Emoji:
+  type: string
+  description: Emoji character or shortcode
+  example: ":thumbsup:"
+
+Metadata:
+  type: object
+  additionalProperties: true
+  description: Additional metadata as key-value pairs
+  example:
+    source: "api"
+    version: "1.0"
+
+# Common Parameters
+PageParam:
+  name: page
+  in: query
+  description: Page number for pagination
+  schema:
+    type: integer
+    minimum: 1
+    default: 1
+
+LimitParam:
+  name: limit
+  in: query
+  description: Number of items per page
+  schema:
+    type: integer
+    minimum: 1
+    maximum: 100
+    default: 20
+
+CursorParam:
+  name: cursor
+  in: query
+  description: Cursor for next page of results
+  schema:
+    type: string
+
+SortParam:
+  name: sort
+  in: query
+  description: Sort order
+  schema:
+    type: string
+    enum: [asc, desc]
+    default: desc

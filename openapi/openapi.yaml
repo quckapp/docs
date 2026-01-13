@@ -1,0 +1,618 @@
+openapi: 3.1.0
+info:
+  title: QuikApp API
+  description: |
+    QuikApp is an enterprise communication platform providing real-time messaging,
+    voice/video calls, file sharing, and team collaboration features.
+
+    ## Authentication
+    Most endpoints require authentication using JWT Bearer tokens.
+    Obtain tokens via the `/auth/login` or `/auth/oauth` endpoints.
+
+    ## Rate Limiting
+    API requests are rate-limited per user/IP:
+    - Standard endpoints: 1000 requests/minute
+    - Auth endpoints: 20 requests/minute
+    - Upload endpoints: 100 requests/minute
+
+    ## Pagination
+    List endpoints support cursor-based pagination using `cursor` and `limit` parameters.
+    Some endpoints also support page-based pagination with `page` and `limit`.
+
+    ## WebSocket
+    Real-time features are available via WebSocket at `wss://ws.quikapp.io`
+
+    ## Error Handling
+    All errors return a consistent JSON structure with `error.code`, `error.message`,
+    and optional `error.details` array for validation errors.
+
+  version: 1.0.0
+  contact:
+    name: QuikApp API Support
+    email: api-support@quikapp.io
+    url: https://docs.quikapp.io
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  x-logo:
+    url: https://quikapp.io/logo.png
+
+servers:
+  - url: https://api.quikapp.io/v1
+    description: Production server
+  - url: https://api.staging.quikapp.io/v1
+    description: Staging server
+  - url: http://localhost:3000/v1
+    description: Local development
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: MFA
+    description: Multi-factor authentication
+  - name: Users
+    description: User management and profiles
+  - name: Bookmarks
+    description: User bookmarks
+  - name: Workspaces
+    description: Workspace management
+  - name: Members
+    description: Workspace and channel membership
+  - name: Invites
+    description: Workspace invitations
+  - name: Channels
+    description: Channel management within workspaces
+  - name: Direct Messages
+    description: Direct and group messages
+  - name: Messages
+    description: Messaging operations
+  - name: Reactions
+    description: Message reactions
+  - name: Threads
+    description: Thread discussions
+  - name: Calls
+    description: Voice and video calls
+  - name: Huddles
+    description: Quick audio huddles
+  - name: Files
+    description: File uploads and management
+  - name: Search
+    description: Search across messages, files, and users
+  - name: Notifications
+    description: Notification management
+  - name: Presence
+    description: User presence and status
+
+security:
+  - BearerAuth: []
+
+paths:
+  # All paths are defined in the paths/ directory
+  # Reference: ./paths/_index.yaml
+
+  # Authentication endpoints
+  /auth/login:
+    $ref: './paths/auth.yaml#/login'
+  /auth/register:
+    $ref: './paths/auth.yaml#/register'
+  /auth/logout:
+    $ref: './paths/auth.yaml#/logout'
+  /auth/refresh:
+    $ref: './paths/auth.yaml#/refresh'
+  /auth/password-reset:
+    $ref: './paths/auth.yaml#/password-reset'
+  /auth/password-reset/confirm:
+    $ref: './paths/auth.yaml#/password-reset-confirm'
+  /auth/oauth:
+    $ref: './paths/auth.yaml#/oauth'
+  /auth/oauth/url:
+    $ref: './paths/auth.yaml#/oauth-url'
+  /auth/mfa/setup:
+    $ref: './paths/auth.yaml#/mfa-setup'
+  /auth/mfa/verify:
+    $ref: './paths/auth.yaml#/mfa-verify'
+  /auth/mfa:
+    $ref: './paths/auth.yaml#/mfa-disable'
+  /auth/sessions:
+    $ref: './paths/auth.yaml#/sessions'
+  /auth/sessions/{sessionId}:
+    $ref: './paths/auth.yaml#/session-revoke'
+  /auth/sessions/all:
+    $ref: './paths/auth.yaml#/sessions-revoke-all'
+  /auth/verify-email:
+    $ref: './paths/auth.yaml#/verify-email'
+  /auth/resend-verification:
+    $ref: './paths/auth.yaml#/resend-verification'
+
+  # User endpoints
+  /users/me:
+    $ref: './paths/users.yaml#/me'
+  /users/{userId}:
+    $ref: './paths/users.yaml#/user-by-id'
+  /users/username/{username}:
+    $ref: './paths/users.yaml#/user-by-username'
+  /users/me/preferences:
+    $ref: './paths/users.yaml#/preferences'
+  /users/me/status:
+    $ref: './paths/users.yaml#/status'
+  /users/me/avatar:
+    $ref: './paths/users.yaml#/avatar'
+  /users/me/password:
+    $ref: './paths/users.yaml#/change-password'
+  /users/me/email:
+    $ref: './paths/users.yaml#/change-email'
+  /users/me/bookmarks:
+    $ref: './paths/users.yaml#/bookmarks'
+  /users/me/bookmarks/{bookmarkId}:
+    $ref: './paths/users.yaml#/bookmark-remove'
+
+  # Workspace endpoints
+  /workspaces:
+    $ref: './paths/workspaces.yaml#/workspaces'
+  /workspaces/{workspaceId}:
+    $ref: './paths/workspaces.yaml#/workspace-by-id'
+  /workspaces/slug/{slug}:
+    $ref: './paths/workspaces.yaml#/workspace-by-slug'
+  /workspaces/{workspaceId}/members:
+    $ref: './paths/workspaces.yaml#/workspace-members'
+  /workspaces/{workspaceId}/members/{userId}:
+    $ref: './paths/workspaces.yaml#/workspace-member-by-id'
+  /workspaces/{workspaceId}/leave:
+    $ref: './paths/workspaces.yaml#/workspace-leave'
+  /workspaces/{workspaceId}/invites:
+    $ref: './paths/workspaces.yaml#/workspace-invites'
+  /workspaces/{workspaceId}/invites/{inviteId}:
+    $ref: './paths/workspaces.yaml#/workspace-invite-revoke'
+  /workspaces/invites/{inviteCode}/accept:
+    $ref: './paths/workspaces.yaml#/workspace-invite-accept'
+  /workspaces/{workspaceId}/stats:
+    $ref: './paths/workspaces.yaml#/workspace-stats'
+  /workspaces/{workspaceId}/icon:
+    $ref: './paths/workspaces.yaml#/workspace-icon'
+
+  # Channel endpoints
+  /workspaces/{workspaceId}/channels:
+    $ref: './paths/channels.yaml#/channels'
+  /workspaces/{workspaceId}/channels/{channelId}:
+    $ref: './paths/channels.yaml#/channel-by-id'
+  /workspaces/{workspaceId}/channels/{channelId}/members:
+    $ref: './paths/channels.yaml#/channel-members'
+  /workspaces/{workspaceId}/channels/{channelId}/members/{userId}:
+    $ref: './paths/channels.yaml#/channel-member-by-id'
+  /workspaces/{workspaceId}/channels/{channelId}/join:
+    $ref: './paths/channels.yaml#/channel-join'
+  /workspaces/{workspaceId}/channels/{channelId}/leave:
+    $ref: './paths/channels.yaml#/channel-leave'
+  /workspaces/{workspaceId}/channels/{channelId}/archive:
+    $ref: './paths/channels.yaml#/channel-archive'
+  /workspaces/{workspaceId}/channels/{channelId}/unarchive:
+    $ref: './paths/channels.yaml#/channel-unarchive'
+  /workspaces/{workspaceId}/channels/{channelId}/notifications:
+    $ref: './paths/channels.yaml#/channel-notifications'
+  /workspaces/{workspaceId}/dms:
+    $ref: './paths/channels.yaml#/direct-messages'
+  /workspaces/{workspaceId}/dms/open:
+    $ref: './paths/channels.yaml#/direct-message-open'
+  /workspaces/{workspaceId}/dms/group:
+    $ref: './paths/channels.yaml#/group-dm-create'
+
+  # Message endpoints
+  /workspaces/{workspaceId}/channels/{channelId}/messages:
+    $ref: './paths/messages.yaml#/messages'
+  /workspaces/{workspaceId}/channels/{channelId}/messages/{messageId}:
+    $ref: './paths/messages.yaml#/message-by-id'
+  /workspaces/{workspaceId}/channels/{channelId}/messages/{messageId}/reactions:
+    $ref: './paths/messages.yaml#/message-reactions'
+  /workspaces/{workspaceId}/channels/{channelId}/messages/{messageId}/reactions/{emoji}:
+    $ref: './paths/messages.yaml#/message-reaction-remove'
+  /workspaces/{workspaceId}/channels/{channelId}/messages/{messageId}/pin:
+    $ref: './paths/messages.yaml#/message-pin'
+  /workspaces/{workspaceId}/channels/{channelId}/messages/{messageId}/unpin:
+    $ref: './paths/messages.yaml#/message-unpin'
+  /workspaces/{workspaceId}/channels/{channelId}/pins:
+    $ref: './paths/messages.yaml#/pinned-messages'
+  /workspaces/{workspaceId}/channels/{channelId}/read:
+    $ref: './paths/messages.yaml#/mark-read'
+  /workspaces/{workspaceId}/scheduled-messages:
+    $ref: './paths/messages.yaml#/scheduled-messages'
+  /workspaces/{workspaceId}/scheduled-messages/{messageId}:
+    $ref: './paths/messages.yaml#/scheduled-message-by-id'
+
+  # Thread endpoints
+  /workspaces/{workspaceId}/threads:
+    $ref: './paths/threads.yaml#/threads'
+  /workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}:
+    $ref: './paths/threads.yaml#/thread-by-id'
+  /workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}/replies:
+    $ref: './paths/threads.yaml#/thread-replies'
+  /workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}/subscribe:
+    $ref: './paths/threads.yaml#/thread-subscribe'
+  /workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}/unsubscribe:
+    $ref: './paths/threads.yaml#/thread-unsubscribe'
+  /workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}/read:
+    $ref: './paths/threads.yaml#/thread-mark-read'
+  /workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}/participants:
+    $ref: './paths/threads.yaml#/thread-participants'
+  /workspaces/{workspaceId}/threads/read-all:
+    $ref: './paths/threads.yaml#/mark-all-threads-read'
+
+  # File endpoints
+  /workspaces/{workspaceId}/files:
+    $ref: './paths/files.yaml#/files'
+  /workspaces/{workspaceId}/files/upload:
+    $ref: './paths/files.yaml#/file-upload-init'
+  /workspaces/{workspaceId}/files/{fileId}:
+    $ref: './paths/files.yaml#/file-by-id'
+  /workspaces/{workspaceId}/files/{fileId}/complete:
+    $ref: './paths/files.yaml#/file-upload-complete'
+  /workspaces/{workspaceId}/files/{fileId}/download:
+    $ref: './paths/files.yaml#/file-download'
+  /workspaces/{workspaceId}/files/{fileId}/share:
+    $ref: './paths/files.yaml#/file-share'
+  /workspaces/{workspaceId}/files/{fileId}/shares:
+    $ref: './paths/files.yaml#/file-shares'
+  /workspaces/{workspaceId}/files/{fileId}/shares/{shareId}:
+    $ref: './paths/files.yaml#/file-share-revoke'
+  /workspaces/{workspaceId}/storage:
+    $ref: './paths/files.yaml#/storage-quota'
+  /workspaces/{workspaceId}/links:
+    $ref: './paths/files.yaml#/external-links'
+
+  # Call endpoints
+  /workspaces/{workspaceId}/calls:
+    $ref: './paths/calls.yaml#/calls'
+  /workspaces/{workspaceId}/calls/active:
+    $ref: './paths/calls.yaml#/active-calls'
+  /workspaces/{workspaceId}/calls/scheduled:
+    $ref: './paths/calls.yaml#/scheduled-calls'
+  /workspaces/{workspaceId}/calls/{callId}:
+    $ref: './paths/calls.yaml#/call-by-id'
+  /workspaces/{workspaceId}/calls/{callId}/join:
+    $ref: './paths/calls.yaml#/call-join'
+  /workspaces/{workspaceId}/calls/{callId}/leave:
+    $ref: './paths/calls.yaml#/call-leave'
+  /workspaces/{workspaceId}/calls/{callId}/end:
+    $ref: './paths/calls.yaml#/call-end'
+  /workspaces/{workspaceId}/calls/{callId}/action:
+    $ref: './paths/calls.yaml#/call-action'
+  /workspaces/{workspaceId}/calls/{callId}/invite:
+    $ref: './paths/calls.yaml#/call-invite'
+  /workspaces/{workspaceId}/calls/{callId}/participants:
+    $ref: './paths/calls.yaml#/call-participants'
+  /workspaces/{workspaceId}/calls/{callId}/recording:
+    $ref: './paths/calls.yaml#/call-recording'
+
+  # Huddle endpoints
+  /workspaces/{workspaceId}/huddles:
+    $ref: './paths/huddles.yaml#/huddles'
+  /workspaces/{workspaceId}/channels/{channelId}/huddle:
+    $ref: './paths/huddles.yaml#/channel-huddle'
+  /workspaces/{workspaceId}/huddles/{huddleId}:
+    $ref: './paths/huddles.yaml#/huddle-by-id'
+  /workspaces/{workspaceId}/huddles/{huddleId}/join:
+    $ref: './paths/huddles.yaml#/huddle-join'
+  /workspaces/{workspaceId}/huddles/{huddleId}/leave:
+    $ref: './paths/huddles.yaml#/huddle-leave'
+  /workspaces/{workspaceId}/huddles/{huddleId}/action:
+    $ref: './paths/huddles.yaml#/huddle-action'
+  /workspaces/{workspaceId}/huddles/{huddleId}/end:
+    $ref: './paths/huddles.yaml#/huddle-end'
+  /workspaces/{workspaceId}/huddles/{huddleId}/participants:
+    $ref: './paths/huddles.yaml#/huddle-participants'
+  /workspaces/{workspaceId}/huddles/{huddleId}/invite:
+    $ref: './paths/huddles.yaml#/huddle-invite'
+  /workspaces/{workspaceId}/huddles/{huddleId}/thread:
+    $ref: './paths/huddles.yaml#/huddle-thread'
+  /workspaces/{workspaceId}/huddles/{huddleId}/notes:
+    $ref: './paths/huddles.yaml#/huddle-notes'
+
+  # Search endpoints
+  /workspaces/{workspaceId}/search:
+    $ref: './paths/search.yaml#/search'
+  /workspaces/{workspaceId}/search/quick:
+    $ref: './paths/search.yaml#/quick-search'
+  /workspaces/{workspaceId}/search/messages:
+    $ref: './paths/search.yaml#/search-messages'
+  /workspaces/{workspaceId}/search/files:
+    $ref: './paths/search.yaml#/search-files'
+  /workspaces/{workspaceId}/search/saved:
+    $ref: './paths/search.yaml#/saved-searches'
+  /workspaces/{workspaceId}/search/saved/{searchId}:
+    $ref: './paths/search.yaml#/saved-search-by-id'
+  /workspaces/{workspaceId}/search/saved/{searchId}/run:
+    $ref: './paths/search.yaml#/saved-search-run'
+  /workspaces/{workspaceId}/search/history:
+    $ref: './paths/search.yaml#/search-history'
+  /workspaces/{workspaceId}/search/suggestions:
+    $ref: './paths/search.yaml#/search-suggestions'
+
+  # Notification endpoints
+  /notifications:
+    $ref: './paths/notifications.yaml#/notifications'
+  /notifications/{notificationId}:
+    $ref: './paths/notifications.yaml#/notification-by-id'
+  /notifications/read:
+    $ref: './paths/notifications.yaml#/notifications-mark-read'
+  /notifications/unread-count:
+    $ref: './paths/notifications.yaml#/notifications-unread-count'
+  /notifications/settings:
+    $ref: './paths/notifications.yaml#/notification-settings'
+  /notifications/push:
+    $ref: './paths/notifications.yaml#/push-subscription'
+  /notifications/device:
+    $ref: './paths/notifications.yaml#/device-token'
+  /notifications/dnd:
+    $ref: './paths/notifications.yaml#/dnd-status'
+  /notifications/snooze:
+    $ref: './paths/notifications.yaml#/snooze'
+  /notifications/test:
+    $ref: './paths/notifications.yaml#/test-notification'
+
+  # Presence endpoints
+  /presence:
+    $ref: './paths/presence.yaml#/presence'
+  /presence/users/{userId}:
+    $ref: './paths/presence.yaml#/user-presence'
+  /presence/bulk:
+    $ref: './paths/presence.yaml#/bulk-presence'
+  /presence/typing:
+    $ref: './paths/presence.yaml#/typing'
+  /presence/typing/stop:
+    $ref: './paths/presence.yaml#/typing-stop'
+  /presence/subscribe:
+    $ref: './paths/presence.yaml#/presence-subscribe'
+  /presence/unsubscribe:
+    $ref: './paths/presence.yaml#/presence-unsubscribe'
+  /presence/activity:
+    $ref: './paths/presence.yaml#/activity-status'
+  /presence/preferences:
+    $ref: './paths/presence.yaml#/presence-preferences'
+  /presence/heartbeat:
+    $ref: './paths/presence.yaml#/heartbeat'
+  /workspaces/{workspaceId}/channels/{channelId}/presence:
+    $ref: './paths/presence.yaml#/channel-presence'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from /auth/login
+
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for service-to-service communication
+
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.quikapp.io/oauth/authorize
+          tokenUrl: https://api.quikapp.io/oauth/token
+          scopes:
+            read: Read access to user data
+            write: Write access to user data
+            admin: Administrative access
+
+  schemas:
+    $ref: './schemas/_index.yaml'
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error.yaml#/Error'
+          example:
+            error:
+              code: BAD_REQUEST
+              message: Invalid request parameters
+              details:
+                - field: email
+                  message: Invalid email format
+
+    Unauthorized:
+      description: Unauthorized - invalid or missing authentication
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error.yaml#/Error'
+          example:
+            error:
+              code: UNAUTHORIZED
+              message: Invalid or expired token
+
+    Forbidden:
+      description: Forbidden - insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error.yaml#/Error'
+          example:
+            error:
+              code: FORBIDDEN
+              message: You do not have permission to perform this action
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error.yaml#/Error'
+          example:
+            error:
+              code: NOT_FOUND
+              message: Resource not found
+
+    Conflict:
+      description: Conflict - resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error.yaml#/Error'
+          example:
+            error:
+              code: CONFLICT
+              message: Resource already exists
+
+    TooManyRequests:
+      description: Too many requests - rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error.yaml#/Error'
+          example:
+            error:
+              code: RATE_LIMITED
+              message: Rate limit exceeded. Try again in 60 seconds
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+          description: Request limit per minute
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+          description: Remaining requests in current window
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+          description: Unix timestamp when the rate limit resets
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error.yaml#/Error'
+          example:
+            error:
+              code: INTERNAL_ERROR
+              message: An unexpected error occurred
+              requestId: req_abc123
+
+  parameters:
+    WorkspaceId:
+      name: workspaceId
+      in: path
+      required: true
+      description: Unique workspace identifier
+      schema:
+        type: string
+        format: uuid
+
+    ChannelId:
+      name: channelId
+      in: path
+      required: true
+      description: Unique channel identifier
+      schema:
+        type: string
+        format: uuid
+
+    MessageId:
+      name: messageId
+      in: path
+      required: true
+      description: Unique message identifier
+      schema:
+        type: string
+        format: uuid
+
+    UserId:
+      name: userId
+      in: path
+      required: true
+      description: Unique user identifier
+      schema:
+        type: string
+        format: uuid
+
+    Cursor:
+      name: cursor
+      in: query
+      description: Pagination cursor for next page
+      schema:
+        type: string
+
+    Page:
+      name: page
+      in: query
+      description: Page number (1-indexed)
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+
+    Limit:
+      name: limit
+      in: query
+      description: Number of items to return (max 100)
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+    SortOrder:
+      name: sort
+      in: query
+      description: Sort order
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+
+  headers:
+    X-Request-Id:
+      description: Unique request identifier for tracing
+      schema:
+        type: string
+        format: uuid
+
+    X-RateLimit-Limit:
+      description: Request limit per minute
+      schema:
+        type: integer
+
+    X-RateLimit-Remaining:
+      description: Remaining requests in current window
+      schema:
+        type: integer
+
+    X-RateLimit-Reset:
+      description: Unix timestamp when the rate limit resets
+      schema:
+        type: integer
+
+x-tagGroups:
+  - name: Core
+    tags:
+      - Authentication
+      - MFA
+      - Users
+      - Bookmarks
+      - Workspaces
+      - Members
+      - Invites
+      - Channels
+      - Direct Messages
+  - name: Messaging
+    tags:
+      - Messages
+      - Reactions
+      - Threads
+      - Search
+  - name: Communication
+    tags:
+      - Calls
+      - Huddles
+      - Presence
+  - name: Content
+    tags:
+      - Files
+      - Notifications

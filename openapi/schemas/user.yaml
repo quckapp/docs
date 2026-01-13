@@ -1,0 +1,277 @@
+# User Schema Definitions
+
+User:
+  type: object
+  required:
+    - id
+    - email
+    - name
+    - createdAt
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique user identifier
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    email:
+      type: string
+      format: email
+      description: User email address
+      example: "john.doe@example.com"
+    name:
+      type: string
+      description: Display name
+      example: "John Doe"
+    username:
+      type: string
+      pattern: "^[a-z0-9_-]{3,30}$"
+      description: Unique username
+      example: "johndoe"
+    avatar:
+      type: string
+      format: uri
+      description: Avatar image URL
+      example: "https://cdn.quikapp.io/avatars/user123.jpg"
+    title:
+      type: string
+      description: Job title
+      example: "Software Engineer"
+    timezone:
+      type: string
+      description: User timezone (IANA format)
+      example: "America/Los_Angeles"
+    locale:
+      type: string
+      description: Preferred locale
+      example: "en-US"
+    phone:
+      type: string
+      description: Phone number
+      example: "+1-555-123-4567"
+    status:
+      $ref: '#/UserStatus'
+    role:
+      type: string
+      enum: [user, admin, owner]
+      description: User role
+      example: "user"
+    isVerified:
+      type: boolean
+      description: Email verification status
+      example: true
+    mfaEnabled:
+      type: boolean
+      description: Whether MFA is enabled
+      example: false
+    lastSeenAt:
+      type: string
+      format: date-time
+      description: Last activity timestamp
+      example: "2024-01-15T10:30:00Z"
+    createdAt:
+      type: string
+      format: date-time
+      description: Account creation timestamp
+      example: "2024-01-01T00:00:00Z"
+    updatedAt:
+      type: string
+      format: date-time
+      description: Last update timestamp
+      example: "2024-01-15T10:30:00Z"
+
+UserProfile:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+      example: "John Doe"
+    username:
+      type: string
+      example: "johndoe"
+    avatar:
+      type: string
+      format: uri
+    title:
+      type: string
+      example: "Software Engineer"
+    bio:
+      type: string
+      maxLength: 500
+      description: User biography
+      example: "Passionate about building great products"
+    pronouns:
+      type: string
+      example: "he/him"
+    location:
+      type: string
+      example: "San Francisco, CA"
+    website:
+      type: string
+      format: uri
+      example: "https://johndoe.dev"
+    socialLinks:
+      type: object
+      properties:
+        twitter:
+          type: string
+          example: "@johndoe"
+        github:
+          type: string
+          example: "johndoe"
+        linkedin:
+          type: string
+          example: "john-doe-12345"
+    status:
+      $ref: '#/UserStatus'
+    timezone:
+      type: string
+      example: "America/Los_Angeles"
+    localTime:
+      type: string
+      description: Current local time for the user
+      example: "10:30 AM"
+
+UserStatus:
+  type: object
+  properties:
+    emoji:
+      type: string
+      description: Status emoji
+      example: "🏠"
+    text:
+      type: string
+      maxLength: 100
+      description: Status text
+      example: "Working from home"
+    expiresAt:
+      type: string
+      format: date-time
+      description: When the status expires
+      example: "2024-01-15T18:00:00Z"
+    clearAfter:
+      type: string
+      enum: [never, "30min", "1h", "4h", "today", "this_week"]
+      description: When to automatically clear status
+      example: "today"
+
+UserPreferences:
+  type: object
+  properties:
+    theme:
+      type: string
+      enum: [light, dark, system]
+      description: UI theme preference
+      default: system
+      example: "dark"
+    language:
+      type: string
+      description: Preferred language
+      example: "en"
+    notifications:
+      $ref: './notification.yaml#/NotificationSettings'
+    sidebar:
+      type: object
+      properties:
+        collapsed:
+          type: boolean
+          default: false
+        order:
+          type: array
+          items:
+            type: string
+          description: Custom sidebar item order
+    keyboard:
+      type: object
+      properties:
+        shortcuts:
+          type: boolean
+          description: Enable keyboard shortcuts
+          default: true
+        markdownShortcuts:
+          type: boolean
+          description: Enable markdown shortcuts
+          default: true
+    accessibility:
+      type: object
+      properties:
+        reduceMotion:
+          type: boolean
+          default: false
+        highContrast:
+          type: boolean
+          default: false
+        screenReader:
+          type: boolean
+          default: false
+    privacy:
+      type: object
+      properties:
+        showOnlineStatus:
+          type: boolean
+          default: true
+        showTypingIndicator:
+          type: boolean
+          default: true
+        showReadReceipts:
+          type: boolean
+          default: true
+
+UserCreateRequest:
+  type: object
+  required:
+    - email
+    - name
+    - password
+  properties:
+    email:
+      type: string
+      format: email
+    name:
+      type: string
+      minLength: 2
+      maxLength: 100
+    password:
+      type: string
+      format: password
+      minLength: 8
+    username:
+      type: string
+      pattern: "^[a-z0-9_-]{3,30}$"
+    title:
+      type: string
+    timezone:
+      type: string
+    locale:
+      type: string
+
+UserUpdateRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 2
+      maxLength: 100
+    username:
+      type: string
+      pattern: "^[a-z0-9_-]{3,30}$"
+    title:
+      type: string
+    bio:
+      type: string
+      maxLength: 500
+    pronouns:
+      type: string
+    location:
+      type: string
+    website:
+      type: string
+      format: uri
+    timezone:
+      type: string
+    locale:
+      type: string
+    phone:
+      type: string

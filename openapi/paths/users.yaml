@@ -1,0 +1,517 @@
+# Users API Paths
+
+me:
+  get:
+    tags:
+      - Users
+    summary: Get current user
+    description: Get the authenticated user's profile
+    operationId: getCurrentUser
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Current user profile
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/User'
+      '401':
+        description: Not authenticated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  patch:
+    tags:
+      - Users
+    summary: Update current user
+    description: Update the authenticated user's profile
+    operationId: updateCurrentUser
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/user.yaml#/UserUpdateRequest'
+    responses:
+      '200':
+        description: User updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/User'
+      '400':
+        description: Invalid input
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ValidationError'
+
+  delete:
+    tags:
+      - Users
+    summary: Delete account
+    description: Permanently delete current user's account
+    operationId: deleteCurrentUser
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - password
+              - confirmation
+            properties:
+              password:
+                type: string
+                format: password
+              confirmation:
+                type: string
+                enum: ["DELETE MY ACCOUNT"]
+    responses:
+      '204':
+        description: Account deleted
+      '401':
+        description: Invalid password
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+user-by-id:
+  get:
+    tags:
+      - Users
+    summary: Get user by ID
+    description: Get a user's public profile by ID
+    operationId: getUserById
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User profile
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/UserProfile'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+user-by-username:
+  get:
+    tags:
+      - Users
+    summary: Get user by username
+    description: Get a user's public profile by username
+    operationId: getUserByUsername
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: User profile
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/UserProfile'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+preferences:
+  get:
+    tags:
+      - Users
+    summary: Get user preferences
+    description: Get current user's preferences
+    operationId: getUserPreferences
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: User preferences
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/UserPreferences'
+
+  patch:
+    tags:
+      - Users
+    summary: Update user preferences
+    description: Update current user's preferences
+    operationId: updateUserPreferences
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/user.yaml#/UserPreferences'
+    responses:
+      '200':
+        description: Preferences updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/UserPreferences'
+
+status:
+  get:
+    tags:
+      - Users
+    summary: Get user status
+    description: Get current user's status
+    operationId: getUserStatus
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: User status
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/UserStatus'
+
+  put:
+    tags:
+      - Users
+    summary: Set user status
+    description: Set current user's status
+    operationId: setUserStatus
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/user.yaml#/UserStatus'
+    responses:
+      '200':
+        description: Status updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/UserStatus'
+
+  delete:
+    tags:
+      - Users
+    summary: Clear user status
+    description: Clear current user's custom status
+    operationId: clearUserStatus
+    security:
+      - bearerAuth: []
+    responses:
+      '204':
+        description: Status cleared
+
+avatar:
+  put:
+    tags:
+      - Users
+    summary: Upload avatar
+    description: Upload a new avatar image
+    operationId: uploadAvatar
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required:
+              - avatar
+            properties:
+              avatar:
+                type: string
+                format: binary
+                description: Avatar image (JPEG, PNG, GIF, max 5MB)
+    responses:
+      '200':
+        description: Avatar uploaded
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                avatarUrl:
+                  type: string
+                  format: uri
+      '400':
+        description: Invalid image format or size
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  delete:
+    tags:
+      - Users
+    summary: Remove avatar
+    description: Remove current user's avatar
+    operationId: removeAvatar
+    security:
+      - bearerAuth: []
+    responses:
+      '204':
+        description: Avatar removed
+
+change-password:
+  post:
+    tags:
+      - Users
+    summary: Change password
+    description: Change current user's password
+    operationId: changePassword
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - currentPassword
+              - newPassword
+            properties:
+              currentPassword:
+                type: string
+                format: password
+              newPassword:
+                type: string
+                format: password
+                minLength: 8
+    responses:
+      '200':
+        description: Password changed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      '400':
+        description: Password requirements not met
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ValidationError'
+      '401':
+        description: Current password incorrect
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+change-email:
+  post:
+    tags:
+      - Users
+    summary: Change email
+    description: Request email address change
+    operationId: changeEmail
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - newEmail
+              - password
+            properties:
+              newEmail:
+                type: string
+                format: email
+              password:
+                type: string
+                format: password
+    responses:
+      '200':
+        description: Verification email sent to new address
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      '400':
+        description: Invalid email
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ValidationError'
+      '401':
+        description: Invalid password
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+      '409':
+        description: Email already in use
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+bookmarks:
+  get:
+    tags:
+      - Users
+      - Bookmarks
+    summary: List bookmarks
+    description: Get current user's bookmarked items
+    operationId: listBookmarks
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum: [message, file, channel]
+      - name: workspaceId
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - $ref: '../schemas/common.yaml#/PageParam'
+      - $ref: '../schemas/common.yaml#/LimitParam'
+    responses:
+      '200':
+        description: List of bookmarks
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bookmarks:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      type:
+                        type: string
+                        enum: [message, file, channel]
+                      itemId:
+                        type: string
+                        format: uuid
+                      note:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                pagination:
+                  $ref: '../schemas/common.yaml#/Pagination'
+
+bookmark-add:
+  post:
+    tags:
+      - Users
+      - Bookmarks
+    summary: Add bookmark
+    description: Bookmark a message, file, or channel
+    operationId: addBookmark
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - type
+              - itemId
+            properties:
+              type:
+                type: string
+                enum: [message, file, channel]
+              itemId:
+                type: string
+                format: uuid
+              note:
+                type: string
+                maxLength: 500
+    responses:
+      '201':
+        description: Bookmark created
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+      '409':
+        description: Already bookmarked
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+bookmark-remove:
+  delete:
+    tags:
+      - Users
+      - Bookmarks
+    summary: Remove bookmark
+    description: Remove a bookmark
+    operationId: removeBookmark
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: bookmarkId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Bookmark removed
+      '404':
+        description: Bookmark not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'

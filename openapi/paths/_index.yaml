@@ -1,0 +1,284 @@
+# API Paths Index
+# This file consolidates all API path references
+
+# Authentication
+/auth/login:
+  $ref: './auth.yaml#/login'
+/auth/register:
+  $ref: './auth.yaml#/register'
+/auth/logout:
+  $ref: './auth.yaml#/logout'
+/auth/refresh:
+  $ref: './auth.yaml#/refresh'
+/auth/password-reset:
+  $ref: './auth.yaml#/password-reset'
+/auth/password-reset/confirm:
+  $ref: './auth.yaml#/password-reset-confirm'
+/auth/oauth:
+  $ref: './auth.yaml#/oauth'
+/auth/oauth/url:
+  $ref: './auth.yaml#/oauth-url'
+/auth/mfa/setup:
+  $ref: './auth.yaml#/mfa-setup'
+/auth/mfa/verify:
+  $ref: './auth.yaml#/mfa-verify'
+/auth/mfa:
+  $ref: './auth.yaml#/mfa-disable'
+/auth/sessions:
+  $ref: './auth.yaml#/sessions'
+/auth/sessions/{sessionId}:
+  $ref: './auth.yaml#/session-revoke'
+/auth/sessions/all:
+  $ref: './auth.yaml#/sessions-revoke-all'
+/auth/verify-email:
+  $ref: './auth.yaml#/verify-email'
+/auth/resend-verification:
+  $ref: './auth.yaml#/resend-verification'
+
+# Users
+/users/me:
+  $ref: './users.yaml#/me'
+/users/{userId}:
+  $ref: './users.yaml#/user-by-id'
+/users/username/{username}:
+  $ref: './users.yaml#/user-by-username'
+/users/me/preferences:
+  $ref: './users.yaml#/preferences'
+/users/me/status:
+  $ref: './users.yaml#/status'
+/users/me/avatar:
+  $ref: './users.yaml#/avatar'
+/users/me/password:
+  $ref: './users.yaml#/change-password'
+/users/me/email:
+  $ref: './users.yaml#/change-email'
+/users/me/bookmarks:
+  $ref: './users.yaml#/bookmarks'
+/users/me/bookmarks/{bookmarkId}:
+  $ref: './users.yaml#/bookmark-remove'
+
+# Workspaces
+/workspaces:
+  $ref: './workspaces.yaml#/workspaces'
+/workspaces/{workspaceId}:
+  $ref: './workspaces.yaml#/workspace-by-id'
+/workspaces/slug/{slug}:
+  $ref: './workspaces.yaml#/workspace-by-slug'
+/workspaces/{workspaceId}/members:
+  $ref: './workspaces.yaml#/workspace-members'
+/workspaces/{workspaceId}/members/{userId}:
+  $ref: './workspaces.yaml#/workspace-member-by-id'
+/workspaces/{workspaceId}/leave:
+  $ref: './workspaces.yaml#/workspace-leave'
+/workspaces/{workspaceId}/invites:
+  $ref: './workspaces.yaml#/workspace-invites'
+/workspaces/{workspaceId}/invites/{inviteId}:
+  $ref: './workspaces.yaml#/workspace-invite-revoke'
+/workspaces/invites/{inviteCode}/accept:
+  $ref: './workspaces.yaml#/workspace-invite-accept'
+/workspaces/{workspaceId}/stats:
+  $ref: './workspaces.yaml#/workspace-stats'
+/workspaces/{workspaceId}/icon:
+  $ref: './workspaces.yaml#/workspace-icon'
+
+# Channels
+/workspaces/{workspaceId}/channels:
+  $ref: './channels.yaml#/channels'
+/workspaces/{workspaceId}/channels/{channelId}:
+  $ref: './channels.yaml#/channel-by-id'
+/workspaces/{workspaceId}/channels/{channelId}/members:
+  $ref: './channels.yaml#/channel-members'
+/workspaces/{workspaceId}/channels/{channelId}/members/{userId}:
+  $ref: './channels.yaml#/channel-member-by-id'
+/workspaces/{workspaceId}/channels/{channelId}/join:
+  $ref: './channels.yaml#/channel-join'
+/workspaces/{workspaceId}/channels/{channelId}/leave:
+  $ref: './channels.yaml#/channel-leave'
+/workspaces/{workspaceId}/channels/{channelId}/archive:
+  $ref: './channels.yaml#/channel-archive'
+/workspaces/{workspaceId}/channels/{channelId}/unarchive:
+  $ref: './channels.yaml#/channel-unarchive'
+/workspaces/{workspaceId}/channels/{channelId}/notifications:
+  $ref: './channels.yaml#/channel-notifications'
+/workspaces/{workspaceId}/dms:
+  $ref: './channels.yaml#/direct-messages'
+/workspaces/{workspaceId}/dms/open:
+  $ref: './channels.yaml#/direct-message-open'
+/workspaces/{workspaceId}/dms/group:
+  $ref: './channels.yaml#/group-dm-create'
+
+# Messages
+/workspaces/{workspaceId}/channels/{channelId}/messages:
+  $ref: './messages.yaml#/messages'
+/workspaces/{workspaceId}/channels/{channelId}/messages/{messageId}:
+  $ref: './messages.yaml#/message-by-id'
+/workspaces/{workspaceId}/channels/{channelId}/messages/{messageId}/reactions:
+  $ref: './messages.yaml#/message-reactions'
+/workspaces/{workspaceId}/channels/{channelId}/messages/{messageId}/reactions/{emoji}:
+  $ref: './messages.yaml#/message-reaction-remove'
+/workspaces/{workspaceId}/channels/{channelId}/messages/{messageId}/pin:
+  $ref: './messages.yaml#/message-pin'
+/workspaces/{workspaceId}/channels/{channelId}/messages/{messageId}/unpin:
+  $ref: './messages.yaml#/message-unpin'
+/workspaces/{workspaceId}/channels/{channelId}/pins:
+  $ref: './messages.yaml#/pinned-messages'
+/workspaces/{workspaceId}/scheduled-messages:
+  $ref: './messages.yaml#/scheduled-messages'
+/workspaces/{workspaceId}/scheduled-messages/{messageId}:
+  $ref: './messages.yaml#/scheduled-message-by-id'
+/workspaces/{workspaceId}/channels/{channelId}/read:
+  $ref: './messages.yaml#/mark-read'
+
+# Threads
+/workspaces/{workspaceId}/threads:
+  $ref: './threads.yaml#/threads'
+/workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}:
+  $ref: './threads.yaml#/thread-by-id'
+/workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}/replies:
+  $ref: './threads.yaml#/thread-replies'
+/workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}/subscribe:
+  $ref: './threads.yaml#/thread-subscribe'
+/workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}/unsubscribe:
+  $ref: './threads.yaml#/thread-unsubscribe'
+/workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}/read:
+  $ref: './threads.yaml#/thread-mark-read'
+/workspaces/{workspaceId}/channels/{channelId}/threads/{threadId}/participants:
+  $ref: './threads.yaml#/thread-participants'
+/workspaces/{workspaceId}/threads/read-all:
+  $ref: './threads.yaml#/mark-all-threads-read'
+
+# Files
+/workspaces/{workspaceId}/files:
+  $ref: './files.yaml#/files'
+/workspaces/{workspaceId}/files/upload:
+  $ref: './files.yaml#/file-upload-init'
+/workspaces/{workspaceId}/files/{fileId}/complete:
+  $ref: './files.yaml#/file-upload-complete'
+/workspaces/{workspaceId}/files/{fileId}:
+  $ref: './files.yaml#/file-by-id'
+/workspaces/{workspaceId}/files/{fileId}/download:
+  $ref: './files.yaml#/file-download'
+/workspaces/{workspaceId}/files/{fileId}/share:
+  $ref: './files.yaml#/file-share'
+/workspaces/{workspaceId}/files/{fileId}/shares:
+  $ref: './files.yaml#/file-shares'
+/workspaces/{workspaceId}/files/{fileId}/shares/{shareId}:
+  $ref: './files.yaml#/file-share-revoke'
+/workspaces/{workspaceId}/storage:
+  $ref: './files.yaml#/storage-quota'
+/workspaces/{workspaceId}/links:
+  $ref: './files.yaml#/external-links'
+
+# Calls
+/workspaces/{workspaceId}/calls:
+  $ref: './calls.yaml#/calls'
+/workspaces/{workspaceId}/calls/active:
+  $ref: './calls.yaml#/active-calls'
+/workspaces/{workspaceId}/calls/{callId}:
+  $ref: './calls.yaml#/call-by-id'
+/workspaces/{workspaceId}/calls/{callId}/join:
+  $ref: './calls.yaml#/call-join'
+/workspaces/{workspaceId}/calls/{callId}/leave:
+  $ref: './calls.yaml#/call-leave'
+/workspaces/{workspaceId}/calls/{callId}/end:
+  $ref: './calls.yaml#/call-end'
+/workspaces/{workspaceId}/calls/{callId}/action:
+  $ref: './calls.yaml#/call-action'
+/workspaces/{workspaceId}/calls/{callId}/invite:
+  $ref: './calls.yaml#/call-invite'
+/workspaces/{workspaceId}/calls/{callId}/participants:
+  $ref: './calls.yaml#/call-participants'
+/workspaces/{workspaceId}/calls/{callId}/recording:
+  $ref: './calls.yaml#/call-recording'
+/workspaces/{workspaceId}/calls/scheduled:
+  $ref: './calls.yaml#/scheduled-calls'
+
+# Huddles
+/workspaces/{workspaceId}/huddles:
+  $ref: './huddles.yaml#/huddles'
+/workspaces/{workspaceId}/channels/{channelId}/huddle:
+  $ref: './huddles.yaml#/channel-huddle'
+/workspaces/{workspaceId}/huddles/{huddleId}:
+  $ref: './huddles.yaml#/huddle-by-id'
+/workspaces/{workspaceId}/huddles/{huddleId}/join:
+  $ref: './huddles.yaml#/huddle-join'
+/workspaces/{workspaceId}/huddles/{huddleId}/leave:
+  $ref: './huddles.yaml#/huddle-leave'
+/workspaces/{workspaceId}/huddles/{huddleId}/action:
+  $ref: './huddles.yaml#/huddle-action'
+/workspaces/{workspaceId}/huddles/{huddleId}/end:
+  $ref: './huddles.yaml#/huddle-end'
+/workspaces/{workspaceId}/huddles/{huddleId}/participants:
+  $ref: './huddles.yaml#/huddle-participants'
+/workspaces/{workspaceId}/huddles/{huddleId}/invite:
+  $ref: './huddles.yaml#/huddle-invite'
+/workspaces/{workspaceId}/huddles/{huddleId}/thread:
+  $ref: './huddles.yaml#/huddle-thread'
+/workspaces/{workspaceId}/huddles/{huddleId}/notes:
+  $ref: './huddles.yaml#/huddle-notes'
+
+# Search
+/workspaces/{workspaceId}/search:
+  $ref: './search.yaml#/search'
+/workspaces/{workspaceId}/search/quick:
+  $ref: './search.yaml#/quick-search'
+/workspaces/{workspaceId}/search/messages:
+  $ref: './search.yaml#/search-messages'
+/workspaces/{workspaceId}/search/files:
+  $ref: './search.yaml#/search-files'
+/workspaces/{workspaceId}/search/saved:
+  $ref: './search.yaml#/saved-searches'
+/workspaces/{workspaceId}/search/saved/{searchId}:
+  $ref: './search.yaml#/saved-search-by-id'
+/workspaces/{workspaceId}/search/saved/{searchId}/run:
+  $ref: './search.yaml#/saved-search-run'
+/workspaces/{workspaceId}/search/history:
+  $ref: './search.yaml#/search-history'
+/workspaces/{workspaceId}/search/suggestions:
+  $ref: './search.yaml#/search-suggestions'
+
+# Notifications
+/notifications:
+  $ref: './notifications.yaml#/notifications'
+/notifications/{notificationId}:
+  $ref: './notifications.yaml#/notification-by-id'
+/notifications/read:
+  $ref: './notifications.yaml#/notifications-mark-read'
+/notifications/unread-count:
+  $ref: './notifications.yaml#/notifications-unread-count'
+/notifications/settings:
+  $ref: './notifications.yaml#/notification-settings'
+/notifications/push:
+  $ref: './notifications.yaml#/push-subscription'
+/notifications/device:
+  $ref: './notifications.yaml#/device-token'
+/notifications/dnd:
+  $ref: './notifications.yaml#/dnd-status'
+/notifications/snooze:
+  $ref: './notifications.yaml#/snooze'
+/notifications/test:
+  $ref: './notifications.yaml#/test-notification'
+
+# Presence
+/presence:
+  $ref: './presence.yaml#/presence'
+/presence/users/{userId}:
+  $ref: './presence.yaml#/user-presence'
+/presence/bulk:
+  $ref: './presence.yaml#/bulk-presence'
+/workspaces/{workspaceId}/channels/{channelId}/presence:
+  $ref: './presence.yaml#/channel-presence'
+/presence/typing:
+  $ref: './presence.yaml#/typing'
+/presence/typing/stop:
+  $ref: './presence.yaml#/typing-stop'
+/presence/subscribe:
+  $ref: './presence.yaml#/presence-subscribe'
+/presence/unsubscribe:
+  $ref: './presence.yaml#/presence-unsubscribe'
+/presence/activity:
+  $ref: './presence.yaml#/activity-status'
+/presence/preferences:
+  $ref: './presence.yaml#/presence-preferences'
+/presence/heartbeat:
+  $ref: './presence.yaml#/heartbeat'

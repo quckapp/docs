@@ -1,0 +1,328 @@
+# Presence API Paths
+
+presence:
+  get:
+    tags:
+      - Presence
+    summary: Get current user presence
+    description: Get the current user's presence status
+    operationId: getCurrentPresence
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Current presence
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/presence.yaml#/Presence'
+
+  put:
+    tags:
+      - Presence
+    summary: Update presence
+    description: Update current user's presence status
+    operationId: updatePresence
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/presence.yaml#/UpdatePresenceRequest'
+    responses:
+      '200':
+        description: Presence updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/presence.yaml#/Presence'
+
+user-presence:
+  get:
+    tags:
+      - Presence
+    summary: Get user presence
+    description: Get presence status for a specific user
+    operationId: getUserPresence
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User presence
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/presence.yaml#/Presence'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+bulk-presence:
+  post:
+    tags:
+      - Presence
+    summary: Get bulk presence
+    description: Get presence for multiple users at once
+    operationId: getBulkPresence
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userIds
+            properties:
+              userIds:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+                maxItems: 500
+    responses:
+      '200':
+        description: Bulk presence data
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/presence.yaml#/BulkPresenceResponse'
+
+channel-presence:
+  get:
+    tags:
+      - Presence
+    summary: Get channel presence
+    description: Get online members and typing indicators for a channel
+    operationId: getChannelPresence
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Channel presence
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/presence.yaml#/ChannelPresence'
+
+typing:
+  post:
+    tags:
+      - Presence
+    summary: Set typing indicator
+    description: Indicate user is typing in a channel/thread
+    operationId: setTyping
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/presence.yaml#/SetTypingRequest'
+    responses:
+      '200':
+        description: Typing indicator set
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+
+typing-stop:
+  post:
+    tags:
+      - Presence
+    summary: Stop typing indicator
+    description: Clear typing indicator
+    operationId: stopTyping
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/presence.yaml#/SetTypingRequest'
+    responses:
+      '200':
+        description: Typing indicator cleared
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+
+presence-subscribe:
+  post:
+    tags:
+      - Presence
+    summary: Subscribe to presence updates
+    description: Subscribe to real-time presence updates for users
+    operationId: subscribePresence
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/presence.yaml#/PresenceSubscription'
+    responses:
+      '200':
+        description: Subscribed to presence
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscriptionId:
+                  type: string
+                  format: uuid
+
+presence-unsubscribe:
+  post:
+    tags:
+      - Presence
+    summary: Unsubscribe from presence updates
+    description: Unsubscribe from real-time presence updates
+    operationId: unsubscribePresence
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - subscriptionId
+            properties:
+              subscriptionId:
+                type: string
+                format: uuid
+    responses:
+      '204':
+        description: Unsubscribed
+
+activity-status:
+  get:
+    tags:
+      - Presence
+    summary: Get detailed activity
+    description: Get detailed activity status for current user
+    operationId: getActivityStatus
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Activity status
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/presence.yaml#/ActivityStatus'
+
+presence-preferences:
+  get:
+    tags:
+      - Presence
+    summary: Get presence preferences
+    description: Get user's presence visibility preferences
+    operationId: getPresencePreferences
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Presence preferences
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/presence.yaml#/PresencePreferences'
+
+  patch:
+    tags:
+      - Presence
+    summary: Update presence preferences
+    description: Update user's presence visibility preferences
+    operationId: updatePresencePreferences
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/presence.yaml#/PresencePreferences'
+    responses:
+      '200':
+        description: Preferences updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/presence.yaml#/PresencePreferences'
+
+heartbeat:
+  post:
+    tags:
+      - Presence
+    summary: Send heartbeat
+    description: Send activity heartbeat to maintain online status
+    operationId: sendHeartbeat
+    security:
+      - bearerAuth: []
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              activeChannelId:
+                type: string
+                format: uuid
+              activeThreadId:
+                type: string
+                format: uuid
+    responses:
+      '200':
+        description: Heartbeat received
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [online, away, dnd]
+                serverTime:
+                  type: string
+                  format: date-time

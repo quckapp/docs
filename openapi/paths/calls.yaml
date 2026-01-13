@@ -1,0 +1,555 @@
+# Calls API Paths
+
+calls:
+  get:
+    tags:
+      - Calls
+    summary: List calls
+    description: Get call history for workspace
+    operationId: listCalls
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum: [active, ended, missed]
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum: [audio, video]
+      - $ref: '../schemas/common.yaml#/PageParam'
+      - $ref: '../schemas/common.yaml#/LimitParam'
+    responses:
+      '200':
+        description: List of calls
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                calls:
+                  type: array
+                  items:
+                    $ref: '../schemas/call.yaml#/Call'
+                pagination:
+                  $ref: '../schemas/common.yaml#/Pagination'
+
+  post:
+    tags:
+      - Calls
+    summary: Start call
+    description: Start a new call
+    operationId: startCall
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/call.yaml#/CallCreateRequest'
+    responses:
+      '201':
+        description: Call started
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/call.yaml#/Call'
+      '400':
+        description: Invalid call configuration
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+active-calls:
+  get:
+    tags:
+      - Calls
+    summary: List active calls
+    description: Get all currently active calls in workspace
+    operationId: listActiveCalls
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Active calls
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                calls:
+                  type: array
+                  items:
+                    $ref: '../schemas/call.yaml#/Call'
+
+call-by-id:
+  get:
+    tags:
+      - Calls
+    summary: Get call
+    description: Get call details by ID
+    operationId: getCall
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: callId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Call details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/call.yaml#/Call'
+      '404':
+        description: Call not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  patch:
+    tags:
+      - Calls
+    summary: Update call
+    description: Update call settings (host only)
+    operationId: updateCall
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: callId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/call.yaml#/CallUpdateRequest'
+    responses:
+      '200':
+        description: Call updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/call.yaml#/Call'
+
+call-join:
+  post:
+    tags:
+      - Calls
+    summary: Join call
+    description: Join an active call
+    operationId: joinCall
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: callId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/call.yaml#/JoinCallRequest'
+    responses:
+      '200':
+        description: Joined call
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                call:
+                  $ref: '../schemas/call.yaml#/Call'
+                connectionInfo:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+                    serverUrl:
+                      type: string
+                      format: uri
+                    iceServers:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          urls:
+                            type: array
+                            items:
+                              type: string
+                          username:
+                            type: string
+                          credential:
+                            type: string
+      '401':
+        description: Invalid password
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+      '403':
+        description: In waiting room
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                    message:
+                      type: string
+                waitingRoom:
+                  type: boolean
+
+call-leave:
+  post:
+    tags:
+      - Calls
+    summary: Leave call
+    description: Leave the current call
+    operationId: leaveCall
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: callId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Left call
+
+call-end:
+  post:
+    tags:
+      - Calls
+    summary: End call
+    description: End call for all participants (host only)
+    operationId: endCall
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: callId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Call ended
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/call.yaml#/Call'
+      '403':
+        description: Not the host
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+call-action:
+  post:
+    tags:
+      - Calls
+    summary: Call action
+    description: Perform an action in the call (mute, screen share, etc.)
+    operationId: callAction
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: callId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/call.yaml#/CallActionRequest'
+    responses:
+      '200':
+        description: Action performed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                participant:
+                  $ref: '../schemas/call.yaml#/CallParticipant'
+
+call-invite:
+  post:
+    tags:
+      - Calls
+    summary: Invite to call
+    description: Invite users to join the call
+    operationId: inviteToCall
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: callId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userIds
+            properties:
+              userIds:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+                maxItems: 50
+    responses:
+      '200':
+        description: Invites sent
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                invited:
+                  type: integer
+
+call-participants:
+  get:
+    tags:
+      - Calls
+    summary: List call participants
+    description: Get all participants in a call
+    operationId: listCallParticipants
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: callId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Call participants
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participants:
+                  type: array
+                  items:
+                    $ref: '../schemas/call.yaml#/CallParticipant'
+
+call-recording:
+  get:
+    tags:
+      - Calls
+    summary: Get call recording
+    description: Get recording details for a call
+    operationId: getCallRecording
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: callId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Recording details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/call.yaml#/CallRecording'
+      '404':
+        description: No recording found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+scheduled-calls:
+  get:
+    tags:
+      - Calls
+    summary: List scheduled calls
+    description: Get upcoming scheduled calls
+    operationId: listScheduledCalls
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: from
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: to
+        in: query
+        schema:
+          type: string
+          format: date-time
+    responses:
+      '200':
+        description: Scheduled calls
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                calls:
+                  type: array
+                  items:
+                    $ref: '../schemas/call.yaml#/ScheduledCall'
+
+  post:
+    tags:
+      - Calls
+    summary: Schedule call
+    description: Schedule a call for later
+    operationId: scheduleCall
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/call.yaml#/CallCreateRequest'
+    responses:
+      '201':
+        description: Call scheduled
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/call.yaml#/ScheduledCall'

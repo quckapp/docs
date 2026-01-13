@@ -1,0 +1,322 @@
+# File Schema Definitions
+
+File:
+  type: object
+  required:
+    - id
+    - name
+    - mimeType
+    - size
+    - uploadedBy
+    - createdAt
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique file identifier
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    name:
+      type: string
+      maxLength: 255
+      description: Original filename
+      example: "quarterly-report.pdf"
+    displayName:
+      type: string
+      maxLength: 255
+      description: Custom display name
+    mimeType:
+      type: string
+      description: MIME type
+      example: "application/pdf"
+    size:
+      type: integer
+      format: int64
+      description: File size in bytes
+      example: 1048576
+    extension:
+      type: string
+      description: File extension
+      example: "pdf"
+    url:
+      type: string
+      format: uri
+      description: Download URL
+    thumbnailUrl:
+      type: string
+      format: uri
+      description: Thumbnail URL for images/videos
+    previewUrl:
+      type: string
+      format: uri
+      description: Preview URL
+    uploadedBy:
+      type: string
+      format: uuid
+      description: User who uploaded the file
+    uploader:
+      $ref: './user.yaml#/UserProfile'
+    workspaceId:
+      type: string
+      format: uuid
+    channelId:
+      type: string
+      format: uuid
+      description: Channel where file was shared
+    messageId:
+      type: string
+      format: uuid
+      description: Message containing the file
+    category:
+      type: string
+      enum: [image, video, audio, document, spreadsheet, presentation, archive, code, other]
+      description: File category
+    metadata:
+      $ref: '#/FileMetadata'
+    isPublic:
+      type: boolean
+      description: Whether file is publicly accessible
+      default: false
+    expiresAt:
+      type: string
+      format: date-time
+      description: When file access expires
+    downloadCount:
+      type: integer
+      description: Number of downloads
+    shares:
+      type: array
+      items:
+        $ref: '#/FileShare'
+    createdAt:
+      type: string
+      format: date-time
+      example: "2024-01-15T10:30:00Z"
+    updatedAt:
+      type: string
+      format: date-time
+
+FileMetadata:
+  type: object
+  description: Additional file metadata based on type
+  properties:
+    width:
+      type: integer
+      description: Image/video width
+    height:
+      type: integer
+      description: Image/video height
+    duration:
+      type: number
+      description: Audio/video duration in seconds
+    pages:
+      type: integer
+      description: Document page count
+    hasAudio:
+      type: boolean
+      description: Whether video has audio
+    codec:
+      type: string
+      description: Audio/video codec
+    bitrate:
+      type: integer
+      description: Audio/video bitrate
+    artist:
+      type: string
+      description: Audio artist
+    album:
+      type: string
+      description: Audio album
+    exif:
+      type: object
+      additionalProperties: true
+      description: EXIF data for images
+
+FileAttachment:
+  type: object
+  description: File attached to a message
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+    mimeType:
+      type: string
+    size:
+      type: integer
+      format: int64
+    url:
+      type: string
+      format: uri
+    thumbnailUrl:
+      type: string
+      format: uri
+    category:
+      type: string
+      enum: [image, video, audio, document, spreadsheet, presentation, archive, code, other]
+
+FileShare:
+  type: object
+  required:
+    - id
+    - type
+    - targetId
+  properties:
+    id:
+      type: string
+      format: uuid
+    type:
+      type: string
+      enum: [user, channel, workspace, public]
+      description: Share type
+    targetId:
+      type: string
+      format: uuid
+      description: ID of user/channel/workspace
+    permissions:
+      type: string
+      enum: [view, download, edit]
+      default: view
+    sharedBy:
+      type: string
+      format: uuid
+    sharedAt:
+      type: string
+      format: date-time
+    expiresAt:
+      type: string
+      format: date-time
+
+FileUploadRequest:
+  type: object
+  required:
+    - name
+    - mimeType
+    - size
+  properties:
+    name:
+      type: string
+      maxLength: 255
+    mimeType:
+      type: string
+    size:
+      type: integer
+      format: int64
+      description: File size in bytes
+    channelId:
+      type: string
+      format: uuid
+    messageId:
+      type: string
+      format: uuid
+    isPublic:
+      type: boolean
+      default: false
+
+FileUploadResponse:
+  type: object
+  required:
+    - fileId
+    - uploadUrl
+    - expiresAt
+  properties:
+    fileId:
+      type: string
+      format: uuid
+      description: Reserved file ID
+    uploadUrl:
+      type: string
+      format: uri
+      description: Pre-signed upload URL
+    uploadMethod:
+      type: string
+      enum: [PUT, POST]
+      default: PUT
+    headers:
+      type: object
+      additionalProperties:
+        type: string
+      description: Required headers for upload
+    expiresAt:
+      type: string
+      format: date-time
+      description: When upload URL expires
+
+FileUpdateRequest:
+  type: object
+  properties:
+    displayName:
+      type: string
+      maxLength: 255
+    isPublic:
+      type: boolean
+
+ShareFileRequest:
+  type: object
+  required:
+    - type
+    - targetId
+  properties:
+    type:
+      type: string
+      enum: [user, channel, workspace, public]
+    targetId:
+      type: string
+      format: uuid
+    permissions:
+      type: string
+      enum: [view, download, edit]
+      default: view
+    expiresAt:
+      type: string
+      format: date-time
+    notifyTarget:
+      type: boolean
+      default: true
+
+ExternalLink:
+  type: object
+  description: External link shared in messages
+  properties:
+    url:
+      type: string
+      format: uri
+    title:
+      type: string
+    description:
+      type: string
+    siteName:
+      type: string
+    imageUrl:
+      type: string
+      format: uri
+    faviconUrl:
+      type: string
+      format: uri
+    contentType:
+      type: string
+      enum: [article, video, image, audio, rich, website]
+    author:
+      type: string
+    publishedAt:
+      type: string
+      format: date-time
+
+StorageQuota:
+  type: object
+  properties:
+    used:
+      type: integer
+      format: int64
+      description: Storage used in bytes
+    limit:
+      type: integer
+      format: int64
+      description: Storage limit in bytes
+    percentage:
+      type: number
+      format: float
+      description: Usage percentage
+    fileCount:
+      type: integer
+      description: Total file count

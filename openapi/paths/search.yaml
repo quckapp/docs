@@ -1,0 +1,405 @@
+# Search API Paths
+
+search:
+  post:
+    tags:
+      - Search
+    summary: Search workspace
+    description: Search messages, files, channels, and users in workspace
+    operationId: search
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search.yaml#/SearchRequest'
+    responses:
+      '200':
+        description: Search results
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/search.yaml#/SearchResponse'
+      '400':
+        description: Invalid search query
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ValidationError'
+
+quick-search:
+  get:
+    tags:
+      - Search
+    summary: Quick search
+    description: Fast autocomplete search for UI suggestions
+    operationId: quickSearch
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: q
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+        description: Search query
+      - name: types
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            enum: [channel, user, message, file]
+        description: Result types to include
+    responses:
+      '200':
+        description: Quick search results
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/search.yaml#/QuickSearchResponse'
+
+search-messages:
+  post:
+    tags:
+      - Search
+    summary: Search messages
+    description: Search specifically for messages
+    operationId: searchMessages
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '../schemas/search.yaml#/SearchRequest'
+              - type: object
+                properties:
+                  scope:
+                    type: string
+                    enum: [messages]
+                    default: messages
+    responses:
+      '200':
+        description: Message search results
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/search.yaml#/SearchResponse'
+
+search-files:
+  post:
+    tags:
+      - Search
+    summary: Search files
+    description: Search specifically for files
+    operationId: searchFiles
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '../schemas/search.yaml#/SearchRequest'
+              - type: object
+                properties:
+                  scope:
+                    type: string
+                    enum: [files]
+                    default: files
+    responses:
+      '200':
+        description: File search results
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/search.yaml#/SearchResponse'
+
+saved-searches:
+  get:
+    tags:
+      - Search
+    summary: List saved searches
+    description: Get user's saved searches
+    operationId: listSavedSearches
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Saved searches
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                searches:
+                  type: array
+                  items:
+                    $ref: '../schemas/search.yaml#/SavedSearch'
+
+  post:
+    tags:
+      - Search
+    summary: Create saved search
+    description: Save a search for quick access
+    operationId: createSavedSearch
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search.yaml#/CreateSavedSearchRequest'
+    responses:
+      '201':
+        description: Search saved
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/search.yaml#/SavedSearch'
+
+saved-search-by-id:
+  get:
+    tags:
+      - Search
+    summary: Get saved search
+    description: Get a saved search by ID
+    operationId: getSavedSearch
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: searchId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Saved search details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/search.yaml#/SavedSearch'
+      '404':
+        description: Saved search not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  delete:
+    tags:
+      - Search
+    summary: Delete saved search
+    description: Delete a saved search
+    operationId: deleteSavedSearch
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: searchId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Saved search deleted
+
+saved-search-run:
+  post:
+    tags:
+      - Search
+    summary: Run saved search
+    description: Execute a saved search
+    operationId: runSavedSearch
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: searchId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              page:
+                type: integer
+                minimum: 1
+                default: 1
+              limit:
+                type: integer
+                minimum: 1
+                maximum: 100
+                default: 20
+    responses:
+      '200':
+        description: Search results
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/search.yaml#/SearchResponse'
+
+search-history:
+  get:
+    tags:
+      - Search
+    summary: Get search history
+    description: Get user's recent searches
+    operationId: getSearchHistory
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 20
+    responses:
+      '200':
+        description: Search history
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/search.yaml#/SearchHistory'
+
+  delete:
+    tags:
+      - Search
+    summary: Clear search history
+    description: Clear user's search history
+    operationId: clearSearchHistory
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Search history cleared
+
+search-suggestions:
+  get:
+    tags:
+      - Search
+    summary: Get search suggestions
+    description: Get search query suggestions based on input
+    operationId: getSearchSuggestions
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: q
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Partial search query
+    responses:
+      '200':
+        description: Search suggestions
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                suggestions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      text:
+                        type: string
+                      type:
+                        type: string
+                        enum: [query, filter, modifier]

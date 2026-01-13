@@ -1,0 +1,329 @@
+# Search Schema Definitions
+
+SearchRequest:
+  type: object
+  required:
+    - query
+  properties:
+    query:
+      type: string
+      minLength: 1
+      maxLength: 500
+      description: Search query string
+      example: "quarterly report"
+    scope:
+      type: string
+      enum: [all, messages, files, channels, users]
+      default: all
+      description: Search scope
+    filters:
+      $ref: '#/SearchFilters'
+    sort:
+      type: string
+      enum: [relevance, date_desc, date_asc]
+      default: relevance
+    highlight:
+      type: boolean
+      description: Include highlighted snippets
+      default: true
+    page:
+      type: integer
+      minimum: 1
+      default: 1
+    limit:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+
+SearchFilters:
+  type: object
+  properties:
+    workspaceId:
+      type: string
+      format: uuid
+    channelIds:
+      type: array
+      items:
+        type: string
+        format: uuid
+      description: Filter by specific channels
+    userIds:
+      type: array
+      items:
+        type: string
+        format: uuid
+      description: Filter by authors
+    from:
+      type: string
+      format: uuid
+      description: Messages from specific user
+    in:
+      type: string
+      description: Channel name or ID
+    dateFrom:
+      type: string
+      format: date
+      description: Messages after this date
+    dateTo:
+      type: string
+      format: date
+      description: Messages before this date
+    hasAttachment:
+      type: boolean
+      description: Only messages with attachments
+    hasLink:
+      type: boolean
+      description: Only messages with links
+    hasReaction:
+      type: boolean
+      description: Only messages with reactions
+    isPinned:
+      type: boolean
+      description: Only pinned messages
+    isStarred:
+      type: boolean
+      description: Only starred/bookmarked items
+    fileTypes:
+      type: array
+      items:
+        type: string
+        enum: [image, video, audio, document, spreadsheet, presentation, archive, code]
+      description: Filter files by type
+    mimeTypes:
+      type: array
+      items:
+        type: string
+      description: Filter by MIME types
+
+SearchResponse:
+  type: object
+  required:
+    - results
+    - total
+    - pagination
+  properties:
+    query:
+      type: string
+      description: Original query
+    results:
+      type: array
+      items:
+        $ref: '#/SearchResult'
+    total:
+      type: integer
+      description: Total number of results
+    pagination:
+      $ref: './common.yaml#/Pagination'
+    facets:
+      $ref: '#/SearchFacets'
+    suggestions:
+      type: array
+      items:
+        type: string
+      description: Query suggestions
+
+SearchResult:
+  type: object
+  required:
+    - type
+    - id
+    - score
+  properties:
+    type:
+      type: string
+      enum: [message, file, channel, user]
+      description: Result type
+    id:
+      type: string
+      format: uuid
+    score:
+      type: number
+      format: float
+      description: Relevance score
+    highlights:
+      type: array
+      items:
+        $ref: '#/SearchHighlight'
+    message:
+      $ref: './message.yaml#/Message'
+    file:
+      $ref: './file.yaml#/File'
+    channel:
+      $ref: './channel.yaml#/Channel'
+    user:
+      $ref: './user.yaml#/UserProfile'
+
+SearchHighlight:
+  type: object
+  properties:
+    field:
+      type: string
+      description: Field containing the match
+      example: "content"
+    snippet:
+      type: string
+      description: Text snippet with highlights
+      example: "Check out the <em>quarterly report</em> for details"
+    offsets:
+      type: array
+      items:
+        type: object
+        properties:
+          start:
+            type: integer
+          end:
+            type: integer
+
+SearchFacets:
+  type: object
+  description: Aggregated counts for filtering
+  properties:
+    channels:
+      type: array
+      items:
+        $ref: '#/FacetBucket'
+    users:
+      type: array
+      items:
+        $ref: '#/FacetBucket'
+    fileTypes:
+      type: array
+      items:
+        $ref: '#/FacetBucket'
+    dates:
+      type: array
+      items:
+        $ref: '#/DateFacetBucket'
+
+FacetBucket:
+  type: object
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    count:
+      type: integer
+
+DateFacetBucket:
+  type: object
+  properties:
+    date:
+      type: string
+      format: date
+    count:
+      type: integer
+
+QuickSearchResponse:
+  type: object
+  description: Fast autocomplete search response
+  properties:
+    query:
+      type: string
+    channels:
+      type: array
+      items:
+        $ref: '#/QuickSearchItem'
+      maxItems: 5
+    users:
+      type: array
+      items:
+        $ref: '#/QuickSearchItem'
+      maxItems: 5
+    messages:
+      type: array
+      items:
+        $ref: '#/QuickSearchItem'
+      maxItems: 5
+    files:
+      type: array
+      items:
+        $ref: '#/QuickSearchItem'
+      maxItems: 5
+    recent:
+      type: array
+      items:
+        $ref: '#/QuickSearchItem'
+      description: Recent searches
+
+QuickSearchItem:
+  type: object
+  properties:
+    type:
+      type: string
+      enum: [channel, user, message, file, search]
+    id:
+      type: string
+    title:
+      type: string
+    subtitle:
+      type: string
+    icon:
+      type: string
+    avatar:
+      type: string
+      format: uri
+
+SavedSearch:
+  type: object
+  required:
+    - id
+    - name
+    - query
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+      maxLength: 100
+      example: "Project updates"
+    query:
+      type: string
+    filters:
+      $ref: '#/SearchFilters'
+    notifyOnNew:
+      type: boolean
+      description: Get notified on new matches
+      default: false
+    createdAt:
+      type: string
+      format: date-time
+    lastUsedAt:
+      type: string
+      format: date-time
+
+CreateSavedSearchRequest:
+  type: object
+  required:
+    - name
+    - query
+  properties:
+    name:
+      type: string
+      maxLength: 100
+    query:
+      type: string
+    filters:
+      $ref: '#/SearchFilters'
+    notifyOnNew:
+      type: boolean
+      default: false
+
+SearchHistory:
+  type: object
+  properties:
+    recentSearches:
+      type: array
+      items:
+        type: object
+        properties:
+          query:
+            type: string
+          timestamp:
+            type: string
+            format: date-time
+          resultCount:
+            type: integer
+      maxItems: 20

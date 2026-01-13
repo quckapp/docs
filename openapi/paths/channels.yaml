@@ -1,0 +1,722 @@
+# Channels API Paths
+
+channels:
+  get:
+    tags:
+      - Channels
+    summary: List channels
+    description: Get all channels in a workspace that the user can access
+    operationId: listChannels
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum: [public, private, dm, group_dm]
+      - name: joined
+        in: query
+        schema:
+          type: boolean
+        description: Filter to joined channels only
+      - name: search
+        in: query
+        schema:
+          type: string
+        description: Search by channel name
+      - $ref: '../schemas/common.yaml#/PageParam'
+      - $ref: '../schemas/common.yaml#/LimitParam'
+    responses:
+      '200':
+        description: List of channels
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channels:
+                  type: array
+                  items:
+                    $ref: '../schemas/channel.yaml#/Channel'
+                pagination:
+                  $ref: '../schemas/common.yaml#/Pagination'
+
+  post:
+    tags:
+      - Channels
+    summary: Create channel
+    description: Create a new channel in the workspace
+    operationId: createChannel
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/channel.yaml#/ChannelCreateRequest'
+    responses:
+      '201':
+        description: Channel created
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/channel.yaml#/Channel'
+      '400':
+        description: Invalid input
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ValidationError'
+      '409':
+        description: Channel name already exists
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+channel-by-id:
+  get:
+    tags:
+      - Channels
+    summary: Get channel
+    description: Get channel details by ID
+    operationId: getChannel
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Channel details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/channel.yaml#/Channel'
+      '403':
+        description: Not a member of private channel
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+      '404':
+        description: Channel not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  patch:
+    tags:
+      - Channels
+    summary: Update channel
+    description: Update channel details (admin only for settings)
+    operationId: updateChannel
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/channel.yaml#/ChannelUpdateRequest'
+    responses:
+      '200':
+        description: Channel updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/channel.yaml#/Channel'
+      '403':
+        description: Not authorized
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  delete:
+    tags:
+      - Channels
+    summary: Delete channel
+    description: Delete a channel (admin only, cannot delete default channel)
+    operationId: deleteChannel
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Channel deleted
+      '400':
+        description: Cannot delete default channel
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+      '403':
+        description: Not authorized
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+channel-members:
+  get:
+    tags:
+      - Channels
+      - Members
+    summary: List channel members
+    description: Get all members of a channel
+    operationId: listChannelMembers
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '../schemas/common.yaml#/PageParam'
+      - $ref: '../schemas/common.yaml#/LimitParam'
+    responses:
+      '200':
+        description: List of channel members
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                members:
+                  type: array
+                  items:
+                    $ref: '../schemas/channel.yaml#/ChannelMember'
+                pagination:
+                  $ref: '../schemas/common.yaml#/Pagination'
+
+  post:
+    tags:
+      - Channels
+      - Members
+    summary: Add members
+    description: Add members to a channel
+    operationId: addChannelMembers
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/channel.yaml#/AddMembersRequest'
+    responses:
+      '200':
+        description: Members added
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                added:
+                  type: integer
+                alreadyMembers:
+                  type: integer
+
+channel-member-by-id:
+  get:
+    tags:
+      - Channels
+      - Members
+    summary: Get channel member
+    description: Get details of a channel member
+    operationId: getChannelMember
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Channel member details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/channel.yaml#/ChannelMember'
+      '404':
+        description: Member not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  patch:
+    tags:
+      - Channels
+      - Members
+    summary: Update channel member
+    description: Update member role in channel (channel admin only)
+    operationId: updateChannelMember
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              role:
+                type: string
+                enum: [member, admin]
+    responses:
+      '200':
+        description: Member updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/channel.yaml#/ChannelMember'
+
+  delete:
+    tags:
+      - Channels
+      - Members
+    summary: Remove channel member
+    description: Remove a member from the channel
+    operationId: removeChannelMember
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Member removed
+
+channel-join:
+  post:
+    tags:
+      - Channels
+    summary: Join channel
+    description: Join a public channel
+    operationId: joinChannel
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Joined channel
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/channel.yaml#/Channel'
+      '403':
+        description: Cannot join private channel
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+channel-leave:
+  post:
+    tags:
+      - Channels
+    summary: Leave channel
+    description: Leave a channel (cannot leave default channel)
+    operationId: leaveChannel
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Left channel
+      '400':
+        description: Cannot leave default channel
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+channel-archive:
+  post:
+    tags:
+      - Channels
+    summary: Archive channel
+    description: Archive a channel (admin only)
+    operationId: archiveChannel
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Channel archived
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/channel.yaml#/Channel'
+
+channel-unarchive:
+  post:
+    tags:
+      - Channels
+    summary: Unarchive channel
+    description: Unarchive a channel (admin only)
+    operationId: unarchiveChannel
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Channel unarchived
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/channel.yaml#/Channel'
+
+channel-notifications:
+  get:
+    tags:
+      - Channels
+    summary: Get channel notification settings
+    description: Get notification settings for channel
+    operationId: getChannelNotifications
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Channel notification settings
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/notification.yaml#/ChannelNotificationSettings'
+
+  put:
+    tags:
+      - Channels
+    summary: Update channel notification settings
+    description: Update notification settings for channel
+    operationId: updateChannelNotifications
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/notification.yaml#/ChannelNotificationSettings'
+    responses:
+      '200':
+        description: Settings updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/notification.yaml#/ChannelNotificationSettings'
+
+direct-messages:
+  get:
+    tags:
+      - Channels
+      - Direct Messages
+    summary: List direct message channels
+    description: Get all DM and group DM channels
+    operationId: listDirectMessages
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '../schemas/common.yaml#/PageParam'
+      - $ref: '../schemas/common.yaml#/LimitParam'
+    responses:
+      '200':
+        description: List of DM channels
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channels:
+                  type: array
+                  items:
+                    oneOf:
+                      - $ref: '../schemas/channel.yaml#/DirectMessage'
+                      - $ref: '../schemas/channel.yaml#/GroupDirectMessage'
+                pagination:
+                  $ref: '../schemas/common.yaml#/Pagination'
+
+direct-message-open:
+  post:
+    tags:
+      - Channels
+      - Direct Messages
+    summary: Open DM channel
+    description: Open or create a direct message channel with a user
+    operationId: openDirectMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userId
+            properties:
+              userId:
+                type: string
+                format: uuid
+    responses:
+      '200':
+        description: DM channel opened
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/channel.yaml#/DirectMessage'
+
+group-dm-create:
+  post:
+    tags:
+      - Channels
+      - Direct Messages
+    summary: Create group DM
+    description: Create a new group direct message channel
+    operationId: createGroupDM
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userIds
+            properties:
+              userIds:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+                minItems: 2
+                maxItems: 8
+              name:
+                type: string
+                maxLength: 100
+    responses:
+      '201':
+        description: Group DM created
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/channel.yaml#/GroupDirectMessage'

@@ -1,0 +1,336 @@
+# Call Schema Definitions
+
+Call:
+  type: object
+  required:
+    - id
+    - type
+    - status
+    - initiatedBy
+    - createdAt
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique call identifier
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    type:
+      type: string
+      enum: [audio, video]
+      description: Call type
+      example: "video"
+    status:
+      type: string
+      enum: [ringing, active, ended, missed, declined]
+      description: Current call status
+      example: "active"
+    channelId:
+      type: string
+      format: uuid
+      description: Channel where call was initiated
+    workspaceId:
+      type: string
+      format: uuid
+      description: Workspace ID
+    title:
+      type: string
+      maxLength: 200
+      description: Call title/topic
+      example: "Sprint Planning Meeting"
+    initiatedBy:
+      type: string
+      format: uuid
+      description: User who started the call
+    initiator:
+      $ref: './user.yaml#/UserProfile'
+    participants:
+      type: array
+      items:
+        $ref: '#/CallParticipant'
+      description: Current participants
+    maxParticipants:
+      type: integer
+      description: Maximum allowed participants
+      example: 50
+    settings:
+      $ref: '#/CallSettings'
+    recording:
+      $ref: '#/CallRecording'
+    startedAt:
+      type: string
+      format: date-time
+      description: When call started
+    endedAt:
+      type: string
+      format: date-time
+      description: When call ended
+    duration:
+      type: integer
+      description: Call duration in seconds
+      example: 3600
+    joinUrl:
+      type: string
+      format: uri
+      description: URL to join the call
+    createdAt:
+      type: string
+      format: date-time
+      example: "2024-01-15T10:30:00Z"
+
+CallParticipant:
+  type: object
+  required:
+    - userId
+    - status
+    - joinedAt
+  properties:
+    userId:
+      type: string
+      format: uuid
+    user:
+      $ref: './user.yaml#/UserProfile'
+    status:
+      type: string
+      enum: [invited, joining, connected, disconnected, left]
+      description: Participant status
+    role:
+      type: string
+      enum: [host, co-host, participant]
+      description: Participant role in call
+      default: participant
+    isAudioMuted:
+      type: boolean
+      description: Audio mute status
+      default: false
+    isVideoMuted:
+      type: boolean
+      description: Video mute status
+      default: false
+    isScreenSharing:
+      type: boolean
+      description: Screen sharing status
+      default: false
+    isHandRaised:
+      type: boolean
+      description: Hand raised status
+      default: false
+    isSpeaking:
+      type: boolean
+      description: Currently speaking
+      default: false
+    joinedAt:
+      type: string
+      format: date-time
+    leftAt:
+      type: string
+      format: date-time
+    duration:
+      type: integer
+      description: Time in call (seconds)
+
+CallSettings:
+  type: object
+  properties:
+    allowScreenShare:
+      type: boolean
+      description: Allow screen sharing
+      default: true
+    allowRecording:
+      type: boolean
+      description: Allow call recording
+      default: false
+    muteOnJoin:
+      type: boolean
+      description: Mute participants on join
+      default: false
+    videoOnJoin:
+      type: boolean
+      description: Enable video on join
+      default: true
+    waitingRoom:
+      type: boolean
+      description: Enable waiting room
+      default: false
+    requirePassword:
+      type: boolean
+      description: Require password to join
+      default: false
+    password:
+      type: string
+      description: Call password (if required)
+    allowChat:
+      type: boolean
+      description: Allow in-call chat
+      default: true
+    allowReactions:
+      type: boolean
+      description: Allow emoji reactions
+      default: true
+    blur:
+      type: boolean
+      description: Enable background blur
+      default: false
+    noiseSuppression:
+      type: boolean
+      description: Enable noise suppression
+      default: true
+
+CallRecording:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    status:
+      type: string
+      enum: [recording, processing, ready, failed]
+    startedAt:
+      type: string
+      format: date-time
+    endedAt:
+      type: string
+      format: date-time
+    duration:
+      type: integer
+      description: Recording duration in seconds
+    fileSize:
+      type: integer
+      format: int64
+      description: File size in bytes
+    url:
+      type: string
+      format: uri
+      description: Download URL (when ready)
+    transcriptUrl:
+      type: string
+      format: uri
+      description: Transcript download URL
+    expiresAt:
+      type: string
+      format: date-time
+      description: When recording expires
+
+CallCreateRequest:
+  type: object
+  required:
+    - type
+  properties:
+    type:
+      type: string
+      enum: [audio, video]
+    channelId:
+      type: string
+      format: uuid
+      description: Channel to start call in
+    title:
+      type: string
+      maxLength: 200
+    participants:
+      type: array
+      items:
+        type: string
+        format: uuid
+      description: User IDs to invite
+    settings:
+      $ref: '#/CallSettings'
+    scheduledFor:
+      type: string
+      format: date-time
+      description: Schedule call for later
+
+CallUpdateRequest:
+  type: object
+  properties:
+    title:
+      type: string
+      maxLength: 200
+    settings:
+      $ref: '#/CallSettings'
+
+JoinCallRequest:
+  type: object
+  properties:
+    password:
+      type: string
+      description: Call password if required
+    audioMuted:
+      type: boolean
+      default: false
+    videoMuted:
+      type: boolean
+      default: false
+
+CallActionRequest:
+  type: object
+  required:
+    - action
+  properties:
+    action:
+      type: string
+      enum: [mute_audio, unmute_audio, mute_video, unmute_video, start_screen_share, stop_screen_share, raise_hand, lower_hand, start_recording, stop_recording, end_call]
+      description: Action to perform
+    targetUserId:
+      type: string
+      format: uuid
+      description: Target user for host actions
+
+ScheduledCall:
+  type: object
+  required:
+    - id
+    - type
+    - scheduledFor
+    - createdBy
+  properties:
+    id:
+      type: string
+      format: uuid
+    type:
+      type: string
+      enum: [audio, video]
+    title:
+      type: string
+    description:
+      type: string
+    scheduledFor:
+      type: string
+      format: date-time
+    duration:
+      type: integer
+      description: Expected duration in minutes
+    channelId:
+      type: string
+      format: uuid
+    invitees:
+      type: array
+      items:
+        type: string
+        format: uuid
+    settings:
+      $ref: '#/CallSettings'
+    recurrence:
+      $ref: '#/CallRecurrence'
+    createdBy:
+      type: string
+      format: uuid
+    createdAt:
+      type: string
+      format: date-time
+
+CallRecurrence:
+  type: object
+  properties:
+    frequency:
+      type: string
+      enum: [daily, weekly, biweekly, monthly]
+    daysOfWeek:
+      type: array
+      items:
+        type: string
+        enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+    endDate:
+      type: string
+      format: date
+    occurrences:
+      type: integer
+      description: Number of occurrences

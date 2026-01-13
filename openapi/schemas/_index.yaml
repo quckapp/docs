@@ -1,0 +1,91 @@
+# Schema Index - References all schema definitions
+
+# Common
+Error:
+  $ref: './error.yaml#/Error'
+Pagination:
+  $ref: './common.yaml#/Pagination'
+Timestamp:
+  $ref: './common.yaml#/Timestamp'
+
+# User schemas
+User:
+  $ref: './user.yaml#/User'
+UserProfile:
+  $ref: './user.yaml#/UserProfile'
+UserPreferences:
+  $ref: './user.yaml#/UserPreferences'
+UserStatus:
+  $ref: './user.yaml#/UserStatus'
+
+# Auth schemas
+LoginRequest:
+  $ref: './auth.yaml#/LoginRequest'
+LoginResponse:
+  $ref: './auth.yaml#/LoginResponse'
+TokenPair:
+  $ref: './auth.yaml#/TokenPair'
+RefreshTokenRequest:
+  $ref: './auth.yaml#/RefreshTokenRequest'
+
+# Workspace schemas
+Workspace:
+  $ref: './workspace.yaml#/Workspace'
+WorkspaceMember:
+  $ref: './workspace.yaml#/WorkspaceMember'
+WorkspaceInvite:
+  $ref: './workspace.yaml#/WorkspaceInvite'
+
+# Channel schemas
+Channel:
+  $ref: './channel.yaml#/Channel'
+ChannelMember:
+  $ref: './channel.yaml#/ChannelMember'
+
+# Message schemas
+Message:
+  $ref: './message.yaml#/Message'
+Reaction:
+  $ref: './message.yaml#/Reaction'
+MessageBlock:
+  $ref: './message.yaml#/MessageBlock'
+
+# Thread schemas
+Thread:
+  $ref: './thread.yaml#/Thread'
+ThreadReply:
+  $ref: './thread.yaml#/ThreadReply'
+
+# Call schemas
+Call:
+  $ref: './call.yaml#/Call'
+CallParticipant:
+  $ref: './call.yaml#/CallParticipant'
+
+# Huddle schemas
+Huddle:
+  $ref: './huddle.yaml#/Huddle'
+
+# File schemas
+File:
+  $ref: './file.yaml#/File'
+FileAttachment:
+  $ref: './file.yaml#/FileAttachment'
+FileUploadRequest:
+  $ref: './file.yaml#/FileUploadRequest'
+
+# Notification schemas
+Notification:
+  $ref: './notification.yaml#/Notification'
+NotificationSettings:
+  $ref: './notification.yaml#/NotificationSettings'
+
+# Search schemas
+SearchResult:
+  $ref: './search.yaml#/SearchResult'
+SearchFilters:
+  $ref: './search.yaml#/SearchFilters'
+
+# Presence schemas
+Presence:
+  $ref: './presence.yaml#/Presence'

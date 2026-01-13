@@ -1,0 +1,685 @@
+# Messages API Paths
+
+messages:
+  get:
+    tags:
+      - Messages
+    summary: List messages
+    description: Get messages from a channel with pagination
+    operationId: listMessages
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: before
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Get messages before this timestamp
+      - name: after
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Get messages after this timestamp
+      - name: around
+        in: query
+        schema:
+          type: string
+          format: uuid
+        description: Get messages around this message ID
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+    responses:
+      '200':
+        description: List of messages
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: '../schemas/message.yaml#/Message'
+                hasMore:
+                  type: boolean
+
+  post:
+    tags:
+      - Messages
+    summary: Send message
+    description: Send a new message to a channel
+    operationId: sendMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/message.yaml#/MessageCreateRequest'
+    responses:
+      '201':
+        description: Message sent
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/message.yaml#/Message'
+      '400':
+        description: Invalid message content
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ValidationError'
+      '403':
+        description: Cannot post to this channel
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+message-by-id:
+  get:
+    tags:
+      - Messages
+    summary: Get message
+    description: Get a specific message by ID
+    operationId: getMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Message details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/message.yaml#/Message'
+      '404':
+        description: Message not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  patch:
+    tags:
+      - Messages
+    summary: Edit message
+    description: Edit a message (author only, within edit window)
+    operationId: editMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/message.yaml#/MessageUpdateRequest'
+    responses:
+      '200':
+        description: Message updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/message.yaml#/Message'
+      '403':
+        description: Not authorized to edit
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  delete:
+    tags:
+      - Messages
+    summary: Delete message
+    description: Delete a message (author or admin)
+    operationId: deleteMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Message deleted
+      '403':
+        description: Not authorized to delete
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+message-reactions:
+  get:
+    tags:
+      - Messages
+      - Reactions
+    summary: Get message reactions
+    description: Get all reactions on a message
+    operationId: getMessageReactions
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Message reactions
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reactions:
+                  type: array
+                  items:
+                    $ref: '../schemas/message.yaml#/Reaction'
+
+  post:
+    tags:
+      - Messages
+      - Reactions
+    summary: Add reaction
+    description: Add a reaction to a message
+    operationId: addReaction
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/message.yaml#/ReactionRequest'
+    responses:
+      '201':
+        description: Reaction added
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/message.yaml#/Reaction'
+      '409':
+        description: Already reacted with this emoji
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+message-reaction-remove:
+  delete:
+    tags:
+      - Messages
+      - Reactions
+    summary: Remove reaction
+    description: Remove a reaction from a message
+    operationId: removeReaction
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: emoji
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Reaction removed
+      '404':
+        description: Reaction not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+message-pin:
+  post:
+    tags:
+      - Messages
+    summary: Pin message
+    description: Pin a message to the channel
+    operationId: pinMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Message pinned
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/message.yaml#/Message'
+      '400':
+        description: Message already pinned or pin limit reached
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+message-unpin:
+  delete:
+    tags:
+      - Messages
+    summary: Unpin message
+    description: Unpin a message from the channel
+    operationId: unpinMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Message unpinned
+
+pinned-messages:
+  get:
+    tags:
+      - Messages
+    summary: List pinned messages
+    description: Get all pinned messages in a channel
+    operationId: listPinnedMessages
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Pinned messages
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: '../schemas/message.yaml#/Message'
+
+scheduled-messages:
+  get:
+    tags:
+      - Messages
+    summary: List scheduled messages
+    description: Get user's scheduled messages
+    operationId: listScheduledMessages
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: query
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Scheduled messages
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: '../schemas/message.yaml#/ScheduledMessage'
+
+  post:
+    tags:
+      - Messages
+    summary: Schedule message
+    description: Schedule a message for later delivery
+    operationId: scheduleMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/message.yaml#/ScheduleMessageRequest'
+    responses:
+      '201':
+        description: Message scheduled
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/message.yaml#/ScheduledMessage'
+
+scheduled-message-by-id:
+  get:
+    tags:
+      - Messages
+    summary: Get scheduled message
+    description: Get a scheduled message by ID
+    operationId: getScheduledMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Scheduled message details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/message.yaml#/ScheduledMessage'
+
+  patch:
+    tags:
+      - Messages
+    summary: Update scheduled message
+    description: Update a scheduled message
+    operationId: updateScheduledMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/message.yaml#/ScheduleMessageRequest'
+    responses:
+      '200':
+        description: Scheduled message updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/message.yaml#/ScheduledMessage'
+
+  delete:
+    tags:
+      - Messages
+    summary: Delete scheduled message
+    description: Delete a scheduled message
+    operationId: deleteScheduledMessage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Scheduled message deleted
+
+mark-read:
+  post:
+    tags:
+      - Messages
+    summary: Mark channel as read
+    description: Mark all messages in channel as read
+    operationId: markChannelRead
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              messageId:
+                type: string
+                format: uuid
+                description: Mark as read up to this message
+    responses:
+      '200':
+        description: Channel marked as read
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lastReadAt:
+                  type: string
+                  format: date-time
+                lastReadMessageId:
+                  type: string
+                  format: uuid
