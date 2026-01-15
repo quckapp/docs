@@ -1,10 +1,10 @@
 # Environment Configurations
 
-This document describes the Terraform environment configurations for QuikApp infrastructure.
+This document describes the Terraform environment configurations for QuckApp infrastructure.
 
 ## Overview
 
-QuikApp uses a multi-environment Terraform structure with environment-specific configurations:
+QuckApp uses a multi-environment Terraform structure with environment-specific configurations:
 
 ```
 terraform/
@@ -49,7 +49,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "QuikApp"
+      Project     = "QuckApp"
       Environment = "dev"
       ManagedBy   = "terraform"
     }
@@ -209,7 +209,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "QuikApp"
+      Project     = "QuckApp"
       Environment = "prod"
       ManagedBy   = "terraform"
     }
@@ -438,11 +438,11 @@ terraform apply tfplan
 
 ```hcl
 # backend.hcl
-bucket         = "quikapp-terraform-state"
+bucket         = "quckapp-terraform-state"
 key            = "${environment}/terraform.tfstate"
 region         = "us-east-1"
 encrypt        = true
-dynamodb_table = "quikapp-terraform-locks"
+dynamodb_table = "quckapp-terraform-locks"
 ```
 
 ### State Locking
@@ -451,7 +451,7 @@ DynamoDB table for state locking:
 
 ```hcl
 resource "aws_dynamodb_table" "terraform_locks" {
-  name         = "quikapp-terraform-locks"
+  name         = "quckapp-terraform-locks"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
 

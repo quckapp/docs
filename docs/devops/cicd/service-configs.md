@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Service Deployment Configurations
 
-Kubernetes deployment configurations for all 33 QuikApp microservices across 5 technology stacks.
+Kubernetes deployment configurations for all 33 QuckApp microservices across 5 technology stacks.
 
 ## Deployment Structure
 
@@ -63,10 +63,10 @@ spec:
         prometheus.io/port: "8081"
         prometheus.io/path: "/actuator/prometheus"
     spec:
-      serviceAccountName: quikapp-service
+      serviceAccountName: quckapp-service
       containers:
         - name: auth-service
-          image: quikapp.azurecr.io/auth-service:latest
+          image: quckapp.azurecr.io/auth-service:latest
           ports:
             - containerPort: 8081
               name: http
@@ -76,27 +76,27 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-config
+                  name: quckapp-config
                   key: ENVIRONMENT
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: DB_HOST
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: DB_PASSWORD
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: JWT_SECRET
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: REDIS_URL
           resources:
             requests:
@@ -228,10 +228,10 @@ spec:
         prometheus.io/port: "3000"
         prometheus.io/path: "/metrics"
     spec:
-      serviceAccountName: quikapp-service
+      serviceAccountName: quckapp-service
       containers:
         - name: backend-gateway
-          image: quikapp.azurecr.io/backend-gateway:latest
+          image: quckapp.azurecr.io/backend-gateway:latest
           ports:
             - containerPort: 3000
               name: http
@@ -239,22 +239,22 @@ spec:
             - name: NODE_ENV
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-config
+                  name: quckapp-config
                   key: ENVIRONMENT
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: DATABASE_URL
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: REDIS_URL
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: JWT_SECRET
             - name: AUTH_SERVICE_URL
               value: "http://auth-service:8081"
@@ -305,10 +305,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - api.quikapp.dev
+        - api.quckapp.dev
       secretName: api-tls
   rules:
-    - host: api.quikapp.dev
+    - host: api.quckapp.dev
       http:
         paths:
           - path: /api
@@ -359,10 +359,10 @@ spec:
         prometheus.io/port: "4000"
         prometheus.io/path: "/metrics"
     spec:
-      serviceAccountName: quikapp-service
+      serviceAccountName: quckapp-service
       containers:
         - name: elixir-realtime
-          image: quikapp.azurecr.io/elixir-realtime:latest
+          image: quckapp.azurecr.io/elixir-realtime:latest
           ports:
             - containerPort: 4000
               name: http
@@ -372,48 +372,48 @@ spec:
               name: distribution
           env:
             - name: PHX_HOST
-              value: "realtime.quikapp.dev"
+              value: "realtime.quckapp.dev"
             - name: PHX_SERVER
               value: "true"
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: PHX_SECRET_KEY_BASE
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: DATABASE_URL
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: REDIS_URL
             - name: MONGO_URL
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: MONGO_URL
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-config
+                  name: quckapp-config
                   key: KAFKA_BROKERS
             - name: TURN_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: TURN_SECRET
             - name: APNS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: APNS_KEY
             - name: FCM_SERVER_KEY
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: FCM_SERVER_KEY
             # Erlang Clustering
             - name: RELEASE_DISTRIBUTION
@@ -425,7 +425,7 @@ spec:
             - name: RELEASE_COOKIE
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: ERLANG_COOKIE
             - name: POD_IP
               valueFrom:
@@ -566,10 +566,10 @@ spec:
         prometheus.io/port: "5004"
         prometheus.io/path: "/metrics"
     spec:
-      serviceAccountName: quikapp-service
+      serviceAccountName: quckapp-service
       containers:
         - name: workspace-service
-          image: quikapp.azurecr.io/workspace-service:latest
+          image: quckapp.azurecr.io/workspace-service:latest
           ports:
             - containerPort: 5004
               name: http
@@ -579,22 +579,22 @@ spec:
             - name: ENV
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-config
+                  name: quckapp-config
                   key: ENVIRONMENT
             - name: DB_DSN
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: MYSQL_DSN
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: REDIS_URL
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-config
+                  name: quckapp-config
                   key: KAFKA_BROKERS
           resources:
             requests:
@@ -679,10 +679,10 @@ spec:
         prometheus.io/port: "5007"
         prometheus.io/path: "/metrics"
     spec:
-      serviceAccountName: quikapp-service
+      serviceAccountName: quckapp-service
       containers:
         - name: analytics-service
-          image: quikapp.azurecr.io/analytics-service:latest
+          image: quckapp.azurecr.io/analytics-service:latest
           ports:
             - containerPort: 5007
               name: http
@@ -690,22 +690,22 @@ spec:
             - name: ENVIRONMENT
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-config
+                  name: quckapp-config
                   key: ENVIRONMENT
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: DATABASE_URL
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: REDIS_URL
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-config
+                  name: quckapp-config
                   key: KAFKA_BROKERS
           resources:
             requests:
@@ -764,12 +764,12 @@ spec:
         app: ml-service
         tier: ml
     spec:
-      serviceAccountName: quikapp-service
+      serviceAccountName: quckapp-service
       nodeSelector:
         kubernetes.io/accelerator: nvidia-tesla-v100
       containers:
         - name: ml-service
-          image: quikapp.azurecr.io/ml-service:latest
+          image: quckapp.azurecr.io/ml-service:latest
           ports:
             - containerPort: 5008
               name: http
@@ -777,17 +777,17 @@ spec:
             - name: ENVIRONMENT
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-config
+                  name: quckapp-config
                   key: ENVIRONMENT
             - name: DATABRICKS_HOST
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: DATABRICKS_HOST
             - name: DATABRICKS_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-secrets
+                  name: quckapp-secrets
                   key: DATABRICKS_TOKEN
             - name: MODEL_PATH
               value: "/models"
@@ -833,7 +833,7 @@ spec:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: quikapp-dev
+namespace: quckapp
 
 resources:
   - ../../base
@@ -852,16 +852,16 @@ resources:
   - ../../services/python/analytics-service
 
 configMapGenerator:
-  - name: quikapp-config
+  - name: quckapp-config
     literals:
       - ENVIRONMENT=dev
       - LOG_LEVEL=debug
-      - KAFKA_BROKERS=kafka-dev.quikapp.internal:9092
+      - KAFKA_BROKERS=kafka-dev.quckapp.internal:9092
 
 images:
-  - name: quikapp.azurecr.io/auth-service
+  - name: quckapp.azurecr.io/auth-service
     newTag: dev-latest
-  - name: quikapp.azurecr.io/user-service
+  - name: quckapp.azurecr.io/user-service
     newTag: dev-latest
 
 replicas:
@@ -880,7 +880,7 @@ replicas:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: quikapp-prod
+namespace: quckapp-prod
 
 resources:
   - ../../base
@@ -904,11 +904,11 @@ resources:
   - networkpolicies.yaml
 
 configMapGenerator:
-  - name: quikapp-config
+  - name: quckapp-config
     literals:
       - ENVIRONMENT=production
       - LOG_LEVEL=warn
-      - KAFKA_BROKERS=kafka-prod-1.quikapp.internal:9092,kafka-prod-2.quikapp.internal:9092,kafka-prod-3.quikapp.internal:9092
+      - KAFKA_BROKERS=kafka-prod-1.quckapp.internal:9092,kafka-prod-2.quckapp.internal:9092,kafka-prod-3.quckapp.internal:9092
 
 patchesStrategicMerge:
   - production-resources.yaml

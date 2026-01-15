@@ -168,7 +168,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/QuikApp_users
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/QuckApp_users
     username: ${MYSQL_USER:root}
     password: ${MYSQL_PASSWORD:password}
 
@@ -179,7 +179,7 @@ spring:
 
 storage:
   type: s3
-  bucket: QuikApp-avatars
+  bucket: QuckApp-avatars
   region: ${AWS_REGION:us-east-1}
 ```
 
@@ -209,7 +209,7 @@ public class UserService {
             .build());
 
         // Publish event
-        kafkaTemplate.send("QuikApp.users.events",
+        kafkaTemplate.send("QuckApp.users.events",
             new UserCreatedEvent(user.getId(), user.getEmail()));
 
         return user;
@@ -242,7 +242,7 @@ public class UserBannedEvent {
 
 ## MySQL Database Integration
 
-QuikApp User Service leverages MySQL 8.0 for reliable, ACID-compliant user data storage with advanced features for high-performance queries and horizontal scaling.
+QuckApp User Service leverages MySQL 8.0 for reliable, ACID-compliant user data storage with advanced features for high-performance queries and horizontal scaling.
 
 ### MySQL Architecture
 
@@ -271,14 +271,14 @@ QuikApp User Service leverages MySQL 8.0 for reliable, ACID-compliant user data 
 # application.yml
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/quikapp_users?useSSL=true&serverTimezone=UTC&rewriteBatchedStatements=true
-    username: ${MYSQL_USER:quikapp}
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/quckapp_users?useSSL=true&serverTimezone=UTC&rewriteBatchedStatements=true
+    username: ${MYSQL_USER:quckapp}
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
     # HikariCP Configuration
     hikari:
-      pool-name: QuikAppUserPool
+      pool-name: QuckAppUserPool
       maximum-pool-size: 20
       minimum-idle: 5
       idle-timeout: 300000        # 5 minutes
@@ -791,11 +791,11 @@ version: '3.8'
 services:
   mysql-primary:
     image: mysql:8.0
-    container_name: quikapp-mysql-primary
+    container_name: quckapp-mysql-primary
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: quikapp_users
-      MYSQL_USER: quikapp
+      MYSQL_DATABASE: quckapp_users
+      MYSQL_USER: quckapp
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
@@ -810,7 +810,7 @@ services:
       --innodb-buffer-pool-size=1G
       --max-connections=200
     networks:
-      - quikapp-network
+      - quckapp-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
@@ -819,7 +819,7 @@ services:
 
   mysql-replica:
     image: mysql:8.0
-    container_name: quikapp-mysql-replica
+    container_name: quckapp-mysql-replica
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
@@ -837,11 +837,11 @@ services:
       mysql-primary:
         condition: service_healthy
     networks:
-      - quikapp-network
+      - quckapp-network
 
   proxysql:
     image: proxysql/proxysql:2.5.0
-    container_name: quikapp-proxysql
+    container_name: quckapp-proxysql
     ports:
       - "6033:6033"   # MySQL Protocol
       - "6032:6032"   # Admin interface
@@ -851,14 +851,14 @@ services:
       - mysql-primary
       - mysql-replica
     networks:
-      - quikapp-network
+      - quckapp-network
 
 volumes:
   mysql_primary_data:
   mysql_replica_data:
 
 networks:
-  quikapp-network:
+  quckapp-network:
     external: true
 ```
 
@@ -880,7 +880,7 @@ INSERT INTO mysql_query_rules (rule_id, active, match_pattern, destination_hostg
 
 -- Define users
 INSERT INTO mysql_users (username, password, default_hostgroup) VALUES
-    ('quikapp', 'password', 10);
+    ('quckapp', 'password', 10);
 
 -- Load configuration
 LOAD MYSQL SERVERS TO RUNTIME;
@@ -897,11 +897,11 @@ SAVE MYSQL USERS TO DISK;
 apiVersion: pxc.percona.com/v1
 kind: PerconaXtraDBCluster
 metadata:
-  name: quikapp-mysql
-  namespace: quikapp
+  name: quckapp-mysql
+  namespace: quckapp
 spec:
   crVersion: 1.13.0
-  secretsName: quikapp-mysql-secrets
+  secretsName: quckapp-mysql-secrets
 
   pxc:
     size: 3
@@ -962,7 +962,7 @@ spec:
       s3-backup:
         type: s3
         s3:
-          bucket: quikapp-mysql-backups
+          bucket: quckapp-mysql-backups
           region: us-east-1
           credentialsSecret: aws-s3-secret
 
@@ -976,8 +976,8 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: quikapp-mysql-secrets
-  namespace: quikapp
+  name: quckapp-mysql-secrets
+  namespace: quckapp
 type: Opaque
 stringData:
   root: ${MYSQL_ROOT_PASSWORD}
@@ -1091,8 +1091,8 @@ public class MySQLHealthIndicator implements HealthIndicator {
 # MySQL Connection
 MYSQL_HOST=mysql-primary
 MYSQL_PORT=3306
-MYSQL_DATABASE=quikapp_users
-MYSQL_USER=quikapp
+MYSQL_DATABASE=quckapp_users
+MYSQL_USER=quckapp
 MYSQL_PASSWORD=secure-password
 MYSQL_ROOT_PASSWORD=root-secure-password
 

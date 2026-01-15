@@ -8,13 +8,13 @@ User Acceptance Testing (UAT) environments provide isolated spaces for business 
 
 ## Overview
 
-QuikApp maintains three UAT environments for different testing purposes:
+QuckApp maintains three UAT environments for different testing purposes:
 
 | Environment | URL | Purpose |
 |-------------|-----|---------|
-| **UAT1** | `https://uat1.QuikApp.com` | Feature testing (Sprint A) |
-| **UAT2** | `https://uat2.QuikApp.com` | Feature testing (Sprint B) |
-| **UAT3** | `https://uat3.QuikApp.com` | Regression testing |
+| **UAT1** | `https://uat1.QuckApp.com` | Feature testing (Sprint A) |
+| **UAT2** | `https://uat2.QuckApp.com` | Feature testing (Sprint B) |
+| **UAT3** | `https://uat3.QuckApp.com` | Regression testing |
 
 ## Environment Details
 
@@ -92,7 +92,7 @@ Reset: Before each release cycle
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: QuikApp-uat1
+namespace: QuckApp-uat1
 
 resources:
   - ../../base
@@ -106,9 +106,9 @@ replicas:
     count: 2
 
 images:
-  - name: registry.QuikApp.dev/backend
+  - name: registry.QuckApp.dev/backend
     newTag: uat1-latest
-  - name: registry.QuikApp.dev/auth-service
+  - name: registry.QuckApp.dev/auth-service
     newTag: uat1-latest
 
 configMapGenerator:
@@ -128,7 +128,7 @@ configMapGenerator:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: QuikApp-uat2
+namespace: QuckApp-uat2
 
 resources:
   - ../../base
@@ -142,9 +142,9 @@ replicas:
     count: 2
 
 images:
-  - name: registry.QuikApp.dev/backend
+  - name: registry.QuckApp.dev/backend
     newTag: uat2-latest
-  - name: registry.QuikApp.dev/auth-service
+  - name: registry.QuckApp.dev/auth-service
     newTag: uat2-latest
 
 configMapGenerator:
@@ -164,7 +164,7 @@ configMapGenerator:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: QuikApp-uat3
+namespace: QuckApp-uat3
 
 resources:
   - ../../base
@@ -178,9 +178,9 @@ replicas:
     count: 2
 
 images:
-  - name: registry.QuikApp.dev/backend
+  - name: registry.QuckApp.dev/backend
     newTag: uat3-latest
-  - name: registry.QuikApp.dev/auth-service
+  - name: registry.QuckApp.dev/auth-service
     newTag: uat3-latest
 
 configMapGenerator:
@@ -214,23 +214,23 @@ fi
 echo "Deploying $BRANCH to $UAT_ENV..."
 
 # Build and push images
-docker build -t registry.QuikApp.dev/backend:$UAT_ENV-$VERSION ./backend
-docker push registry.QuikApp.dev/backend:$UAT_ENV-$VERSION
+docker build -t registry.QuckApp.dev/backend:$UAT_ENV-$VERSION ./backend
+docker push registry.QuckApp.dev/backend:$UAT_ENV-$VERSION
 
 # Tag as latest for the UAT environment
-docker tag registry.QuikApp.dev/backend:$UAT_ENV-$VERSION \
-           registry.QuikApp.dev/backend:$UAT_ENV-latest
-docker push registry.QuikApp.dev/backend:$UAT_ENV-latest
+docker tag registry.QuckApp.dev/backend:$UAT_ENV-$VERSION \
+           registry.QuckApp.dev/backend:$UAT_ENV-latest
+docker push registry.QuckApp.dev/backend:$UAT_ENV-latest
 
 # Update kubeconfig
-aws eks update-kubeconfig --name QuikApp-uat --region us-east-1
+aws eks update-kubeconfig --name QuckApp-uat --region us-east-1
 
 # Deploy
 kubectl apply -k k8s/overlays/$UAT_ENV
-kubectl rollout status deployment/backend -n QuikApp-$UAT_ENV --timeout=300s
+kubectl rollout status deployment/backend -n QuckApp-$UAT_ENV --timeout=300s
 
 echo "Deployment to $UAT_ENV complete!"
-echo "URL: https://$UAT_ENV.QuikApp.com"
+echo "URL: https://$UAT_ENV.QuckApp.com"
 ```
 
 ### Reset UAT Data
@@ -249,25 +249,25 @@ fi
 echo "Resetting data for $UAT_ENV..."
 
 # Scale down services
-kubectl scale deployment --all --replicas=0 -n QuikApp-$UAT_ENV
+kubectl scale deployment --all --replicas=0 -n QuckApp-$UAT_ENV
 
 # Restore from sanitized production snapshot
 aws rds restore-db-cluster-from-snapshot \
-  --db-cluster-identifier QuikApp-$UAT_ENV-new \
+  --db-cluster-identifier QuckApp-$UAT_ENV-new \
   --snapshot-identifier prod-sanitized-latest \
   --engine aurora-postgresql
 
 # Wait for restore
 aws rds wait db-cluster-available \
-  --db-cluster-identifier QuikApp-$UAT_ENV-new
+  --db-cluster-identifier QuckApp-$UAT_ENV-new
 
 # Switch to new cluster (update secrets)
 kubectl create secret generic db-credentials \
-  --from-literal=host=QuikApp-$UAT_ENV-new.cluster-xxxxx.rds.amazonaws.com \
-  --dry-run=client -o yaml | kubectl apply -f - -n QuikApp-$UAT_ENV
+  --from-literal=host=QuckApp-$UAT_ENV-new.cluster-xxxxx.rds.amazonaws.com \
+  --dry-run=client -o yaml | kubectl apply -f - -n QuckApp-$UAT_ENV
 
 # Scale up services
-kubectl scale deployment --all --replicas=2 -n QuikApp-$UAT_ENV
+kubectl scale deployment --all --replicas=2 -n QuckApp-$UAT_ENV
 
 echo "Data reset complete for $UAT_ENV!"
 ```
@@ -291,7 +291,7 @@ def sanitize_user(user):
 
     return {
         **user,
-        'email': f"uat.user.{email_hash}@QuikApp-test.com",
+        'email': f"uat.user.{email_hash}@QuckApp-test.com",
         'display_name': fake.name(),
         'phone': fake.phone_number() if user.get('phone') else None,
         'avatar_url': f"https://api.dicebear.com/7.x/avataaars/svg?seed={email_hash}",
@@ -316,7 +316,7 @@ def sanitize_file(file):
     """Replace files with placeholders"""
     return {
         **file,
-        'url': f"https://cdn.uat.QuikApp.com/placeholder/{file['type']}",
+        'url': f"https://cdn.uat.QuckApp.com/placeholder/{file['type']}",
         'name': f"test_file_{file['id']}.{file['extension']}",
     }
 ```
@@ -329,28 +329,28 @@ Each UAT environment has pre-configured test users:
 
 | Email | Password | Role |
 |-------|----------|------|
-| uat1.admin@QuikApp.com | Uat1Admin123! | Super Admin |
-| uat1.owner@QuikApp.com | Uat1Owner123! | Workspace Owner |
-| uat1.member@QuikApp.com | Uat1Member123! | Member |
-| uat1.guest@QuikApp.com | Uat1Guest123! | Guest |
+| uat1.admin@QuckApp.com | Uat1Admin123! | Super Admin |
+| uat1.owner@QuckApp.com | Uat1Owner123! | Workspace Owner |
+| uat1.member@QuckApp.com | Uat1Member123! | Member |
+| uat1.guest@QuckApp.com | Uat1Guest123! | Guest |
 
 ### UAT2 Users
 
 | Email | Password | Role |
 |-------|----------|------|
-| uat2.admin@QuikApp.com | Uat2Admin123! | Super Admin |
-| uat2.owner@QuikApp.com | Uat2Owner123! | Workspace Owner |
-| uat2.member@QuikApp.com | Uat2Member123! | Member |
-| uat2.guest@QuikApp.com | Uat2Guest123! | Guest |
+| uat2.admin@QuckApp.com | Uat2Admin123! | Super Admin |
+| uat2.owner@QuckApp.com | Uat2Owner123! | Workspace Owner |
+| uat2.member@QuckApp.com | Uat2Member123! | Member |
+| uat2.guest@QuckApp.com | Uat2Guest123! | Guest |
 
 ### UAT3 Users
 
 | Email | Password | Role |
 |-------|----------|------|
-| uat3.admin@QuikApp.com | Uat3Admin123! | Super Admin |
-| uat3.owner@QuikApp.com | Uat3Owner123! | Workspace Owner |
-| uat3.member@QuikApp.com | Uat3Member123! | Member |
-| uat3.guest@QuikApp.com | Uat3Guest123! | Guest |
+| uat3.admin@QuckApp.com | Uat3Admin123! | Super Admin |
+| uat3.owner@QuckApp.com | Uat3Owner123! | Workspace Owner |
+| uat3.member@QuckApp.com | Uat3Member123! | Member |
+| uat3.guest@QuckApp.com | Uat3Guest123! | Guest |
 
 ## UAT Workflow
 
@@ -384,8 +384,8 @@ graph LR
 
 | Tool | UAT1 | UAT2 | UAT3 |
 |------|------|------|------|
-| Grafana | [uat1.grafana](https://grafana.uat1.QuikApp.com) | [uat2.grafana](https://grafana.uat2.QuikApp.com) | [uat3.grafana](https://grafana.uat3.QuikApp.com) |
-| Logs | [uat1.logs](https://logs.uat1.QuikApp.com) | [uat2.logs](https://logs.uat2.QuikApp.com) | [uat3.logs](https://logs.uat3.QuikApp.com) |
+| Grafana | [uat1.grafana](https://grafana.uat1.QuckApp.com) | [uat2.grafana](https://grafana.uat2.QuckApp.com) | [uat3.grafana](https://grafana.uat3.QuckApp.com) |
+| Logs | [uat1.logs](https://logs.uat1.QuckApp.com) | [uat2.logs](https://logs.uat2.QuckApp.com) | [uat3.logs](https://logs.uat3.QuckApp.com) |
 
 ## Accessing UAT Environments
 
@@ -393,19 +393,19 @@ graph LR
 
 ```bash
 # Connect to UAT VPN (shared across UAT1-3)
-openvpn --config QuikApp-uat.ovpn
+openvpn --config QuckApp-uat.ovpn
 ```
 
 ### kubectl Access
 
 ```bash
 # Configure kubectl for UAT
-aws eks update-kubeconfig --name QuikApp-uat --region us-east-1
+aws eks update-kubeconfig --name QuckApp-uat --region us-east-1
 
 # Access specific namespace
-kubectl get pods -n QuikApp-uat1
-kubectl get pods -n QuikApp-uat2
-kubectl get pods -n QuikApp-uat3
+kubectl get pods -n QuckApp-uat1
+kubectl get pods -n QuckApp-uat2
+kubectl get pods -n QuckApp-uat3
 ```
 
 ## UAT Sign-off Process
@@ -422,11 +422,11 @@ testing:
 
 stakeholders:
   - name: "Product Owner"
-    email: "po@QuikApp.com"
+    email: "po@QuckApp.com"
     approved: true
     date: "2024-01-18"
   - name: "Business Analyst"
-    email: "ba@QuikApp.com"
+    email: "ba@QuckApp.com"
     approved: true
     date: "2024-01-19"
 

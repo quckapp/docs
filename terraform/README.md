@@ -1,6 +1,6 @@
-# QuikApp Terraform Infrastructure
+# QuckApp Terraform Infrastructure
 
-This document provides comprehensive documentation for the QuikApp AWS infrastructure managed with Terraform.
+This document provides comprehensive documentation for the QuckApp AWS infrastructure managed with Terraform.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ This document provides comprehensive documentation for the QuikApp AWS infrastru
 
 ## Overview
 
-QuikApp uses a modular Terraform architecture to provision and manage AWS infrastructure. The infrastructure supports a messaging application with features including:
+QuckApp uses a modular Terraform architecture to provision and manage AWS infrastructure. The infrastructure supports a messaging application with features including:
 
 - **Media Storage**: S3 buckets for photos, videos, voice messages, and files
 - **Content Delivery**: CloudFront CDN with signed URLs and WAF protection
@@ -120,11 +120,11 @@ Uncomment and configure the S3 backend in `main.tf`:
 
 ```hcl
 backend "s3" {
-  bucket         = "quikapp-terraform-state"
+  bucket         = "quckapp-terraform-state"
   key            = "dev/terraform.tfstate"
   region         = "us-east-1"
   encrypt        = true
-  dynamodb_table = "quikapp-terraform-locks"
+  dynamodb_table = "quckapp-terraform-locks"
 }
 ```
 

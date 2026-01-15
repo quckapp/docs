@@ -77,8 +77,8 @@ For media processing completion/failure events:
 
 ```hcl
 topic {
-  name         = "quikapp-media-events-{env}"
-  display_name = "QuikApp Media Events"
+  name         = "quckapp-media-events-{env}"
+  display_name = "QuckApp Media Events"
 
   delivery_policy = {
     minDelayTarget     = 20
@@ -95,8 +95,8 @@ For CloudWatch alarms and operational alerts:
 
 ```hcl
 topic {
-  name         = "quikapp-alerts-{env}"
-  display_name = "QuikApp Alerts"
+  name         = "quckapp-alerts-{env}"
+  display_name = "QuckApp Alerts"
 }
 
 # Email subscriptions
@@ -112,8 +112,8 @@ For user-facing notifications with SQS fan-out:
 
 ```hcl
 topic {
-  name         = "quikapp-user-notifications-{env}"
-  display_name = "QuikApp User Notifications"
+  name         = "quckapp-user-notifications-{env}"
+  display_name = "QuckApp User Notifications"
 
   # Higher retry for user notifications
   delivery_policy = {
@@ -138,7 +138,7 @@ For scenarios requiring message ordering:
 
 ```hcl
 topic {
-  name                        = "quikapp-media-events-{env}.fifo"
+  name                        = "quckapp-media-events-{env}.fifo"
   fifo_topic                  = true
   content_based_deduplication = true
 }
@@ -150,7 +150,7 @@ topic {
 
 ```hcl
 platform_application {
-  name     = "quikapp-apns-{env}"
+  name     = "quckapp-apns-{env}"
   platform = "APNS"  # or "APNS_SANDBOX" for dev
 
   platform_credential = var.apns_private_key
@@ -162,7 +162,7 @@ platform_application {
 
 ```hcl
 platform_application {
-  name                = "quikapp-fcm-{env}"
+  name                = "quckapp-fcm-{env}"
   platform            = "GCM"
   platform_credential = var.fcm_api_key
 }
@@ -206,9 +206,9 @@ await sns.send(new AWS.PublishCommand({
 ```hcl
 sms_preferences {
   monthly_spend_limit   = 100  # USD
-  default_sender_id     = "QuikApp"
+  default_sender_id     = "QuckApp"
   default_sms_type      = "Transactional"  # or "Promotional"
-  usage_report_s3_bucket = "quikapp-sms-reports"
+  usage_report_s3_bucket = "quckapp-sms-reports"
 }
 ```
 

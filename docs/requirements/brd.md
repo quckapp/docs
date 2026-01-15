@@ -8,7 +8,7 @@ sidebar_position: 3
 
 | Field | Value |
 |-------|-------|
-| **Document ID** | QUIKAPP-BRD-001 |
+| **Document ID** | QUCKAPP-BRD-001 |
 | **Version** | 1.5 |
 | **Status** | Approved |
 | **Last Updated** | 2024-01-10 |
@@ -16,7 +16,7 @@ sidebar_position: 3
 
 ## 1. Executive Summary
 
-QuikApp is an enterprise team communication platform designed to compete with Slack and Microsoft Teams in the B2B collaboration market. The platform aims to differentiate through superior real-time performance, stronger security controls, and flexible deployment options.
+QuckApp is an enterprise team communication platform designed to compete with Slack and Microsoft Teams in the B2B collaboration market. The platform aims to differentiate through superior real-time performance, stronger security controls, and flexible deployment options.
 
 ### 1.1 Business Opportunity
 - Global team collaboration market: $17.7B (2024)
@@ -112,7 +112,7 @@ QuikApp is an enterprise team communication platform designed to compete with Sl
 
 ### 4.2 Competitive Requirements
 
-| Feature | QuikApp | Slack | MS Teams | Differentiation |
+| Feature | QuckApp | Slack | MS Teams | Differentiation |
 |---------|:-------:|:-----:|:--------:|-----------------|
 | Real-time messaging | ✓ | ✓ | ✓ | Sub-100ms latency |
 | Video calls | ✓ | ✓ | ✓ | WebRTC quality |

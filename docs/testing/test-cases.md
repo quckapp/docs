@@ -54,7 +54,7 @@ sidebar_position: 3
 | 1 | Navigate to workspace login | SSO button displayed |
 | 2 | Click "Sign in with Okta" | Redirected to Okta |
 | 3 | Enter Okta credentials | Authenticated by Okta |
-| 4 | Authorize QuikApp | Redirected back |
+| 4 | Authorize QuckApp | Redirected back |
 | 5 | Complete login | Access granted |
 
 ---

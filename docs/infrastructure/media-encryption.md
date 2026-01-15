@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Media Encryption
 
-QuikApp implements a multi-layer encryption strategy similar to WhatsApp, combining client-side End-to-End Encryption (E2EE) with server-side encryption for defense in depth.
+QuckApp implements a multi-layer encryption strategy similar to WhatsApp, combining client-side End-to-End Encryption (E2EE) with server-side encryption for defense in depth.
 
 ## Encryption Architecture
 
@@ -379,7 +379,7 @@ func (e *ServerSideEncryption) UploadWithEncryption(
 
 # Media encryption key
 resource "aws_kms_key" "media" {
-  description             = "KMS key for QuikApp media encryption"
+  description             = "KMS key for QuckApp media encryption"
   deletion_window_in_days = 30
   enable_key_rotation     = true
   multi_region            = var.environment == "prod"
@@ -452,7 +452,7 @@ resource "aws_kms_key" "media" {
 }
 
 resource "aws_kms_alias" "media" {
-  name          = "alias/quikapp-media-${var.environment}"
+  name          = "alias/quckapp-media-${var.environment}"
   target_key_id = aws_kms_key.media.key_id
 }
 
@@ -462,7 +462,7 @@ resource "aws_kms_replica_key" "media_eu" {
 
   provider = aws.eu-west-1
 
-  description             = "Replica of QuikApp media encryption key (EU)"
+  description             = "Replica of QuckApp media encryption key (EU)"
   primary_key_arn         = aws_kms_key.media.arn
   deletion_window_in_days = 30
 }
@@ -472,7 +472,7 @@ resource "aws_kms_replica_key" "media_apac" {
 
   provider = aws.ap-southeast-1
 
-  description             = "Replica of QuikApp media encryption key (APAC)"
+  description             = "Replica of QuckApp media encryption key (APAC)"
   primary_key_arn         = aws_kms_key.media.arn
   deletion_window_in_days = 30
 }
@@ -482,9 +482,9 @@ resource "aws_kms_replica_key" "media_apac" {
 
 ## Security Comparison
 
-### QuikApp vs WhatsApp Encryption
+### QuckApp vs WhatsApp Encryption
 
-| Feature | WhatsApp | QuikApp |
+| Feature | WhatsApp | QuckApp |
 |---------|----------|---------|
 | **E2EE Protocol** | Signal Protocol | Signal Protocol |
 | **Message Encryption** | AES-256-GCM | AES-256-GCM |
@@ -531,7 +531,7 @@ resource "aws_kms_replica_key" "media_apac" {
 
 ```yaml
 # CloudWatch Logs for KMS usage
-logGroupName: /aws/kms/quikapp-media
+logGroupName: /aws/kms/quckapp-media
 
 # Sample audit event
 {
@@ -543,19 +543,19 @@ logGroupName: /aws/kms/quikapp-media
   "sourceIPAddress": "10.0.1.50",
   "userAgent": "aws-sdk-go/1.44.0",
   "requestParameters": {
-    "keyId": "alias/quikapp-media-prod",
+    "keyId": "alias/quckapp-media-prod",
     "keySpec": "AES_256"
   },
   "userIdentity": {
     "type": "AssumedRole",
-    "arn": "arn:aws:sts::123456789:assumed-role/quikapp-media-service/i-xxx"
+    "arn": "arn:aws:sts::123456789:assumed-role/quckapp-media-service/i-xxx"
   }
 }
 ```
 
 ### Compliance Standards
 
-| Standard | Requirement | QuikApp Implementation |
+| Standard | Requirement | QuckApp Implementation |
 |----------|-------------|------------------------|
 | **SOC 2** | Encryption at rest | SSE-KMS + E2EE |
 | **GDPR** | Data protection | E2EE + user consent |

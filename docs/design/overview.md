@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Design & Architecture Overview
 
-Design and architecture documents explain **how** the QuikApp system is built. These documents bridge the gap between requirements and implementation.
+Design and architecture documents explain **how** the QuckApp system is built. These documents bridge the gap between requirements and implementation.
 
 ## Document Types
 
@@ -45,7 +45,7 @@ Design and architecture documents explain **how** the QuikApp system is built. T
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              QuikApp Architecture                            │
+│                              QuckApp Architecture                            │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │

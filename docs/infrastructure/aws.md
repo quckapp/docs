@@ -4,13 +4,13 @@ sidebar_position: 2
 
 # AWS Infrastructure
 
-QuikApp leverages Amazon Web Services (AWS) for media storage, content delivery, and scalable infrastructure alongside Azure Kubernetes Service (AKS) for container orchestration.
+QuckApp leverages Amazon Web Services (AWS) for media storage, content delivery, and scalable infrastructure alongside Azure Kubernetes Service (AKS) for container orchestration.
 
 ## Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                           QuikApp AWS Infrastructure                                 │
+│                           QuckApp AWS Infrastructure                                 │
 ├─────────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                      │
 │  ┌──────────────────────────────────────────────────────────────────────────────┐   │
@@ -114,7 +114,7 @@ QuikApp leverages Amazon Web Services (AWS) for media storage, content delivery,
 
 ## Why AWS for Media Storage?
 
-QuikApp uses a **hybrid cloud strategy**:
+QuckApp uses a **hybrid cloud strategy**:
 
 | Component | Platform | Reason |
 |-----------|----------|--------|
@@ -127,7 +127,7 @@ QuikApp uses a **hybrid cloud strategy**:
 ### AWS vs WhatsApp Architecture Comparison
 
 ```
-WhatsApp (Meta)                           QuikApp (AWS)
+WhatsApp (Meta)                           QuckApp (AWS)
 ─────────────────                         ─────────────────
 • Closed system                           • Open/extensible
 • Meta-owned servers                      • AWS infrastructure
@@ -218,13 +218,13 @@ region: us-east-1
 s3:
   buckets:
     media:
-      name: quikapp-media-dev
+      name: quckapp-media-dev
       versioning: false
       encryption: AES256
       lifecycle:
         expiration_days: 7
     thumbnails:
-      name: quikapp-thumbs-dev
+      name: quckapp-thumbs-dev
       lifecycle:
         expiration_days: 3
 
@@ -249,7 +249,7 @@ replica_regions:
 s3:
   buckets:
     media:
-      name: quikapp-media-prod
+      name: quckapp-media-prod
       versioning: true
       encryption: aws:kms
       kms_key: arn:aws:kms:us-east-1:123456789:key/media-key

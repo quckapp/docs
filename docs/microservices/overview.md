@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Microservices Overview
 
-QuikApp consists of **32+ microservices** built with 5 different technology stacks.
+QuckApp consists of **32+ microservices** built with 5 different technology stacks.
 
 ## Service Categories
 

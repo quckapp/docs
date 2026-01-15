@@ -4,14 +4,14 @@ sidebar_position: 1
 
 # WebSocket API
 
-QuikApp uses WebSocket connections for real-time features including messaging, presence, typing indicators, and calls.
+QuckApp uses WebSocket connections for real-time features including messaging, presence, typing indicators, and calls.
 
 ## Connection
 
 ### Endpoint
 
 ```
-wss://realtime.QuikApp.dev/socket
+wss://realtime.QuckApp.dev/socket
 ```
 
 ### Authentication
@@ -20,12 +20,12 @@ Connect with JWT token as query parameter or header:
 
 ```javascript
 // Query parameter
-const socket = new WebSocket('wss://realtime.QuikApp.dev/socket?token=<jwt>');
+const socket = new WebSocket('wss://realtime.QuckApp.dev/socket?token=<jwt>');
 
 // Or using Phoenix Socket (recommended)
 import { Socket } from 'phoenix';
 
-const socket = new Socket('wss://realtime.QuikApp.dev/socket', {
+const socket = new Socket('wss://realtime.QuckApp.dev/socket', {
   params: { token: '<jwt>' }
 });
 

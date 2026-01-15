@@ -55,7 +55,7 @@ module "dynamodb" {
 
 ```hcl
 table {
-  name     = "quikapp-{env}-media-metadata"
+  name     = "quckapp-{env}-media-metadata"
   hash_key = "mediaId"
 
   attribute {
@@ -109,7 +109,7 @@ table {
 
 ```hcl
 table {
-  name      = "quikapp-{env}-user-sessions"
+  name      = "quckapp-{env}-user-sessions"
   hash_key  = "sessionId"
   range_key = "userId"
 
@@ -124,7 +124,7 @@ table {
 
 ```hcl
 table {
-  name      = "quikapp-{env}-conversations"
+  name      = "quckapp-{env}-conversations"
   hash_key  = "conversationId"
   range_key = "messageId"
 
@@ -141,7 +141,7 @@ table {
 
 ```hcl
 table {
-  name     = "quikapp-{env}-rate-limits"
+  name     = "quckapp-{env}-rate-limits"
   hash_key = "key"  # e.g., "api:user-123:endpoint"
 
   ttl {

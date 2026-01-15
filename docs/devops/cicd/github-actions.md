@@ -99,7 +99,7 @@ on:
 env:
   JAVA_VERSION: '21'
   MAVEN_OPTS: '-Xmx3072m'
-  ACR_REGISTRY: quikapp.azurecr.io
+  ACR_REGISTRY: quckapp.azurecr.io
 
 jobs:
   build-test:
@@ -189,7 +189,7 @@ jobs:
       - name: OWASP Dependency Check
         uses: dependency-check/Dependency-Check_Action@main
         with:
-          project: 'quikapp-${{ matrix.service }}'
+          project: 'quckapp-${{ matrix.service }}'
           path: 'services/spring-boot/${{ matrix.service }}'
           format: 'HTML'
           args: >
@@ -260,7 +260,7 @@ jobs:
       - name: Trigger Azure DevOps CD
         uses: azure/pipelines@v1
         with:
-          azure-devops-project-url: 'https://dev.azure.com/quikapp/QuikApp'
+          azure-devops-project-url: 'https://dev.azure.com/quckapp/QuckApp'
           azure-pipeline-name: 'spring-boot-cd'
           azure-devops-token: ${{ secrets.AZURE_DEVOPS_PAT }}
           azure-pipeline-variables: '{"SERVICE_NAME": "${{ matrix.service }}", "IMAGE_TAG": "${{ github.sha }}"}'
@@ -312,7 +312,7 @@ on:
 
 env:
   NODE_VERSION: '20'
-  ACR_REGISTRY: quikapp.azurecr.io
+  ACR_REGISTRY: quckapp.azurecr.io
 
 jobs:
   build-test:
@@ -441,7 +441,7 @@ jobs:
       - name: Trigger Azure DevOps CD
         uses: azure/pipelines@v1
         with:
-          azure-devops-project-url: 'https://dev.azure.com/quikapp/QuikApp'
+          azure-devops-project-url: 'https://dev.azure.com/quckapp/QuckApp'
           azure-pipeline-name: 'nestjs-cd'
           azure-devops-token: ${{ secrets.AZURE_DEVOPS_PAT }}
           azure-pipeline-variables: '{"SERVICE_NAME": "${{ matrix.service }}", "IMAGE_TAG": "${{ github.sha }}"}'
@@ -502,7 +502,7 @@ on:
 env:
   OTP_VERSION: '26.2'
   ELIXIR_VERSION: '1.16.0'
-  ACR_REGISTRY: quikapp.azurecr.io
+  ACR_REGISTRY: quckapp.azurecr.io
 
 jobs:
   build-test:
@@ -524,7 +524,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: quikapp_test
+          POSTGRES_DB: quckapp_test
         ports:
           - 5432:5432
         options: >-
@@ -590,7 +590,7 @@ jobs:
         working-directory: services/elixir/${{ matrix.service }}
         env:
           MIX_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/quikapp_test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/quckapp_test
           REDIS_URL: redis://localhost:6379
         run: |
           mix ecto.create
@@ -688,7 +688,7 @@ jobs:
       - name: Trigger Azure DevOps CD
         uses: azure/pipelines@v1
         with:
-          azure-devops-project-url: 'https://dev.azure.com/quikapp/QuikApp'
+          azure-devops-project-url: 'https://dev.azure.com/quckapp/QuckApp'
           azure-pipeline-name: 'elixir-cd'
           azure-devops-token: ${{ secrets.AZURE_DEVOPS_PAT }}
           azure-pipeline-variables: '{"SERVICE_NAME": "${{ matrix.service }}", "IMAGE_TAG": "${{ github.sha }}"}'
@@ -765,7 +765,7 @@ on:
 
 env:
   GO_VERSION: '1.22'
-  ACR_REGISTRY: quikapp.azurecr.io
+  ACR_REGISTRY: quckapp.azurecr.io
 
 jobs:
   build-test:
@@ -917,7 +917,7 @@ jobs:
       - name: Trigger Azure DevOps CD
         uses: azure/pipelines@v1
         with:
-          azure-devops-project-url: 'https://dev.azure.com/quikapp/QuikApp'
+          azure-devops-project-url: 'https://dev.azure.com/quckapp/QuckApp'
           azure-pipeline-name: 'go-cd'
           azure-devops-token: ${{ secrets.AZURE_DEVOPS_PAT }}
           azure-pipeline-variables: '{"SERVICE_NAME": "${{ matrix.service }}", "IMAGE_TAG": "${{ github.sha }}"}'
@@ -972,7 +972,7 @@ on:
 
 env:
   PYTHON_VERSION: '3.12'
-  ACR_REGISTRY: quikapp.azurecr.io
+  ACR_REGISTRY: quckapp.azurecr.io
 
 jobs:
   build-test:
@@ -1102,7 +1102,7 @@ jobs:
       - name: Trigger Azure DevOps CD
         uses: azure/pipelines@v1
         with:
-          azure-devops-project-url: 'https://dev.azure.com/quikapp/QuikApp'
+          azure-devops-project-url: 'https://dev.azure.com/quckapp/QuckApp'
           azure-pipeline-name: 'python-cd'
           azure-devops-token: ${{ secrets.AZURE_DEVOPS_PAT }}
           azure-pipeline-variables: '{"SERVICE_NAME": "${{ matrix.service }}", "IMAGE_TAG": "${{ github.sha }}"}'
@@ -1128,7 +1128,7 @@ on:
 
 env:
   PYTHON_VERSION: '3.12'
-  ACR_REGISTRY: quikapp.azurecr.io
+  ACR_REGISTRY: quckapp.azurecr.io
 
 jobs:
   build-test:
@@ -1194,7 +1194,7 @@ jobs:
         run: |
           # Download from Azure Blob or Databricks
           az storage blob download-batch \
-            --account-name quikappml \
+            --account-name quckappml \
             --source models/${{ matrix.service }} \
             --destination ./models
 
@@ -1239,7 +1239,7 @@ jobs:
       - name: Trigger Azure DevOps CD
         uses: azure/pipelines@v1
         with:
-          azure-devops-project-url: 'https://dev.azure.com/quikapp/QuikApp'
+          azure-devops-project-url: 'https://dev.azure.com/quckapp/QuckApp'
           azure-pipeline-name: 'python-ml-cd'
           azure-devops-token: ${{ secrets.AZURE_DEVOPS_PAT }}
           azure-pipeline-variables: '{"SERVICE_NAME": "${{ matrix.service }}", "IMAGE_TAG": "${{ github.sha }}"}'

@@ -4,7 +4,7 @@ sidebar_position: 13
 
 # HashiCorp Vault
 
-QuikApp uses HashiCorp Vault for centralized secrets management, providing secure storage for API keys, database credentials, encryption keys, and certificates.
+QuckApp uses HashiCorp Vault for centralized secrets management, providing secure storage for API keys, database credentials, encryption keys, and certificates.
 
 ## Architecture
 
@@ -52,7 +52,7 @@ QuikApp uses HashiCorp Vault for centralized secrets management, providing secur
 services:
   vault:
     image: hashicorp/vault:1.15
-    container_name: QuikApp-vault
+    container_name: QuckApp-vault
     ports:
       - "8200:8200"
     environment:
@@ -65,7 +65,7 @@ services:
       - vault_data:/vault/data
       - ./config/vault:/vault/config
     networks:
-      - QuikApp-network
+      - QuckApp-network
     healthcheck:
       test: ["CMD", "vault", "status"]
       interval: 10s
@@ -94,7 +94,7 @@ services:
     cap_add:
       - IPC_LOCK
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   vault-2:
     image: hashicorp/vault:1.15
@@ -109,7 +109,7 @@ services:
     cap_add:
       - IPC_LOCK
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
 volumes:
   vault1_data:
@@ -135,12 +135,12 @@ storage "consul" {
   token   = "consul-acl-token"
 }
 
-api_addr = "https://vault.QuikApp.dev:8200"
-cluster_addr = "https://vault.QuikApp.dev:8201"
+api_addr = "https://vault.QuckApp.dev:8200"
+cluster_addr = "https://vault.QuckApp.dev:8201"
 
 seal "awskms" {
   region     = "us-east-1"
-  kms_key_id = "alias/QuikApp-vault-unseal"
+  kms_key_id = "alias/QuckApp-vault-unseal"
 }
 
 telemetry {
@@ -156,27 +156,27 @@ telemetry {
 ```bash
 # PostgreSQL
 vault kv put secret/database/postgres \
-  host=postgres.QuikApp.internal \
+  host=postgres.QuckApp.internal \
   port=5432 \
-  username=QuikApp \
+  username=QuckApp \
   password=super-secret-password \
-  database=QuikApp
+  database=QuckApp
 
 # MySQL
 vault kv put secret/database/mysql \
-  host=mysql.QuikApp.internal \
+  host=mysql.QuckApp.internal \
   port=3306 \
-  username=QuikApp \
+  username=QuckApp \
   password=super-secret-password \
-  database=QuikApp_auth
+  database=QuckApp_auth
 
 # MongoDB
 vault kv put secret/database/mongodb \
-  uri="mongodb://QuikApp:password@mongodb:27017/QuikApp?authSource=admin"
+  uri="mongodb://QuckApp:password@mongodb:27017/QuckApp?authSource=admin"
 
 # Redis
 vault kv put secret/database/redis \
-  host=redis.QuikApp.internal \
+  host=redis.QuckApp.internal \
   port=6379 \
   password=redis-secret-password
 ```
@@ -260,7 +260,7 @@ vault write auth/kubernetes/config \
 # Create role for services
 vault write auth/kubernetes/role/backend-service \
   bound_service_account_names=backend-service \
-  bound_service_account_namespaces=QuikApp \
+  bound_service_account_namespaces=QuckApp \
   policies=backend-policy \
   ttl=1h
 ```
@@ -498,7 +498,7 @@ vault secrets enable database
 # Configure PostgreSQL connection
 vault write database/config/postgres \
   plugin_name=postgresql-database-plugin \
-  connection_url="postgresql://{{username}}:{{password}}@postgres:5432/QuikApp" \
+  connection_url="postgresql://{{username}}:{{password}}@postgres:5432/QuckApp" \
   allowed_roles="readonly,readwrite" \
   username="vault_admin" \
   password="vault_admin_password"
@@ -637,8 +637,8 @@ vault operator raft snapshot save "$BACKUP_DIR/vault_${TIMESTAMP}.snap"
 vault kv get -format=json secret/data/database/postgres > "$BACKUP_DIR/postgres_${TIMESTAMP}.json"
 
 # Encrypt backup
-gpg --encrypt --recipient backup@QuikApp.dev "$BACKUP_DIR/vault_${TIMESTAMP}.snap"
+gpg --encrypt --recipient backup@QuckApp.dev "$BACKUP_DIR/vault_${TIMESTAMP}.snap"
 
 # Upload to S3
-aws s3 cp "$BACKUP_DIR/vault_${TIMESTAMP}.snap.gpg" s3://QuikApp-backups/vault/
+aws s3 cp "$BACKUP_DIR/vault_${TIMESTAMP}.snap.gpg" s3://QuckApp-backups/vault/
 ```

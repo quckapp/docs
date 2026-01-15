@@ -10,8 +10,8 @@ The live environment serves actual end users and implements blue/green deploymen
 
 | Aspect | Configuration |
 |--------|---------------|
-| **URL** | `https://QuikApp.com` / `https://app.QuikApp.com` |
-| **API** | `https://api.QuikApp.com` |
+| **URL** | `https://QuckApp.com` / `https://app.QuckApp.com` |
+| **API** | `https://api.QuckApp.com` |
 | **Purpose** | Active production serving end users |
 | **Data** | Real user data |
 | **Deployment** | Blue/Green with traffic shifting |
@@ -25,7 +25,7 @@ The live environment serves actual end users and implements blue/green deploymen
 │                                                                                  │
 │  ┌─────────────────────────────────────────────────────────────────────────┐   │
 │  │                          Route 53                                        │   │
-│  │                     api.QuikApp.com                                     │   │
+│  │                     api.QuckApp.com                                     │   │
 │  │              (Weighted routing: Blue 100% / Green 0%)                    │   │
 │  └─────────────────────────────────────────────────────────────────────────┘   │
 │                           │                     │                               │
@@ -80,7 +80,7 @@ The live environment serves actual end users and implements blue/green deploymen
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: QuikApp-live-blue
+namespace: QuckApp-live-blue
 
 resources:
   - ../../base
@@ -108,9 +108,9 @@ replicas:
     count: 8
 
 images:
-  - name: registry.QuikApp.dev/backend
+  - name: registry.QuckApp.dev/backend
     newTag: live-v2.5.0
-  - name: registry.QuikApp.dev/auth-service
+  - name: registry.QuckApp.dev/auth-service
     newTag: live-v2.5.0
 
 configMapGenerator:
@@ -131,7 +131,7 @@ configMapGenerator:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: QuikApp-live-green
+namespace: QuckApp-live-green
 
 resources:
   - ../../base
@@ -159,9 +159,9 @@ replicas:
     count: 8
 
 images:
-  - name: registry.QuikApp.dev/backend
+  - name: registry.QuckApp.dev/backend
     newTag: live-v2.6.0  # New version
-  - name: registry.QuikApp.dev/auth-service
+  - name: registry.QuckApp.dev/auth-service
     newTag: live-v2.6.0
 
 configMapGenerator:
@@ -203,12 +203,12 @@ kubectl apply -k k8s/overlays/live-$NEW_STACK
 
 # Wait for deployment
 for deploy in backend auth-service user-service message-service; do
-  kubectl rollout status deployment/$deploy -n QuikApp-live-$NEW_STACK --timeout=600s
+  kubectl rollout status deployment/$deploy -n QuckApp-live-$NEW_STACK --timeout=600s
 done
 
 # Step 2: Run health checks on new stack
 echo "Step 2: Running health checks on $NEW_STACK..."
-./scripts/health-check.sh https://api-$NEW_STACK.QuikApp.com
+./scripts/health-check.sh https://api-$NEW_STACK.QuckApp.com
 
 # Step 3: Gradual traffic shift
 echo "Step 3: Starting traffic shift..."
@@ -249,12 +249,12 @@ aws route53 change-resource-record-sets \
 # Step 4: Update stack status
 echo "Step 4: Updating stack configuration..."
 kubectl annotate deployment/backend \
-  -n QuikApp-live-$NEW_STACK \
-  deployment.QuikApp.com/active="true" --overwrite
+  -n QuckApp-live-$NEW_STACK \
+  deployment.QuckApp.com/active="true" --overwrite
 
 kubectl annotate deployment/backend \
-  -n QuikApp-live-$CURRENT_STACK \
-  deployment.QuikApp.com/active="false" --overwrite
+  -n QuckApp-live-$CURRENT_STACK \
+  deployment.QuckApp.com/active="false" --overwrite
 
 echo "=== Deployment Complete ==="
 echo "Active stack: $NEW_STACK (v$VERSION)"
@@ -270,7 +270,7 @@ echo "Standby stack: $CURRENT_STACK"
     {
       "Action": "UPSERT",
       "ResourceRecordSet": {
-        "Name": "api.QuikApp.com",
+        "Name": "api.QuckApp.com",
         "Type": "A",
         "SetIdentifier": "blue",
         "Weight": 90,
@@ -284,7 +284,7 @@ echo "Standby stack: $CURRENT_STACK"
     {
       "Action": "UPSERT",
       "ResourceRecordSet": {
-        "Name": "api.QuikApp.com",
+        "Name": "api.QuckApp.com",
         "Type": "A",
         "SetIdentifier": "green",
         "Weight": 10,
@@ -307,7 +307,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: backend-hpa
-  namespace: QuikApp-live-blue
+  namespace: QuckApp-live-blue
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -351,7 +351,7 @@ spec:
           name: sqs_queue_depth
           selector:
             matchLabels:
-              queue: QuikApp-tasks
+              queue: QuckApp-tasks
         target:
           type: AverageValue
           averageValue: "100"
@@ -401,7 +401,7 @@ groups:
           pagerduty: "true"
         annotations:
           summary: "CRITICAL: Live environment error rate > 0.1%"
-          runbook: "https://runbooks.QuikApp.com/live-high-error-rate"
+          runbook: "https://runbooks.QuckApp.com/live-high-error-rate"
 
       - alert: LiveHighLatency
         expr: |
@@ -451,7 +451,7 @@ groups:
 ```yaml
 # grafana/live-dashboard.yaml
 dashboard:
-  title: "QuikApp Live Dashboard"
+  title: "QuckApp Live Dashboard"
   refresh: "5s"
 
   panels:
@@ -497,8 +497,8 @@ dashboard:
 # scripts/emergency-rollback.sh
 
 # Get current active stack
-ACTIVE_STACK=$(kubectl get deployment/backend -n QuikApp-live-blue \
-  -o jsonpath='{.metadata.annotations.deployment\.QuikApp\.com/active}')
+ACTIVE_STACK=$(kubectl get deployment/backend -n QuckApp-live-blue \
+  -o jsonpath='{.metadata.annotations.deployment\.QuckApp\.com/active}')
 
 if [ "$ACTIVE_STACK" == "true" ]; then
   CURRENT="blue"

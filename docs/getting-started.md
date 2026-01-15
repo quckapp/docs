@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Getting Started
 
-This guide will help you set up QuikApp for local development.
+This guide will help you set up QuckApp for local development.
 
 ## Prerequisites
 
@@ -35,8 +35,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/QuikApp/QuikApp.git
-cd QuikApp
+git clone https://github.com/QuckApp/QuckApp.git
+cd QuckApp
 ```
 
 ### 2. Set Up Environment Variables
@@ -115,7 +115,7 @@ curl http://localhost:5004/health           # Workspace Service
 ## Project Structure
 
 ```
-QuikApp/
+QuckApp/
 ├── backend/                    # NestJS API Gateway
 │   ├── src/
 │   │   ├── common/            # Shared utilities

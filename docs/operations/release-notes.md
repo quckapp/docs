@@ -153,7 +153,7 @@ See the deployment guide for migration steps.
 
 ## Versioning Policy
 
-QuikApp follows [Semantic Versioning](https://semver.org/):
+QuckApp follows [Semantic Versioning](https://semver.org/):
 
 - **MAJOR** (X.0.0): Breaking changes
 - **MINOR** (X.Y.0): New features, backwards compatible

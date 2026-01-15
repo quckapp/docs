@@ -4,7 +4,7 @@ sidebar_position: 14
 
 # HashiCorp Consul
 
-QuikApp uses HashiCorp Consul for service discovery, health checking, and distributed configuration management across all microservices.
+QuckApp uses HashiCorp Consul for service discovery, health checking, and distributed configuration management across all microservices.
 
 ## Architecture
 
@@ -53,7 +53,7 @@ QuikApp uses HashiCorp Consul for service discovery, health checking, and distri
 services:
   consul:
     image: hashicorp/consul:1.17
-    container_name: QuikApp-consul
+    container_name: QuckApp-consul
     ports:
       - "8500:8500"   # HTTP API & UI
       - "8600:8600/udp"  # DNS
@@ -67,7 +67,7 @@ services:
       - consul_data:/consul/data
       - ./config/consul:/consul/config
     networks:
-      - QuikApp-network
+      - QuckApp-network
     healthcheck:
       test: ["CMD", "consul", "members"]
       interval: 10s
@@ -89,7 +89,7 @@ services:
     volumes:
       - consul1_data:/consul/data
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   consul-server-2:
     image: hashicorp/consul:1.17
@@ -97,7 +97,7 @@ services:
     volumes:
       - consul2_data:/consul/data
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   consul-server-3:
     image: hashicorp/consul:1.17
@@ -105,7 +105,7 @@ services:
     volumes:
       - consul3_data:/consul/data
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
 volumes:
   consul1_data:
@@ -117,7 +117,7 @@ volumes:
 
 ```hcl
 # config/consul/server.hcl
-datacenter = "QuikApp-dc1"
+datacenter = "QuckApp-dc1"
 data_dir = "/consul/data"
 log_level = "INFO"
 
@@ -530,18 +530,18 @@ user_service_url = consul_client.get_service_url('user-service')
 
 ```bash
 # Set configuration values
-consul kv put config/QuikApp/database/max_connections 100
-consul kv put config/QuikApp/cache/ttl 3600
-consul kv put config/QuikApp/rate_limit/requests_per_second 100
+consul kv put config/QuckApp/database/max_connections 100
+consul kv put config/QuckApp/cache/ttl 3600
+consul kv put config/QuckApp/rate_limit/requests_per_second 100
 
 # Get values
-consul kv get config/QuikApp/database/max_connections
+consul kv get config/QuckApp/database/max_connections
 
 # List all keys
-consul kv get -recurse config/QuikApp/
+consul kv get -recurse config/QuckApp/
 
 # Export configuration
-consul kv export config/QuikApp/ > config-backup.json
+consul kv export config/QuckApp/ > config-backup.json
 
 # Import configuration
 consul kv import @config-backup.json
@@ -573,7 +573,7 @@ async function watchConfig(key: string, callback: (value: string) => void) {
 }
 
 // Usage
-watchConfig('config/QuikApp/rate_limit/requests_per_second', (value) => {
+watchConfig('config/QuckApp/rate_limit/requests_per_second', (value) => {
   console.log('Rate limit updated:', value);
   updateRateLimit(parseInt(value));
 });
@@ -688,7 +688,7 @@ find $BACKUP_DIR -name "*.snap" -mtime +7 -delete
 find $BACKUP_DIR -name "*.json" -mtime +7 -delete
 
 # Upload to S3
-aws s3 sync $BACKUP_DIR s3://QuikApp-backups/consul/
+aws s3 sync $BACKUP_DIR s3://QuckApp-backups/consul/
 ```
 
 ### Restore

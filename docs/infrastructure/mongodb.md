@@ -4,7 +4,7 @@ sidebar_position: 11
 
 # MongoDB
 
-QuikApp uses MongoDB for storing messages, reactions, and other document-oriented data that benefits from flexible schemas and high write throughput.
+QuckApp uses MongoDB for storing messages, reactions, and other document-oriented data that benefits from flexible schemas and high write throughput.
 
 ## Architecture
 
@@ -33,18 +33,18 @@ QuikApp uses MongoDB for storing messages, reactions, and other document-oriente
 
 | Service | Database | Purpose |
 |---------|----------|---------|
-| **message-service** (Elixir) | `QuikApp_messages` | Messages, reactions, threads |
-| **moderation-service** (Python) | `QuikApp_moderation` | Content moderation logs |
-| **ml-service** (Python) | `QuikApp_ml` | ML model data, training sets |
-| **smart-reply-service** (Python) | `QuikApp_smartreply` | Reply suggestions, context |
-| **file-service** (Go) | `QuikApp_files` | File metadata, GridFS |
+| **message-service** (Elixir) | `QuckApp_messages` | Messages, reactions, threads |
+| **moderation-service** (Python) | `QuckApp_moderation` | Content moderation logs |
+| **ml-service** (Python) | `QuckApp_ml` | ML model data, training sets |
+| **smart-reply-service** (Python) | `QuckApp_smartreply` | Reply suggestions, context |
+| **file-service** (Go) | `QuckApp_files` | File metadata, GridFS |
 
 ## Collections Schema
 
 ### Messages Collection
 
 ```javascript
-// QuikApp_messages.messages
+// QuckApp_messages.messages
 {
   _id: ObjectId("..."),
   channelId: UUID("channel-uuid"),
@@ -70,11 +70,11 @@ QuikApp uses MongoDB for storing messages, reactions, and other document-oriente
     {
       id: UUID("attachment-uuid"),
       type: "image",
-      url: "https://cdn.QuikApp.dev/...",
+      url: "https://cdn.QuckApp.dev/...",
       filename: "screenshot.png",
       size: 102400,
       mimeType: "image/png",
-      thumbnailUrl: "https://cdn.QuikApp.dev/thumb/..."
+      thumbnailUrl: "https://cdn.QuckApp.dev/thumb/..."
     }
   ],
 
@@ -124,7 +124,7 @@ db.messages.createIndex({ clientMessageId: 1 }, { unique: true, sparse: true })
 ### Reactions Collection
 
 ```javascript
-// QuikApp_messages.reactions (for detailed tracking)
+// QuckApp_messages.reactions (for detailed tracking)
 {
   _id: ObjectId("..."),
   messageId: ObjectId("message-id"),
@@ -143,7 +143,7 @@ db.reactions.createIndex({ userId: 1, messageId: 1 }, { unique: true })
 ### Read Receipts Collection
 
 ```javascript
-// QuikApp_messages.read_receipts
+// QuckApp_messages.read_receipts
 {
   _id: ObjectId("..."),
   channelId: UUID("channel-uuid"),
@@ -161,7 +161,7 @@ db.read_receipts.createIndex({ userId: 1 })
 ### Moderation Collection
 
 ```javascript
-// QuikApp_moderation.reports
+// QuckApp_moderation.reports
 {
   _id: ObjectId("..."),
   messageId: ObjectId("message-id"),
@@ -177,7 +177,7 @@ db.read_receipts.createIndex({ userId: 1 })
   createdAt: ISODate("2024-01-15T11:00:00Z")
 }
 
-// QuikApp_moderation.auto_mod_results
+// QuckApp_moderation.auto_mod_results
 {
   _id: ObjectId("..."),
   messageId: ObjectId("message-id"),
@@ -196,7 +196,7 @@ db.read_receipts.createIndex({ userId: 1 })
 ### File Metadata Collection
 
 ```javascript
-// QuikApp_files.files
+// QuckApp_files.files
 {
   _id: ObjectId("..."),
   fileId: UUID("file-uuid"),
@@ -210,14 +210,14 @@ db.read_receipts.createIndex({ userId: 1 })
 
   storage: {
     provider: "s3",
-    bucket: "QuikApp-files",
+    bucket: "QuckApp-files",
     key: "workspaces/ws-uuid/files/file-uuid.pdf",
     region: "us-east-1"
   },
 
   urls: {
-    original: "https://cdn.QuikApp.dev/files/...",
-    thumbnail: "https://cdn.QuikApp.dev/thumbs/..."
+    original: "https://cdn.QuckApp.dev/files/...",
+    thumbnail: "https://cdn.QuckApp.dev/thumbs/..."
   },
 
   metadata: {
@@ -253,9 +253,9 @@ db.files.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 })
 services:
   mongodb:
     image: mongo:6.0
-    container_name: QuikApp-mongodb
+    container_name: QuckApp-mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-QuikApp}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-QuckApp}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-secret}
     volumes:
       - mongodb_data:/data/db
@@ -263,7 +263,7 @@ services:
     ports:
       - "27017:27017"
     networks:
-      - QuikApp-network
+      - QuckApp-network
     command: mongod --replSet rs0 --bind_ip_all
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
@@ -276,14 +276,14 @@ services:
     depends_on:
       - mongodb
     command: >
-      mongosh --host mongodb:27017 --username QuikApp --password secret --authenticationDatabase admin --eval "
+      mongosh --host mongodb:27017 --username QuckApp --password secret --authenticationDatabase admin --eval "
         rs.initiate({
           _id: 'rs0',
           members: [{ _id: 0, host: 'mongodb:27017' }]
         })
       "
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
 volumes:
   mongodb_data:
@@ -300,7 +300,7 @@ services:
     volumes:
       - mongo1_data:/data/db
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   mongo2:
     image: mongo:6.0
@@ -308,7 +308,7 @@ services:
     volumes:
       - mongo2_data:/data/db
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   mongo3:
     image: mongo:6.0
@@ -316,7 +316,7 @@ services:
     volumes:
       - mongo3_data:/data/db
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
 volumes:
   mongo1_data:
@@ -330,14 +330,14 @@ volumes:
 
 ```elixir
 # config/config.exs
-config :QuikApp, QuikApp.Repo,
-  url: System.get_env("MONGODB_URL", "mongodb://QuikApp:secret@localhost:27017/QuikApp_messages"),
+config :QuckApp, QuckApp.Repo,
+  url: System.get_env("MONGODB_URL", "mongodb://QuckApp:secret@localhost:27017/QuckApp_messages"),
   pool_size: 10,
   write_concern: [w: "majority", j: true],
   read_preference: :secondary_preferred
 
-# lib/QuikApp/message.ex
-defmodule QuikApp.Message do
+# lib/QuckApp/message.ex
+defmodule QuckApp.Message do
   use Mongo.Collection
 
   collection "messages" do
@@ -362,7 +362,7 @@ import os
 
 MONGODB_URL = os.getenv(
     "MONGODB_URL",
-    "mongodb://QuikApp:secret@localhost:27017"
+    "mongodb://QuckApp:secret@localhost:27017"
 )
 
 client = MongoClient(
@@ -375,9 +375,9 @@ client = MongoClient(
 )
 
 # Databases
-messages_db = client.QuikApp_messages
-moderation_db = client.QuikApp_moderation
-ml_db = client.QuikApp_ml
+messages_db = client.QuckApp_messages
+moderation_db = client.QuckApp_moderation
+ml_db = client.QuckApp_ml
 
 # Collections
 messages = messages_db.messages
@@ -609,13 +609,13 @@ db.system.profile.find({ millis: { $gt: 100 } }).sort({ ts: -1 }).limit(10)
 services:
   mongodb-exporter:
     image: percona/mongodb_exporter:0.40
-    container_name: QuikApp-mongodb-exporter
+    container_name: QuckApp-mongodb-exporter
     environment:
-      MONGODB_URI: "mongodb://QuikApp:secret@mongodb:27017"
+      MONGODB_URI: "mongodb://QuckApp:secret@mongodb:27017"
     ports:
       - "9216:9216"
     networks:
-      - QuikApp-network
+      - QuckApp-network
 ```
 
 ## Backup & Recovery
@@ -626,11 +626,11 @@ services:
 
 BACKUP_DIR="/backups/mongodb"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-DATABASES="QuikApp_messages QuikApp_moderation QuikApp_ml QuikApp_files"
+DATABASES="QuckApp_messages QuckApp_moderation QuckApp_ml QuckApp_files"
 
 for DB in $DATABASES; do
     mongodump \
-        --uri="mongodb://QuikApp:secret@localhost:27017/$DB?authSource=admin" \
+        --uri="mongodb://QuckApp:secret@localhost:27017/$DB?authSource=admin" \
         --out="$BACKUP_DIR/${DB}_${TIMESTAMP}"
 
     tar -czvf "$BACKUP_DIR/${DB}_${TIMESTAMP}.tar.gz" "$BACKUP_DIR/${DB}_${TIMESTAMP}"
@@ -641,5 +641,5 @@ done
 find $BACKUP_DIR -name "*.tar.gz" -mtime +14 -delete
 
 # Upload to S3
-aws s3 sync $BACKUP_DIR s3://QuikApp-backups/mongodb/
+aws s3 sync $BACKUP_DIR s3://QuckApp-backups/mongodb/
 ```

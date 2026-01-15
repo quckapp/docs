@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Architecture Overview
 
-QuikApp is built on a **polyglot microservices architecture** designed for scalability, maintainability, and performance.
+QuckApp is built on a **polyglot microservices architecture** designed for scalability, maintainability, and performance.
 
 ## High-Level Architecture
 

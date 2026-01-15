@@ -8,7 +8,7 @@ sidebar_position: 4
 
 | Field | Value |
 |-------|-------|
-| **Document ID** | QUIKAPP-PRD-001 |
+| **Document ID** | QUCKAPP-PRD-001 |
 | **Version** | 2.0 |
 | **Status** | Approved |
 | **Last Updated** | 2024-01-12 |
@@ -16,7 +16,7 @@ sidebar_position: 4
 
 ## 1. Product Vision
 
-> **QuikApp empowers teams to communicate and collaborate in real-time with enterprise-grade security, enabling organizations to work together seamlessly regardless of location.**
+> **QuckApp empowers teams to communicate and collaborate in real-time with enterprise-grade security, enabling organizations to work together seamlessly regardless of location.**
 
 ### 1.1 Vision Statement
 Build the most secure, performant, and user-friendly team communication platform that enterprises trust for their most sensitive communications.
@@ -255,7 +255,7 @@ is:thread                  # Thread messages
 
 #### Flow: Send First Message
 ```
-1. User opens QuikApp
+1. User opens QuckApp
 2. User sees workspace sidebar
 3. User clicks channel or DM
 4. User sees message history
@@ -406,7 +406,7 @@ is:thread                  # Thread messages
 
 ### 10.1 Competitive Analysis
 
-| Feature | QuikApp | Slack | Teams |
+| Feature | QuckApp | Slack | Teams |
 |---------|---------|-------|-------|
 | Pricing | $8-15/user | $7.25-12.50 | $4-12.50 |
 | E2E Encryption | ✓ | - | - |

@@ -54,7 +54,7 @@ Go service for full-text search, autocomplete, and relevance ranking using Elast
 
 ```yaml
 # elasticsearch.yml
-cluster.name: quikapp-search
+cluster.name: quckapp-search
 node.name: es-node-1
 
 network.host: 0.0.0.0
@@ -426,7 +426,7 @@ import (
     "encoding/json"
     "fmt"
 
-    "github.com/quikapp/search-service/elasticsearch"
+    "github.com/quckapp/search-service/elasticsearch"
 )
 
 type SearchService struct {
@@ -1164,7 +1164,7 @@ volumes:
 apiVersion: elasticsearch.k8s.elastic.co/v1
 kind: Elasticsearch
 metadata:
-  name: quikapp-search
+  name: quckapp-search
   namespace: search
 spec:
   version: 8.11.0

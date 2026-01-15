@@ -170,7 +170,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/QuikApp_auth
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/QuckApp_auth
     username: ${MYSQL_USER:root}
     password: ${MYSQL_PASSWORD:password}
 
@@ -185,7 +185,7 @@ jwt:
   secret: ${JWT_SECRET}
   access-token-expiry: 15m
   refresh-token-expiry: 7d
-  issuer: QuikApp-auth
+  issuer: QuckApp-auth
 
 oauth:
   google:
@@ -222,7 +222,7 @@ public class JwtService {
             .claim("permissions", user.getPermissions())
             .setIssuedAt(new Date())
             .setExpiration(Date.from(Instant.now().plus(15, ChronoUnit.MINUTES)))
-            .setIssuer("QuikApp-auth")
+            .setIssuer("QuckApp-auth")
             .signWith(privateKey, SignatureAlgorithm.RS256)
             .compact();
 
@@ -268,7 +268,7 @@ public class TotpService {
 
     public String generateQrCodeUri(String secret, String email) {
         return String.format(
-            "otpauth://totp/QuikApp:%s?secret=%s&issuer=QuikApp",
+            "otpauth://totp/QuckApp:%s?secret=%s&issuer=QuckApp",
             email, secret
         );
     }
@@ -281,7 +281,7 @@ public class TotpService {
 
 ```java
 // Login events
-@KafkaPublish(topic = "QuikApp.auth.events")
+@KafkaPublish(topic = "QuckApp.auth.events")
 public class LoginSuccessEvent {
     private String userId;
     private String ip;
@@ -289,7 +289,7 @@ public class LoginSuccessEvent {
     private LocalDateTime timestamp;
 }
 
-@KafkaPublish(topic = "QuikApp.auth.events")
+@KafkaPublish(topic = "QuckApp.auth.events")
 public class LoginFailedEvent {
     private String email;
     private String ip;
@@ -298,7 +298,7 @@ public class LoginFailedEvent {
 }
 
 // Security events
-@KafkaPublish(topic = "QuikApp.security.events")
+@KafkaPublish(topic = "QuckApp.security.events")
 public class BruteForceDetectedEvent {
     private String ip;
     private String targetEmail;

@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Terraform Infrastructure
 
-This document covers Terraform infrastructure management for all QuikApp environments.
+This document covers Terraform infrastructure management for all QuckApp environments.
 
 ## Environment Structure
 
@@ -387,7 +387,7 @@ jobs:
 make unlock ENV=qa ID=<lock-id>
 
 # Find lock ID
-aws dynamodb scan --table-name quikapp-terraform-locks
+aws dynamodb scan --table-name quckapp-terraform-locks
 ```
 
 ### Import Existing Resources
@@ -395,7 +395,7 @@ aws dynamodb scan --table-name quikapp-terraform-locks
 ```bash
 make state-import ENV=qa \
   RESOURCE=aws_s3_bucket.media \
-  ID=quikapp-media-qa
+  ID=quckapp-media-qa
 ```
 
 ### Drift Detection

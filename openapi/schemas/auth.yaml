@@ -155,7 +155,7 @@ OAuthRequest:
       type: string
       format: uri
       description: Redirect URI used in authorization request
-      example: "https://app.quikapp.io/auth/callback"
+      example: "https://app.quckapp.io/auth/callback"
 
 MfaSetupResponse:
   type: object

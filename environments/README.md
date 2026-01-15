@@ -1,6 +1,6 @@
-# QuikApp Environments
+# QuckApp Environments
 
-This document describes all deployment environments for QuikApp.
+This document describes all deployment environments for QuckApp.
 
 ## Environment Overview
 
@@ -21,13 +21,13 @@ This document describes all deployment environments for QuikApp.
 
 | Environment | Purpose | URL | AWS Region |
 |-------------|---------|-----|------------|
-| **Dev** | Development & Integration | `dev.quikapp.com` | us-east-1 |
-| **QA** | Quality Assurance Testing | `qa.quikapp.com` | us-east-1 |
-| **UAT1** | User Acceptance Testing 1 | `uat1.quikapp.com` | us-east-1 |
-| **UAT2** | User Acceptance Testing 2 | `uat2.quikapp.com` | us-east-1 |
-| **UAT3** | User Acceptance Testing 3 | `uat3.quikapp.com` | us-east-1 |
-| **Staging** | Pre-Production | `staging.quikapp.com` | us-east-1 |
-| **Live** | Production | `quikapp.com` | us-east-1 |
+| **Dev** | Development & Integration | `dev.quckapp.com` | us-east-1 |
+| **QA** | Quality Assurance Testing | `qa.quckapp.com` | us-east-1 |
+| **UAT1** | User Acceptance Testing 1 | `uat1.quckapp.com` | us-east-1 |
+| **UAT2** | User Acceptance Testing 2 | `uat2.quckapp.com` | us-east-1 |
+| **UAT3** | User Acceptance Testing 3 | `uat3.quckapp.com` | us-east-1 |
+| **Staging** | Pre-Production | `staging.quckapp.com` | us-east-1 |
+| **Live** | Production | `quckapp.com` | us-east-1 |
 
 ## Environment Details
 
@@ -178,7 +178,7 @@ kubectl apply -k k8s/overlays/<env>
 kustomize build k8s/overlays/<env> | kubectl apply -f -
 
 # Check deployment
-kubectl get pods -n quikapp-<env>
+kubectl get pods -n quckapp-<env>
 ```
 
 ## GitHub Actions

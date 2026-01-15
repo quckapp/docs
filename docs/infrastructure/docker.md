@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Docker Configuration
 
-QuikApp uses Docker for containerization and Docker Compose for local development orchestration.
+QuckApp uses Docker for containerization and Docker Compose for local development orchestration.
 
 ## Docker Compose Files
 
@@ -20,7 +20,7 @@ services:
   # ===================
   nginx:
     image: nginx:alpine
-    container_name: QuikApp-nginx
+    container_name: QuckApp-nginx
     ports:
       - "80:80"
       - "443:443"
@@ -31,7 +31,7 @@ services:
       - backend
       - realtime
     networks:
-      - QuikApp-network
+      - QuckApp-network
     restart: unless-stopped
 
   # ===================
@@ -39,31 +39,31 @@ services:
   # ===================
   postgres:
     image: postgres:15-alpine
-    container_name: QuikApp-postgres
+    container_name: QuckApp-postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-QuikApp}
+      POSTGRES_USER: ${POSTGRES_USER:-QuckApp}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
-      POSTGRES_DB: ${POSTGRES_DB:-QuikApp}
+      POSTGRES_DB: ${POSTGRES_DB:-QuckApp}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts/postgres:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
-      - QuikApp-network
+      - QuckApp-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U QuikApp"]
+      test: ["CMD-SHELL", "pg_isready -U QuckApp"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   mysql:
     image: mysql:8.0
-    container_name: QuikApp-mysql
+    container_name: QuckApp-mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootsecret}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-QuikApp_auth}
-      MYSQL_USER: ${MYSQL_USER:-QuikApp}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-QuckApp_auth}
+      MYSQL_USER: ${MYSQL_USER:-QuckApp}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-secret}
     volumes:
       - mysql_data:/var/lib/mysql
@@ -71,7 +71,7 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - QuikApp-network
+      - QuckApp-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -80,27 +80,27 @@ services:
 
   mongodb:
     image: mongo:6.0
-    container_name: QuikApp-mongodb
+    container_name: QuckApp-mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-QuikApp}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-QuckApp}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-secret}
     volumes:
       - mongodb_data:/data/db
     ports:
       - "27017:27017"
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   redis:
     image: redis:7-alpine
-    container_name: QuikApp-redis
+    container_name: QuckApp-redis
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-secret}
     volumes:
       - redis_data:/data
     ports:
       - "6379:6379"
     networks:
-      - QuikApp-network
+      - QuckApp-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -112,18 +112,18 @@ services:
   # ===================
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
-    container_name: QuikApp-zookeeper
+    container_name: QuckApp-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     volumes:
       - zookeeper_data:/var/lib/zookeeper/data
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
-    container_name: QuikApp-kafka
+    container_name: QuckApp-kafka
     depends_on:
       - zookeeper
     ports:
@@ -138,25 +138,25 @@ services:
     volumes:
       - kafka_data:/var/lib/kafka/data
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   # ===================
   # SERVICE DISCOVERY
   # ===================
   consul:
     image: consul:1.15
-    container_name: QuikApp-consul
+    container_name: QuckApp-consul
     ports:
       - "8500:8500"
     command: agent -server -bootstrap-expect=1 -ui -client=0.0.0.0
     volumes:
       - consul_data:/consul/data
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   vault:
     image: vault:1.13
-    container_name: QuikApp-vault
+    container_name: QuckApp-vault
     ports:
       - "8200:8200"
     environment:
@@ -165,10 +165,10 @@ services:
     cap_add:
       - IPC_LOCK
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
 networks:
-  QuikApp-network:
+  QuckApp-network:
     driver: bridge
 
 volumes:
@@ -193,7 +193,7 @@ services:
   # ===================
   auth-service:
     build: ./services/auth-service
-    container_name: QuikApp-auth
+    container_name: QuckApp-auth
     ports:
       - "8001:8001"
     environment:
@@ -207,11 +207,11 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   user-service:
     build: ./services/user-service
-    container_name: QuikApp-user
+    container_name: QuckApp-user
     ports:
       - "8002:8002"
     environment:
@@ -222,19 +222,19 @@ services:
       mysql:
         condition: service_healthy
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   # ===================
   # NESTJS SERVICES
   # ===================
   backend:
     build: ./backend
-    container_name: QuikApp-backend
+    container_name: QuckApp-backend
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://QuikApp:secret@postgres:5432/QuikApp
+      - DATABASE_URL=postgresql://QuckApp:secret@postgres:5432/QuckApp
       - REDIS_URL=redis://:secret@redis:6379
     depends_on:
       postgres:
@@ -242,11 +242,11 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   realtime:
     build: ./services/realtime-service
-    container_name: QuikApp-realtime
+    container_name: QuckApp-realtime
     ports:
       - "3001:3001"
     environment:
@@ -256,11 +256,11 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   notification:
     build: ./services/notification-service
-    container_name: QuikApp-notification
+    container_name: QuckApp-notification
     ports:
       - "3002:3002"
     environment:
@@ -269,58 +269,58 @@ services:
     depends_on:
       - kafka
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   # ===================
   # ELIXIR SERVICES
   # ===================
   presence:
     build: ./services/presence-service
-    container_name: QuikApp-presence
+    container_name: QuckApp-presence
     ports:
       - "4001:4001"
     environment:
       - MIX_ENV=prod
       - REDIS_URL=redis://:secret@redis:6379
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   call:
     build: ./services/call-service
-    container_name: QuikApp-call
+    container_name: QuckApp-call
     ports:
       - "4002:4002"
     environment:
       - MIX_ENV=prod
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   # ===================
   # GO SERVICES
   # ===================
   workspace:
     build: ./services/workspace-service
-    container_name: QuikApp-workspace
+    container_name: QuckApp-workspace
     ports:
       - "6001:6001"
     environment:
-      - DATABASE_URL=postgresql://QuikApp:secret@postgres:5432/QuikApp
+      - DATABASE_URL=postgresql://QuckApp:secret@postgres:5432/QuckApp
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   channel:
     build: ./services/channel-service
-    container_name: QuikApp-channel
+    container_name: QuckApp-channel
     ports:
       - "6002:6002"
     environment:
-      - DATABASE_URL=postgresql://QuikApp:secret@postgres:5432/QuikApp
+      - DATABASE_URL=postgresql://QuckApp:secret@postgres:5432/QuckApp
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   search:
     build: ./services/search-service
-    container_name: QuikApp-search
+    container_name: QuckApp-search
     ports:
       - "6003:6003"
     environment:
@@ -328,24 +328,24 @@ services:
     depends_on:
       - elasticsearch
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   # ===================
   # PYTHON SERVICES
   # ===================
   analytics:
     build: ./services/analytics-service
-    container_name: QuikApp-analytics
+    container_name: QuckApp-analytics
     ports:
       - "5001:5001"
     environment:
-      - DATABASE_URL=postgresql://QuikApp:secret@postgres:5432/QuikApp
+      - DATABASE_URL=postgresql://QuckApp:secret@postgres:5432/QuckApp
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   ml:
     build: ./services/ml-service
-    container_name: QuikApp-ml
+    container_name: QuckApp-ml
     ports:
       - "5006:5006"
     environment:
@@ -353,14 +353,14 @@ services:
     volumes:
       - ./models:/models:ro
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   # ===================
   # SEARCH
   # ===================
   elasticsearch:
     image: elasticsearch:8.8.0
-    container_name: QuikApp-elasticsearch
+    container_name: QuckApp-elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -370,13 +370,13 @@ services:
     ports:
       - "9200:9200"
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
 volumes:
   elasticsearch_data:
 
 networks:
-  QuikApp-network:
+  QuckApp-network:
     external: true
 ```
 
@@ -517,10 +517,10 @@ docker-compose -f docker-compose.services.yml down
 docker-compose -f docker-compose.services.yml build
 
 # Tag for registry
-docker tag QuikApp-backend:latest registry.QuikApp.dev/backend:v1.0.0
+docker tag QuckApp-backend:latest registry.QuckApp.dev/backend:v1.0.0
 
 # Push to registry
-docker push registry.QuikApp.dev/backend:v1.0.0
+docker push registry.QuckApp.dev/backend:v1.0.0
 ```
 
 ## Environment Variables
@@ -529,15 +529,15 @@ Create a `.env` file in the project root:
 
 ```env
 # Database
-POSTGRES_USER=QuikApp
+POSTGRES_USER=QuckApp
 POSTGRES_PASSWORD=your-secure-password
-POSTGRES_DB=QuikApp
+POSTGRES_DB=QuckApp
 
 MYSQL_ROOT_PASSWORD=your-root-password
-MYSQL_USER=QuikApp
+MYSQL_USER=QuckApp
 MYSQL_PASSWORD=your-secure-password
 
-MONGO_USER=QuikApp
+MONGO_USER=QuckApp
 MONGO_PASSWORD=your-secure-password
 
 # Cache

@@ -57,22 +57,22 @@ Elixir/Phoenix service for voice and video call management with WebRTC signaling
 # config/config.exs
 config :call_service, :ice_servers,
   stun: [
-    %{urls: "stun:stun.quikapp.com:3478"},
+    %{urls: "stun:stun.quckapp.com:3478"},
     %{urls: "stun:stun.l.google.com:19302"}
   ],
   turn: [
     %{
-      urls: "turn:turn.quikapp.com:3478",
+      urls: "turn:turn.quckapp.com:3478",
       username: System.get_env("TURN_USERNAME"),
       credential: System.get_env("TURN_PASSWORD")
     },
     %{
-      urls: "turn:turn.quikapp.com:443?transport=tcp",
+      urls: "turn:turn.quckapp.com:443?transport=tcp",
       username: System.get_env("TURN_USERNAME"),
       credential: System.get_env("TURN_PASSWORD")
     },
     %{
-      urls: "turns:turn.quikapp.com:443",
+      urls: "turns:turn.quckapp.com:443",
       username: System.get_env("TURN_USERNAME"),
       credential: System.get_env("TURN_PASSWORD")
     }
@@ -547,7 +547,7 @@ defmodule CallService.SFU.Janus do
       body: %{
         request: "create",
         room: call_id_to_room(call_id),
-        description: "QuikApp Call #{call_id}",
+        description: "QuckApp Call #{call_id}",
         publishers: Keyword.get(opts, :max_participants, 50),
         bitrate: Keyword.get(opts, :bitrate, 512000),
         fir_freq: 10,
@@ -783,7 +783,7 @@ defmodule CallService.Recording do
   Call recording with cloud storage integration.
   """
 
-  @recording_bucket System.get_env("RECORDING_BUCKET", "quikapp-recordings")
+  @recording_bucket System.get_env("RECORDING_BUCKET", "quckapp-recordings")
 
   @doc """
   Start recording a call.
@@ -1022,7 +1022,7 @@ alt-listening-port=3479
 external-ip=YOUR_SERVER_IP
 
 # Realm
-realm=quikapp.com
+realm=quckapp.com
 
 # Authentication
 lt-cred-mech
@@ -1058,7 +1058,7 @@ max-port=65535
 ### JavaScript Client Example
 
 ```javascript
-class QuikAppCall {
+class QuckAppCall {
   constructor(callService, userId) {
     this.callService = callService;
     this.userId = userId;
@@ -1290,11 +1290,11 @@ Authorization: Bearer {token}
 
 ```bash
 # TURN/STUN
-TURN_USERNAME=quikapp
+TURN_USERNAME=quckapp
 TURN_PASSWORD=secure-password
 TURN_SECRET=shared-secret-for-credentials
-STUN_URL=stun:stun.quikapp.com:3478
-TURN_URL=turn:turn.quikapp.com:3478
+STUN_URL=stun:stun.quckapp.com:3478
+TURN_URL=turn:turn.quckapp.com:3478
 
 # Media Server (Janus)
 MEDIA_SERVER_URL=ws://janus:8188
@@ -1302,7 +1302,7 @@ JANUS_API_SECRET=janus-api-secret
 JANUS_ADMIN_SECRET=janus-admin-secret
 
 # Recording
-RECORDING_BUCKET=quikapp-recordings
+RECORDING_BUCKET=quckapp-recordings
 AWS_ACCESS_KEY_ID=xxx
 AWS_SECRET_ACCESS_KEY=xxx
 AWS_REGION=us-east-1

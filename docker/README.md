@@ -1,6 +1,6 @@
 # Docker Local Development
 
-This documentation covers the Docker Compose setup for local development of QuikApp.
+This documentation covers the Docker Compose setup for local development of QuckApp.
 
 ## Overview
 
@@ -11,7 +11,7 @@ The Docker setup provides local alternatives to AWS services, allowing developer
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        Docker Network                                │
-│                       (quikapp-network)                             │
+│                       (quckapp-network)                             │
 │                                                                     │
 │  ┌─────────────┐  ┌─────────────┐  ┌──────────────────────────────┐ │
 │  │  PostgreSQL │  │    Redis    │  │         LocalStack           │ │
@@ -65,9 +65,9 @@ PostgreSQL 16 Alpine with:
 ```
 Host: localhost
 Port: 5432
-User: quikapp
-Password: quikapp_dev
-Database: quikapp
+User: quckapp
+Password: quckapp_dev
+Database: quckapp
 ```
 
 ### Redis (ElastiCache Alternative)
@@ -145,7 +145,7 @@ Docker volumes persist data between restarts:
 
 ```bash
 # List volumes
-docker volume ls | grep quikapp
+docker volume ls | grep quckapp
 
 # Remove all data
 docker-compose down -v
@@ -159,28 +159,28 @@ alias awslocal='aws --endpoint-url=http://localhost:4566'
 
 # S3
 awslocal s3 ls
-awslocal s3 cp file.txt s3://quikapp-media-dev/
-awslocal s3 ls s3://quikapp-media-dev/
+awslocal s3 cp file.txt s3://quckapp-media-dev/
+awslocal s3 ls s3://quckapp-media-dev/
 
 # DynamoDB
 awslocal dynamodb list-tables
-awslocal dynamodb scan --table-name quikapp-dev-media-metadata
+awslocal dynamodb scan --table-name quckapp-media-metadata
 
 # SQS
 awslocal sqs list-queues
 awslocal sqs send-message \
-  --queue-url http://localhost:4566/000000000000/quikapp-dev-media-processing \
+  --queue-url http://localhost:4566/000000000000/quckapp-media-processing \
   --message-body '{"mediaId": "123"}'
 
 # SNS
 awslocal sns list-topics
 awslocal sns publish \
-  --topic-arn arn:aws:sns:us-east-1:000000000000:quikapp-media-events-dev \
+  --topic-arn arn:aws:sns:us-east-1:000000000000:quckapp-media-events-dev \
   --message '{"event": "test"}'
 
 # Secrets Manager
 awslocal secretsmanager list-secrets
-awslocal secretsmanager get-secret-value --secret-id quikapp/dev/database
+awslocal secretsmanager get-secret-value --secret-id quckapp/dev/database
 ```
 
 ## Application Integration
@@ -195,7 +195,7 @@ AWS_ACCESS_KEY_ID=test
 AWS_SECRET_ACCESS_KEY=test
 
 # Database
-DATABASE_URL=postgresql://quikapp:quikapp_dev@localhost:5432/quikapp
+DATABASE_URL=postgresql://quckapp:quckapp_dev@localhost:5432/quckapp
 
 # Redis
 REDIS_URL=redis://localhost:6379
@@ -230,7 +230,7 @@ docker-compose exec localstack /etc/localstack/init/ready.d/01-init-aws.sh
 
 ```bash
 # Connect and check
-docker-compose exec postgres psql -U quikapp -d quikapp -c '\dt'
+docker-compose exec postgres psql -U quckapp -d quckapp -c '\dt'
 
 # Reset database
 docker-compose down -v

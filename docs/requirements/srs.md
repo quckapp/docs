@@ -8,7 +8,7 @@ sidebar_position: 2
 
 | Field | Value |
 |-------|-------|
-| **Document ID** | QUIKAPP-SRS-001 |
+| **Document ID** | QUCKAPP-SRS-001 |
 | **Version** | 2.0 |
 | **Status** | Approved |
 | **Last Updated** | 2024-01-15 |
@@ -17,10 +17,10 @@ sidebar_position: 2
 ## 1. Introduction
 
 ### 1.1 Purpose
-This Software Requirements Specification (SRS) document describes the functional and non-functional requirements for QuikApp, an enterprise team communication platform.
+This Software Requirements Specification (SRS) document describes the functional and non-functional requirements for QuckApp, an enterprise team communication platform.
 
 ### 1.2 Scope
-QuikApp is a real-time collaboration platform that enables:
+QuckApp is a real-time collaboration platform that enables:
 - Instant messaging (1:1, group, channels)
 - Voice and video calls
 - File sharing with encryption

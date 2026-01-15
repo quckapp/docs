@@ -4,7 +4,7 @@ sidebar_position: 10
 
 # Redis
 
-QuikApp uses Redis for caching, session management, real-time pub/sub, rate limiting, and distributed locking across all microservices.
+QuckApp uses Redis for caching, session management, real-time pub/sub, rate limiting, and distributed locking across all microservices.
 
 ## Architecture
 
@@ -164,7 +164,7 @@ PSUBSCRIBE workspace:ws-uuid:*
 services:
   redis:
     image: redis:7-alpine
-    container_name: QuikApp-redis
+    container_name: QuckApp-redis
     command: >
       redis-server
       --appendonly yes
@@ -179,7 +179,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - QuikApp-network
+      - QuckApp-network
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-secret}", "ping"]
       interval: 10s
@@ -199,7 +199,7 @@ services:
     image: redis:7-alpine
     command: redis-server --requirepass secret --masterauth secret
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   redis-replica-1:
     image: redis:7-alpine
@@ -207,7 +207,7 @@ services:
     depends_on:
       - redis-master
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   redis-replica-2:
     image: redis:7-alpine
@@ -215,7 +215,7 @@ services:
     depends_on:
       - redis-master
     networks:
-      - QuikApp-network
+      - QuckApp-network
 
   redis-sentinel-1:
     image: redis:7-alpine
@@ -223,7 +223,7 @@ services:
     volumes:
       - ./config/redis/sentinel.conf:/etc/redis/sentinel.conf
     networks:
-      - QuikApp-network
+      - QuckApp-network
 ```
 
 ### Sentinel Configuration
@@ -260,7 +260,7 @@ import Redis from 'ioredis';
           retryDelayOnFailover: 100,
           maxRetriesPerRequest: 3,
           lazyConnect: true,
-          keyPrefix: 'QuikApp:',
+          keyPrefix: 'QuckApp:',
         });
       },
     },
@@ -404,7 +404,7 @@ pool = ConnectionPool(
 redis_client = redis.Redis(connection_pool=pool)
 
 class RedisCache:
-    def __init__(self, prefix: str = 'QuikApp'):
+    def __init__(self, prefix: str = 'QuckApp'):
         self.prefix = prefix
         self.client = redis_client
 
@@ -428,8 +428,8 @@ class RedisCache:
 ### Elixir (Redix)
 
 ```elixir
-# lib/QuikApp/redis.ex
-defmodule QuikApp.Redis do
+# lib/QuckApp/redis.ex
+defmodule QuckApp.Redis do
   use GenServer
 
   def start_link(opts) do
@@ -535,14 +535,14 @@ INFO replication
 services:
   redis-exporter:
     image: oliver006/redis_exporter:v1.55.0
-    container_name: QuikApp-redis-exporter
+    container_name: QuckApp-redis-exporter
     environment:
       REDIS_ADDR: redis://redis:6379
       REDIS_PASSWORD: secret
     ports:
       - "9121:9121"
     networks:
-      - QuikApp-network
+      - QuckApp-network
 ```
 
 ## Performance Tips

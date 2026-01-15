@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Deployment Overview
 
-QuikApp supports multiple deployment environments, each serving a specific purpose in the software development lifecycle.
+QuckApp supports multiple deployment environments, each serving a specific purpose in the software development lifecycle.
 
 ## Environment Hierarchy
 
@@ -14,7 +14,7 @@ QuikApp supports multiple deployment environments, each serving a specific purpo
 │  ┌─────────────────────────────┐  ┌─────────────────────────────┐       │
 │  │         LIVE               │  │       PRODUCTION            │       │
 │  │   (Blue/Green Active)      │◄─│    (Release Candidate)      │       │
-│  │   live.QuikApp.com        │  │   prod.QuikApp.com         │       │
+│  │   live.QuckApp.com        │  │   prod.QuckApp.com         │       │
 │  └─────────────────────────────┘  └─────────────────────────────┘       │
 └─────────────────────────────────────────────────────────────────────────┘
                                     │
@@ -24,7 +24,7 @@ QuikApp supports multiple deployment environments, each serving a specific purpo
 │  ┌─────────────────────────────┐                                        │
 │  │         STAGING             │                                        │
 │  │   (Production Mirror)       │                                        │
-│  │   staging.QuikApp.com      │                                        │
+│  │   staging.QuckApp.com      │                                        │
 │  └─────────────────────────────┘                                        │
 └─────────────────────────────────────────────────────────────────────────┘
                                     │
@@ -34,7 +34,7 @@ QuikApp supports multiple deployment environments, each serving a specific purpo
 │  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐               │
 │  │     UAT1      │  │     UAT2      │  │     UAT3      │               │
 │  │  (Feature A)  │  │  (Feature B)  │  │  (Regression) │               │
-│  │ uat1.QuikApp │  │ uat2.QuikApp │  │ uat3.QuikApp │               │
+│  │ uat1.QuckApp │  │ uat2.QuckApp │  │ uat3.QuckApp │               │
 │  └───────────────┘  └───────────────┘  └───────────────┘               │
 └─────────────────────────────────────────────────────────────────────────┘
                                     │
@@ -44,7 +44,7 @@ QuikApp supports multiple deployment environments, each serving a specific purpo
 │  ┌─────────────────────────────┐                                        │
 │  │            QA               │                                        │
 │  │   (Quality Assurance)       │                                        │
-│  │   qa.QuikApp.com           │                                        │
+│  │   qa.QuckApp.com           │                                        │
 │  └─────────────────────────────┘                                        │
 └─────────────────────────────────────────────────────────────────────────┘
                                     │
@@ -54,7 +54,7 @@ QuikApp supports multiple deployment environments, each serving a specific purpo
 │  ┌─────────────────────────────┐  ┌─────────────────────────────┐       │
 │  │           DEV               │  │          LOCAL              │       │
 │  │   (Integration Testing)     │  │     (Developer Machine)     │       │
-│  │   dev.QuikApp.com          │  │     localhost:3000          │       │
+│  │   dev.QuckApp.com          │  │     localhost:3000          │       │
 │  └─────────────────────────────┘  └─────────────────────────────┘       │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -89,17 +89,17 @@ QuikApp supports multiple deployment environments, each serving a specific purpo
 
 ### AWS Media Infrastructure
 
-QuikApp uses AWS for media storage and delivery alongside Azure Kubernetes Service (AKS) for container orchestration.
+QuckApp uses AWS for media storage and delivery alongside Azure Kubernetes Service (AKS) for container orchestration.
 
 | Environment | S3 Bucket | CloudFront | S3 Lifecycle | Encryption |
 |-------------|-----------|------------|--------------|------------|
 | Local | LocalStack S3 | None | 1 day delete | AES-256 |
-| Dev | quikapp-media-dev | Disabled | 7 day delete | SSE-S3 |
-| QA | quikapp-media-qa | Optional | 14 day delete | SSE-S3 |
-| UAT1-3 | quikapp-media-uat | Enabled | 30 day to IA | SSE-KMS |
-| Staging | quikapp-media-staging | Enabled | 30d-IA, 90d-Glacier | SSE-KMS |
-| Production | quikapp-media-prod | Enabled + WAF | 30d-IA, 90d-Glacier | SSE-KMS |
-| Live | quikapp-media-prod | Enabled + WAF + Shield | 30d-IA, 90d-Glacier | SSE-KMS |
+| Dev | quckapp-media-dev | Disabled | 7 day delete | SSE-S3 |
+| QA | quckapp-media-qa | Optional | 14 day delete | SSE-S3 |
+| UAT1-3 | quckapp-media-uat | Enabled | 30 day to IA | SSE-KMS |
+| Staging | quckapp-media-staging | Enabled | 30d-IA, 90d-Glacier | SSE-KMS |
+| Production | quckapp-media-prod | Enabled + WAF | 30d-IA, 90d-Glacier | SSE-KMS |
+| Live | quckapp-media-prod | Enabled + WAF + Shield | 30d-IA, 90d-Glacier | SSE-KMS |
 
 For detailed AWS configuration, see:
 - [AWS Infrastructure](../infrastructure/aws.md) - Overall AWS architecture

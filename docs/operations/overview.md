@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Operations Overview
 
-Operations documents cover deployment, release, and ongoing support for QuikApp.
+Operations documents cover deployment, release, and ongoing support for QuckApp.
 
 ## Document Types
 

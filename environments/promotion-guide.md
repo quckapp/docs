@@ -71,23 +71,23 @@ This guide describes the process for promoting code between environments.
 
 ```bash
 # Check current deployment in source
-kubectl get pods -n quikapp-<source>
-kubectl get deployment -n quikapp-<source> -o jsonpath='{.items[*].spec.template.spec.containers[*].image}'
+kubectl get pods -n quckapp-<source>
+kubectl get deployment -n quckapp-<source> -o jsonpath='{.items[*].spec.template.spec.containers[*].image}'
 ```
 
 ### 2. Tag Image for Target
 
 ```bash
 # Get source image tag
-SOURCE_TAG=$(kubectl get deployment/<source>-quikapp-api -n quikapp-<source> \
+SOURCE_TAG=$(kubectl get deployment/<source>-quckapp-api -n quckapp-<source> \
   -o jsonpath='{.spec.template.spec.containers[0].image}' | cut -d: -f2)
 
 # Re-tag for target
 aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_REGISTRY
 
-docker pull $ECR_REGISTRY/quikapp/api:$SOURCE_TAG
-docker tag $ECR_REGISTRY/quikapp/api:$SOURCE_TAG $ECR_REGISTRY/quikapp/api:<target>-$SOURCE_TAG
-docker push $ECR_REGISTRY/quikapp/api:<target>-$SOURCE_TAG
+docker pull $ECR_REGISTRY/quckapp/api:$SOURCE_TAG
+docker tag $ECR_REGISTRY/quckapp/api:$SOURCE_TAG $ECR_REGISTRY/quckapp/api:<target>-$SOURCE_TAG
+docker push $ECR_REGISTRY/quckapp/api:<target>-$SOURCE_TAG
 ```
 
 ### 3. Deploy to Target
@@ -95,13 +95,13 @@ docker push $ECR_REGISTRY/quikapp/api:<target>-$SOURCE_TAG
 ```bash
 # Update kustomization
 cd k8s/overlays/<target>
-kustomize edit set image quikapp/api=$ECR_REGISTRY/quikapp/api:<target>-$SOURCE_TAG
+kustomize edit set image quckapp/api=$ECR_REGISTRY/quckapp/api:<target>-$SOURCE_TAG
 
 # Apply
 kubectl apply -k .
 
 # Verify
-kubectl rollout status deployment/<target>-quikapp-api -n quikapp-<target>
+kubectl rollout status deployment/<target>-quckapp-api -n quckapp-<target>
 ```
 
 ## Promotion Checklist
@@ -151,20 +151,20 @@ kubectl rollout status deployment/<target>-quikapp-api -n quikapp-<target>
 
 ```bash
 # Rollback to previous version
-kubectl rollout undo deployment/<env>-quikapp-api -n quikapp-<env>
+kubectl rollout undo deployment/<env>-quckapp-api -n quckapp-<env>
 
 # Verify
-kubectl rollout status deployment/<env>-quikapp-api -n quikapp-<env>
+kubectl rollout status deployment/<env>-quckapp-api -n quckapp-<env>
 ```
 
 ### Rollback to Specific Version
 
 ```bash
 # List revision history
-kubectl rollout history deployment/<env>-quikapp-api -n quikapp-<env>
+kubectl rollout history deployment/<env>-quckapp-api -n quckapp-<env>
 
 # Rollback to specific revision
-kubectl rollout undo deployment/<env>-quikapp-api -n quikapp-<env> --to-revision=<N>
+kubectl rollout undo deployment/<env>-quckapp-api -n quckapp-<env> --to-revision=<N>
 ```
 
 ### Database Rollback
@@ -177,7 +177,7 @@ npm run db:migrate:rollback
 
 # Or restore from backup (RDS)
 aws rds restore-db-instance-from-db-snapshot \
-  --db-instance-identifier quikapp-<env>-restored \
+  --db-instance-identifier quckapp-<env>-restored \
   --db-snapshot-identifier <snapshot-id>
 ```
 

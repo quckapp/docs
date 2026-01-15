@@ -9,7 +9,7 @@ REST API endpoints for the consolidated Elixir Realtime Service.
 ## Base URL
 
 ```
-https://api.QuikApp.dev/api/realtime
+https://api.QuckApp.dev/api/realtime
 ```
 
 ## Health Endpoints
@@ -26,7 +26,7 @@ GET /health
   "status": "healthy",
   "version": "1.0.0",
   "uptime": 86400,
-  "node": "quckchat_realtime@node-1",
+  "node": "quckapp_realtime@node-1",
   "cluster": {
     "nodes": ["node-1", "node-2", "node-3"],
     "connected": true
@@ -122,10 +122,10 @@ Authorization: Bearer {token}
   "success": true,
   "ice_servers": [
     {
-      "urls": "stun:stun.quikapp.com:3478"
+      "urls": "stun:stun.quckapp.com:3478"
     },
     {
-      "urls": "turn:turn.quikapp.com:3478",
+      "urls": "turn:turn.quckapp.com:3478",
       "username": "1705312200:user-123",
       "credential": "abc123hash=="
     }
@@ -241,7 +241,7 @@ Authorization: Bearer {token}
 ```json
 {
   "success": true,
-  "url": "https://storage.quikapp.com/recordings/call_abc123/rec_123.webm?token=xyz",
+  "url": "https://storage.quckapp.com/recordings/call_abc123/rec_123.webm?token=xyz",
   "expires_in": 3600
 }
 ```
@@ -472,20 +472,20 @@ Authorization: Bearer {token}
   "success": true,
   "config": {
     "ice_servers": [
-      {"urls": "stun:stun.quikapp.com:3478"},
+      {"urls": "stun:stun.quckapp.com:3478"},
       {"urls": "stun:stun.l.google.com:19302"},
       {
-        "urls": "turn:turn.quikapp.com:3478",
+        "urls": "turn:turn.quckapp.com:3478",
         "username": "1705312200:user-123",
         "credential": "hmac-sha1-credential"
       },
       {
-        "urls": "turn:turn.quikapp.com:443?transport=tcp",
+        "urls": "turn:turn.quckapp.com:443?transport=tcp",
         "username": "1705312200:user-123",
         "credential": "hmac-sha1-credential"
       },
       {
-        "urls": "turns:turn.quikapp.com:443",
+        "urls": "turns:turn.quckapp.com:443",
         "username": "1705312200:user-123",
         "credential": "hmac-sha1-credential"
       }
@@ -512,9 +512,9 @@ Authorization: Bearer {token}
     "credential": "base64-hmac-sha1-credential",
     "ttl": 86400,
     "urls": [
-      "turn:turn.quikapp.com:3478",
-      "turn:turn.quikapp.com:443?transport=tcp",
-      "turns:turn.quikapp.com:443"
+      "turn:turn.quckapp.com:3478",
+      "turn:turn.quckapp.com:443?transport=tcp",
+      "turns:turn.quckapp.com:443"
     ]
   }
 }

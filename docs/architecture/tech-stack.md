@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Technology Stack
 
-Detailed breakdown of all technologies used in QuikApp.
+Detailed breakdown of all technologies used in QuckApp.
 
 ## Backend Languages & Frameworks
 
@@ -93,7 +93,7 @@ end
 **Used for**: High-performance CRUD, File handling, Search
 
 ```go
-module QuikApp/workspace-service
+module QuckApp/workspace-service
 
 go 1.21
 
@@ -154,8 +154,8 @@ transformers==4.35.2
 postgresql:
   image: postgres:16
   environment:
-    POSTGRES_DB: QuikApp
-    POSTGRES_USER: QuikApp
+    POSTGRES_DB: QuckApp
+    POSTGRES_USER: QuckApp
     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
   volumes:
     - postgres_data:/var/lib/postgresql/data
@@ -180,7 +180,7 @@ mysql:
   image: mysql:8.0
   environment:
     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    MYSQL_DATABASE: QuikApp
+    MYSQL_DATABASE: QuckApp
   command: --default-authentication-plugin=mysql_native_password
 ```
 
@@ -242,7 +242,7 @@ redis:
     "number_of_replicas": 1,
     "analysis": {
       "analyzer": {
-        "QuikApp_analyzer": {
+        "QuckApp_analyzer": {
           "type": "custom",
           "tokenizer": "standard",
           "filter": ["lowercase", "snowball"]
@@ -271,12 +271,12 @@ kafka:
 
 **Topics**:
 ```
-QuikApp.users.events
-QuikApp.messages.events
-QuikApp.presence.events
-QuikApp.notifications.events
-QuikApp.analytics.events
-QuikApp.audit.events
+QuckApp.users.events
+QuckApp.messages.events
+QuckApp.presence.events
+QuckApp.notifications.events
+QuckApp.analytics.events
+QuckApp.audit.events
 ```
 
 ### RabbitMQ 3.12
@@ -293,10 +293,10 @@ rabbitmq:
 
 **Queues**:
 ```
-QuikApp.email.queue
-QuikApp.push.queue
-QuikApp.media.processing.queue
-QuikApp.export.queue
+QuckApp.email.queue
+QuckApp.push.queue
+QuckApp.media.processing.queue
+QuckApp.export.queue
 ```
 
 ## Infrastructure
@@ -332,15 +332,15 @@ server {
 **Used for**: Secrets management, encryption
 
 ```hcl
-path "secret/data/QuikApp/*" {
+path "secret/data/QuckApp/*" {
   capabilities = ["read", "list"]
 }
 
-path "database/creds/QuikApp-role" {
+path "database/creds/QuckApp-role" {
   capabilities = ["read"]
 }
 
-path "transit/encrypt/QuikApp-key" {
+path "transit/encrypt/QuckApp-key" {
   capabilities = ["update"]
 }
 ```
@@ -369,7 +369,7 @@ path "transit/encrypt/QuikApp-key" {
 ```yaml
 prometheus:
   scrape_configs:
-    - job_name: 'QuikApp-services'
+    - job_name: 'QuckApp-services'
       static_configs:
         - targets:
           - 'backend:3000'
@@ -383,7 +383,7 @@ prometheus:
 // NestJS integration
 import tracer from 'dd-trace';
 tracer.init({
-  service: 'QuikApp-backend',
+  service: 'QuckApp-backend',
   env: process.env.NODE_ENV,
 });
 ```

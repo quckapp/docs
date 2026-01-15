@@ -4,7 +4,7 @@ This document describes the GitHub Actions workflows for Terraform infrastructur
 
 ## Overview
 
-QuikApp uses GitHub Actions for automated Terraform operations:
+QuckApp uses GitHub Actions for automated Terraform operations:
 
 ```
 .github/workflows/
@@ -94,7 +94,7 @@ Terraform will perform the following actions:
 
   # aws_s3_bucket.media will be created
   + resource "aws_s3_bucket" "media" {
-      + bucket = "quikapp-media-dev"
+      + bucket = "quckapp-media-dev"
       ...
     }
 
@@ -222,7 +222,7 @@ resource "aws_iam_role" "github_actions_dev" {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
         }
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:myorg/quikapp:*"
+          "token.actions.githubusercontent.com:sub" = "repo:myorg/quckapp:*"
         }
       }
     }]

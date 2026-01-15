@@ -30,7 +30,7 @@ module "iam" {
   # EKS configuration (for pod identity)
   eks_oidc_provider_arn = module.eks.oidc_provider_arn
   eks_oidc_provider     = module.eks.oidc_provider
-  kubernetes_namespace  = "quikapp"
+  kubernetes_namespace  = "quckapp"
 
   # S3 buckets
   media_bucket_arn      = module.s3.media_bucket_arn
@@ -44,7 +44,7 @@ module "iam" {
   cloudfront_distribution_arn = module.cloudfront.distribution_arn
 
   # CI/CD (GitHub Actions)
-  github_repo_pattern = "repo:myorg/quikapp:*"
+  github_repo_pattern = "repo:myorg/quckapp:*"
 
   tags = var.tags
 }
@@ -82,7 +82,7 @@ For EKS pods that handle media uploads/downloads:
 
 ```hcl
 role {
-  name = "quikapp-media-service-{env}"
+  name = "quckapp-media-service-{env}"
 
   # EKS Pod Identity (IRSA)
   assume_role_policy = {
@@ -90,7 +90,7 @@ role {
     Action    = "sts:AssumeRoleWithWebIdentity"
     Condition = {
       StringEquals = {
-        "${oidc_provider}:sub" = "system:serviceaccount:quikapp:media-service"
+        "${oidc_provider}:sub" = "system:serviceaccount:quckapp:media-service"
       }
     }
   }
@@ -120,7 +120,7 @@ For Lambda functions that generate thumbnails:
 
 ```hcl
 role {
-  name = "quikapp-lambda-thumbnail-{env}"
+  name = "quckapp-lambda-thumbnail-{env}"
 
   assume_role_policy = {
     Principal = { Service = "lambda.amazonaws.com" }
@@ -161,14 +161,14 @@ For services managing CloudFront and serving content:
 
 ```hcl
 role {
-  name = "quikapp-cdn-service-{env}"
+  name = "quckapp-cdn-service-{env}"
 
   # EKS Pod Identity
   assume_role_policy = {
     Principal = { Federated = eks_oidc_provider_arn }
     Condition = {
       StringEquals = {
-        "${oidc_provider}:sub" = "system:serviceaccount:quikapp:cdn-service"
+        "${oidc_provider}:sub" = "system:serviceaccount:quckapp:cdn-service"
       }
     }
   }
@@ -195,7 +195,7 @@ For GitHub Actions with OIDC authentication:
 
 ```hcl
 role {
-  name = "quikapp-cicd-deployment-{env}"
+  name = "quckapp-cicd-deployment-{env}"
 
   # GitHub Actions OIDC
   assume_role_policy = {
@@ -208,7 +208,7 @@ role {
         "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
       }
       StringLike = {
-        "token.actions.githubusercontent.com:sub" = "repo:myorg/quikapp:*"
+        "token.actions.githubusercontent.com:sub" = "repo:myorg/quckapp:*"
       }
     }
   }
@@ -237,9 +237,9 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: media-service
-  namespace: quikapp
+  namespace: quckapp
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/quikapp-media-service-prod
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/quckapp-media-service-prod
 ```
 
 ### Pod Configuration
@@ -272,7 +272,7 @@ jobs:
     steps:
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::123456789012:role/quikapp-cicd-deployment-prod
+          role-to-assume: arn:aws:iam::123456789012:role/quckapp-cicd-deployment-prod
           aws-region: us-east-1
 
       - name: Deploy to S3

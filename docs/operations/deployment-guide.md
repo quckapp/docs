@@ -29,7 +29,7 @@ sidebar_position: 2
 
 ```bash
 # Infrastructure
-git clone https://github.com/quikapp/infrastructure.git
+git clone https://github.com/quckapp/infrastructure.git
 cd infrastructure
 
 # Set environment
@@ -40,7 +40,7 @@ export ENV=dev  # dev | qa | uat1 | uat2 | uat3 | staging | live
 
 ```bash
 # Get kubeconfig
-aws eks update-kubeconfig --name quikapp-${ENV} --region us-east-1
+aws eks update-kubeconfig --name quckapp-${ENV} --region us-east-1
 
 # Verify connection
 kubectl cluster-info
@@ -78,19 +78,19 @@ kustomize build . | kubectl diff -f -
 kubectl apply -k .
 
 # Verify rollout
-kubectl rollout status deployment/${ENV}-quikapp-api -n quikapp-${ENV}
+kubectl rollout status deployment/${ENV}-quckapp-api -n quckapp-${ENV}
 ```
 
 ### 3.3 Helm Charts (Optional)
 
 ```bash
 # Add Helm repo
-helm repo add quikapp https://charts.quikapp.com
+helm repo add quckapp https://charts.quckapp.com
 helm repo update
 
 # Install/upgrade
-helm upgrade --install quikapp-${ENV} quikapp/quikapp \
-  -n quikapp-${ENV} \
+helm upgrade --install quckapp-${ENV} quckapp/quckapp \
+  -n quckapp-${ENV} \
   -f values-${ENV}.yaml \
   --wait
 ```
@@ -103,22 +103,22 @@ helm upgrade --install quikapp-${ENV} quikapp/quikapp \
 # config/env/${ENV}.yaml
 environment: ${ENV}
 log_level: info
-db_host: mysql-${ENV}.quikapp.internal
-redis_host: redis-${ENV}.quikapp.internal
-kafka_brokers: kafka-${ENV}.quikapp.internal:9092
+db_host: mysql-${ENV}.quckapp.internal
+redis_host: redis-${ENV}.quckapp.internal
+kafka_brokers: kafka-${ENV}.quckapp.internal:9092
 ```
 
 ### 4.2 Secrets Management
 
 ```bash
 # Secrets from Vault
-vault kv get -format=json secret/quikapp/${ENV}/db | jq -r '.data.data'
+vault kv get -format=json secret/quckapp/${ENV}/db | jq -r '.data.data'
 
 # Create Kubernetes secret
 kubectl create secret generic db-credentials \
-  -n quikapp-${ENV} \
-  --from-literal=username=quikapp \
-  --from-literal=password=$(vault kv get -field=password secret/quikapp/${ENV}/db)
+  -n quckapp-${ENV} \
+  --from-literal=username=quckapp \
+  --from-literal=password=$(vault kv get -field=password secret/quckapp/${ENV}/db)
 ```
 
 ## 5. Verification
@@ -127,13 +127,13 @@ kubectl create secret generic db-credentials \
 
 ```bash
 # Check pods
-kubectl get pods -n quikapp-${ENV}
+kubectl get pods -n quckapp-${ENV}
 
 # Check services
-kubectl get svc -n quikapp-${ENV}
+kubectl get svc -n quckapp-${ENV}
 
 # Health endpoint
-curl https://api.${ENV}.quikapp.com/health
+curl https://api.${ENV}.quckapp.com/health
 ```
 
 ### 5.2 Smoke Tests
@@ -155,14 +155,14 @@ npm run test:smoke -- --env=${ENV}
 
 ```bash
 # Check history
-kubectl rollout history deployment/${ENV}-quikapp-api -n quikapp-${ENV}
+kubectl rollout history deployment/${ENV}-quckapp-api -n quckapp-${ENV}
 
 # Rollback to previous
-kubectl rollout undo deployment/${ENV}-quikapp-api -n quikapp-${ENV}
+kubectl rollout undo deployment/${ENV}-quckapp-api -n quckapp-${ENV}
 
 # Rollback to specific revision
-kubectl rollout undo deployment/${ENV}-quikapp-api \
-  -n quikapp-${ENV} \
+kubectl rollout undo deployment/${ENV}-quckapp-api \
+  -n quckapp-${ENV} \
   --to-revision=3
 ```
 
@@ -170,10 +170,10 @@ kubectl rollout undo deployment/${ENV}-quikapp-api \
 
 ```bash
 # Check migrations
-flyway info -url=jdbc:mysql://mysql-${ENV}:3306/quikapp
+flyway info -url=jdbc:mysql://mysql-${ENV}:3306/quckapp
 
 # Rollback one migration
-flyway undo -url=jdbc:mysql://mysql-${ENV}:3306/quikapp
+flyway undo -url=jdbc:mysql://mysql-${ENV}:3306/quckapp
 ```
 
 ## 7. Environment-Specific Notes
@@ -201,7 +201,7 @@ kubectl apply -k k8s/overlays/live-green
 ./scripts/verify-deployment.sh green
 
 # 3. Switch traffic
-kubectl patch service quikapp-api -n quikapp-live \
+kubectl patch service quckapp-api -n quckapp-live \
   -p '{"spec":{"selector":{"version":"green"}}}'
 
 # 4. Monitor
@@ -223,11 +223,11 @@ kubectl patch service quikapp-api -n quikapp-live \
 
 ```bash
 # Pod logs
-kubectl logs -f deployment/${ENV}-quikapp-api -n quikapp-${ENV}
+kubectl logs -f deployment/${ENV}-quckapp-api -n quckapp-${ENV}
 
 # Describe pod
-kubectl describe pod <pod-name> -n quikapp-${ENV}
+kubectl describe pod <pod-name> -n quckapp-${ENV}
 
 # Exec into pod
-kubectl exec -it <pod-name> -n quikapp-${ENV} -- /bin/sh
+kubectl exec -it <pod-name> -n quckapp-${ENV} -- /bin/sh
 ```

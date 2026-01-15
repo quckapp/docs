@@ -25,8 +25,8 @@ sidebar_position: 3
 
 ```java
 // Package naming
-com.quikapp.service.{service-name}.{layer}
-// Example: com.quikapp.service.auth.controller
+com.quckapp.service.{service-name}.{layer}
+// Example: com.quckapp.service.auth.controller
 
 // Class naming
 - Controllers: *Controller
@@ -253,7 +253,7 @@ class UserService:
 
 ```elixir
 # Module naming
-- PascalCase: QuikApp.User.Service
+- PascalCase: QuckApp.User.Service
 
 # Function naming
 - snake_case: find_by_id
@@ -262,12 +262,12 @@ class UserService:
 - snake_case: user_service.ex
 
 # Example module
-defmodule QuikApp.User.Service do
+defmodule QuckApp.User.Service do
   @moduledoc """
   User management service.
   """
 
-  alias QuikApp.User.{User, Repository}
+  alias QuckApp.User.{User, Repository}
 
   @doc """
   Finds a user by ID.
@@ -363,9 +363,9 @@ public User create(CreateUserRequest request) { ... }
 ### 5.1 Branch Naming
 
 ```
-feature/QUIK-123-add-user-search
-bugfix/QUIK-456-fix-message-ordering
-hotfix/QUIK-789-security-patch
+feature/Quck-123-add-user-search
+bugfix/Quck-456-fix-message-ordering
+hotfix/Quck-789-security-patch
 chore/update-dependencies
 ```
 

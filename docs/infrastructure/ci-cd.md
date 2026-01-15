@@ -4,7 +4,7 @@ sidebar_position: 7
 
 # CI/CD Pipeline
 
-QuikApp uses GitHub Actions for continuous integration and deployment with automated testing, building, and deployment to Kubernetes.
+QuckApp uses GitHub Actions for continuous integration and deployment with automated testing, building, and deployment to Kubernetes.
 
 ## Pipeline Overview
 
@@ -41,7 +41,7 @@ on:
     branches: [main]
 
 env:
-  REGISTRY: registry.QuikApp.dev
+  REGISTRY: registry.QuckApp.dev
   NODE_VERSION: '20'
   GO_VERSION: '1.21'
   JAVA_VERSION: '17'
@@ -296,19 +296,19 @@ jobs:
           aws-region: us-east-1
 
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name QuikApp-staging
+        run: aws eks update-kubeconfig --name QuckApp-staging
 
       - name: Deploy to staging
         run: |
           kubectl set image deployment/backend \
             backend=$REGISTRY/backend:${{ github.sha }} \
-            -n QuikApp-core
+            -n QuckApp-core
 
-          kubectl rollout status deployment/backend -n QuikApp-core
+          kubectl rollout status deployment/backend -n QuckApp-core
 
       - name: Run smoke tests
         run: |
-          ./scripts/smoke-tests.sh https://staging.QuikApp.dev
+          ./scripts/smoke-tests.sh https://staging.QuckApp.dev
 ```
 
 ### Production Deployment
@@ -339,20 +339,20 @@ jobs:
           aws-region: us-east-1
 
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name QuikApp-production
+        run: aws eks update-kubeconfig --name QuckApp-production
 
       - name: Deploy with Helm
         run: |
-          helm upgrade --install QuikApp ./helm/QuikApp \
-            -f helm/QuikApp/values-prod.yaml \
+          helm upgrade --install QuckApp ./helm/QuckApp \
+            -f helm/QuckApp/values-prod.yaml \
             --set global.image.tag=${{ github.event.release.tag_name }} \
-            --namespace QuikApp-core \
+            --namespace QuckApp-core \
             --wait --timeout 10m
 
       - name: Verify deployment
         run: |
-          kubectl get pods -n QuikApp-core
-          kubectl rollout status deployment/backend -n QuikApp-core
+          kubectl get pods -n QuckApp-core
+          kubectl rollout status deployment/backend -n QuckApp-core
 
       - name: Notify Slack
         uses: slackapi/slack-github-action@v1
@@ -374,7 +374,7 @@ jobs:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: QuikApp-staging
+namespace: QuckApp-staging
 
 resources:
   - ../../base
@@ -402,7 +402,7 @@ configMapGenerator:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: QuikApp-production
+namespace: QuckApp-production
 
 resources:
   - ../../base
@@ -427,16 +427,16 @@ configMapGenerator:
 
 ```bash
 # View deployment history
-kubectl rollout history deployment/backend -n QuikApp-core
+kubectl rollout history deployment/backend -n QuckApp-core
 
 # Rollback to previous version
-kubectl rollout undo deployment/backend -n QuikApp-core
+kubectl rollout undo deployment/backend -n QuckApp-core
 
 # Rollback to specific revision
-kubectl rollout undo deployment/backend --to-revision=3 -n QuikApp-core
+kubectl rollout undo deployment/backend --to-revision=3 -n QuckApp-core
 
 # Helm rollback
-helm rollback QuikApp 2 -n QuikApp-core
+helm rollback QuckApp 2 -n QuckApp-core
 ```
 
 ## Secrets Management
@@ -447,7 +447,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: database-credentials
-  namespace: QuikApp-core
+  namespace: QuckApp-core
 spec:
   refreshInterval: 1h
   secretStoreRef:
@@ -458,6 +458,6 @@ spec:
   data:
     - secretKey: postgres-url
       remoteRef:
-        key: QuikApp/production/database
+        key: QuckApp/production/database
         property: postgres_url
 ```

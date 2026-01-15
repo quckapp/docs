@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # CloudFront CDN
 
-Amazon CloudFront provides global content delivery for QuikApp media, with 400+ edge locations for low-latency access worldwide.
+Amazon CloudFront provides global content delivery for QuckApp media, with 400+ edge locations for low-latency access worldwide.
 
 ## CDN Architecture
 
@@ -84,15 +84,15 @@ Amazon CloudFront provides global content delivery for QuikApp media, with 400+ 
 resource "aws_cloudfront_distribution" "media" {
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "QuikApp Media CDN - ${var.environment}"
+  comment             = "QuckApp Media CDN - ${var.environment}"
   default_root_object = ""
   price_class         = var.environment == "prod" ? "PriceClass_All" : "PriceClass_100"
   http_version        = "http2and3"
 
   aliases = var.environment == "prod" ? [
-    "cdn.quikapp.com",
-    "media.quikapp.com"
-  ] : ["cdn.${var.environment}.quikapp.dev"]
+    "cdn.quckapp.com",
+    "media.quckapp.com"
+  ] : ["cdn.${var.environment}.quckapp.dev"]
 
   # S3 Origin for media
   origin {
@@ -220,7 +220,7 @@ resource "aws_cloudfront_distribution" "media" {
 
 # Media cache policy - moderate caching with signed URLs
 resource "aws_cloudfront_cache_policy" "media" {
-  name        = "QuikApp-Media-${var.environment}"
+  name        = "QuckApp-Media-${var.environment}"
   comment     = "Cache policy for media files"
   default_ttl = 86400      # 1 day
   max_ttl     = 604800     # 7 days
@@ -249,7 +249,7 @@ resource "aws_cloudfront_cache_policy" "media" {
 
 # Immutable assets - aggressive caching
 resource "aws_cloudfront_cache_policy" "immutable" {
-  name        = "QuikApp-Immutable-${var.environment}"
+  name        = "QuckApp-Immutable-${var.environment}"
   comment     = "Cache policy for immutable assets"
   default_ttl = 31536000   # 1 year
   max_ttl     = 31536000
@@ -275,7 +275,7 @@ resource "aws_cloudfront_cache_policy" "immutable" {
 
 # Disabled caching for API
 resource "aws_cloudfront_cache_policy" "disabled" {
-  name        = "QuikApp-Disabled-${var.environment}"
+  name        = "QuckApp-Disabled-${var.environment}"
   comment     = "No caching for API requests"
   default_ttl = 0
   max_ttl     = 0
@@ -584,11 +584,11 @@ function handler(event) {
 
 function isAllowedOrigin(origin) {
     var allowedOrigins = [
-        'https://quikapp.com',
-        'https://app.quikapp.com',
-        'https://web.quikapp.com'
+        'https://quckapp.com',
+        'https://app.quckapp.com',
+        'https://web.quckapp.com'
     ];
-    return allowedOrigins.includes(origin) || origin.endsWith('.quikapp.dev');
+    return allowedOrigins.includes(origin) || origin.endsWith('.quckapp.dev');
 }
 ```
 
@@ -600,7 +600,7 @@ function isAllowedOrigin(origin) {
 # terraform/modules/cloudfront/waf.tf
 
 resource "aws_wafv2_web_acl" "cdn" {
-  name        = "quikapp-cdn-waf-${var.environment}"
+  name        = "quckapp-cdn-waf-${var.environment}"
   description = "WAF rules for CloudFront CDN"
   scope       = "CLOUDFRONT"
 
@@ -685,7 +685,7 @@ resource "aws_wafv2_web_acl" "cdn" {
 
   visibility_config {
     cloudwatch_metrics_enabled = true
-    metric_name                = "QuikAppCDNWAF"
+    metric_name                = "QuckAppCDNWAF"
     sampled_requests_enabled   = true
   }
 
@@ -707,7 +707,7 @@ Resources:
   CloudFrontErrorRateAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: QuikApp-CloudFront-ErrorRate
+      AlarmName: QuckApp-CloudFront-ErrorRate
       MetricName: 5xxErrorRate
       Namespace: AWS/CloudFront
       Statistic: Average
@@ -724,7 +724,7 @@ Resources:
   CloudFrontCacheHitRateAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: QuikApp-CloudFront-LowCacheHitRate
+      AlarmName: QuckApp-CloudFront-LowCacheHitRate
       MetricName: CacheHitRate
       Namespace: AWS/CloudFront
       Statistic: Average
@@ -741,7 +741,7 @@ Resources:
   CloudFrontOriginLatencyAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: QuikApp-CloudFront-HighOriginLatency
+      AlarmName: QuckApp-CloudFront-HighOriginLatency
       MetricName: OriginLatency
       Namespace: AWS/CloudFront
       Statistic: p90

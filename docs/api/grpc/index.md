@@ -4,14 +4,14 @@ sidebar_position: 1
 
 # gRPC API
 
-QuikApp uses gRPC for high-performance internal service communication. This documentation covers the public-facing gRPC endpoints available for client applications.
+QuckApp uses gRPC for high-performance internal service communication. This documentation covers the public-facing gRPC endpoints available for client applications.
 
 ## Connection
 
 ### Endpoint
 
 ```
-grpc.QuikApp.dev:443
+grpc.QuckApp.dev:443
 ```
 
 ### Authentication
@@ -31,7 +31,7 @@ metadata.add('authorization', 'Bearer <jwt>');
 // common.proto
 syntax = "proto3";
 
-package QuikApp.common;
+package QuckApp.common;
 
 message Timestamp {
   int64 seconds = 1;
@@ -60,7 +60,7 @@ message PaginatedResponse {
 // user.proto
 syntax = "proto3";
 
-package QuikApp.user;
+package QuckApp.user;
 
 service UserService {
   rpc GetUser(GetUserRequest) returns (User);
@@ -114,7 +114,7 @@ message SearchUsersResponse {
 // message.proto
 syntax = "proto3";
 
-package QuikApp.message;
+package QuckApp.message;
 
 service MessageService {
   rpc SendMessage(SendMessageRequest) returns (Message);
@@ -188,7 +188,7 @@ message StreamMessagesRequest {
 // channel.proto
 syntax = "proto3";
 
-package QuikApp.channel;
+package QuckApp.channel;
 
 service ChannelService {
   rpc CreateChannel(CreateChannelRequest) returns (Channel);
@@ -279,8 +279,8 @@ const protoLoader = require('@grpc/proto-loader');
 const packageDefinition = protoLoader.loadSync('message.proto');
 const proto = grpc.loadPackageDefinition(packageDefinition);
 
-const client = new proto.QuikApp.message.MessageService(
-  'grpc.QuikApp.dev:443',
+const client = new proto.QuckApp.message.MessageService(
+  'grpc.QuckApp.dev:443',
   grpc.credentials.createSsl()
 );
 
@@ -306,12 +306,12 @@ import (
     "google.golang.org/grpc"
     "google.golang.org/grpc/credentials"
     "google.golang.org/grpc/metadata"
-    pb "QuikApp/proto/message"
+    pb "QuckApp/proto/message"
 )
 
 func main() {
     creds := credentials.NewTLS(&tls.Config{})
-    conn, _ := grpc.Dial("grpc.QuikApp.dev:443", grpc.WithTransportCredentials(creds))
+    conn, _ := grpc.Dial("grpc.QuckApp.dev:443", grpc.WithTransportCredentials(creds))
     defer conn.Close()
 
     client := pb.NewMessageServiceClient(conn)

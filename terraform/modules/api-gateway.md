@@ -34,14 +34,14 @@ module "api_gateway" {
   # CORS
   enable_cors = true
   cors_allowed_origins = [
-    "https://app.quikapp.com",
-    "https://admin.quikapp.com"
+    "https://app.quckapp.com",
+    "https://admin.quckapp.com"
   ]
   cors_allowed_methods = ["GET", "POST", "PUT", "DELETE"]
   cors_allowed_headers = ["Authorization", "Content-Type"]
 
   # Custom domain
-  custom_domain_name  = "api.quikapp.com"
+  custom_domain_name  = "api.quckapp.com"
   acm_certificate_arn = module.acm.certificate_arn
 
   # Throttling
@@ -243,7 +243,7 @@ integration {
 ```hcl
 # Domain configuration
 domain {
-  domain_name     = "api.quikapp.com"
+  domain_name     = "api.quckapp.com"
   certificate_arn = acm_certificate_arn
   security_policy = "TLS_1_2"
 }
@@ -252,7 +252,7 @@ domain {
 mapping {
   api_id          = api_id
   stage           = stage_id
-  api_mapping_key = "v1"  # api.quikapp.com/v1/...
+  api_mapping_key = "v1"  # api.quckapp.com/v1/...
 }
 ```
 
@@ -262,7 +262,7 @@ mapping {
 # Route 53 record
 resource "aws_route53_record" "api" {
   zone_id = hosted_zone_id
-  name    = "api.quikapp.com"
+  name    = "api.quckapp.com"
   type    = "A"
 
   alias {

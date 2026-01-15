@@ -20,7 +20,7 @@ const categories: DocCategory[] = [
   {
     title: 'Requirements & Planning',
     icon: '📋',
-    description: 'Documents that define what QuikApp should do and why',
+    description: 'Documents that define what QuckApp should do and why',
     items: [
       {
         title: 'Software Requirements Specification (SRS)',
@@ -168,7 +168,7 @@ export default function DocumentationCategories(): React.ReactElement {
       <div className="container">
         <h2 className={styles.sectionTitle}>Documentation Categories</h2>
         <p className={styles.sectionDescription}>
-          Explore QuikApp documentation organized by software development lifecycle phases
+          Explore QuckApp documentation organized by software development lifecycle phases
         </p>
         <div className={styles.grid}>
           {categories.map((category, idx) => (

@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Security Architecture
 
-Comprehensive security implementation across all layers of QuikApp.
+Comprehensive security implementation across all layers of QuckApp.
 
 ## Security Layers
 
@@ -58,8 +58,8 @@ Comprehensive security implementation across all layers of QuikApp.
     "workspaceId": "workspace-uuid",
     "iat": 1699900000,
     "exp": 1699903600,
-    "iss": "QuikApp-auth",
-    "aud": "QuikApp-api"
+    "iss": "QuckApp-auth",
+    "aud": "QuckApp-api"
   }
 }
 ```
@@ -299,12 +299,12 @@ export class User {
 ```typescript
 // Encrypt sensitive data via Vault Transit
 async encryptSensitiveData(data: string): Promise<string> {
-  const result = await this.vaultService.encrypt('QuikApp-key', data);
+  const result = await this.vaultService.encrypt('QuckApp-key', data);
   return result; // vault:v1:encrypted-data
 }
 
 async decryptSensitiveData(ciphertext: string): Promise<string> {
-  return await this.vaultService.decrypt('QuikApp-key', ciphertext);
+  return await this.vaultService.decrypt('QuckApp-key', ciphertext);
 }
 ```
 

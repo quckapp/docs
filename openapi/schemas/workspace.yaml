@@ -31,11 +31,11 @@ Workspace:
       type: string
       format: uri
       description: Workspace icon URL
-      example: "https://cdn.quikapp.io/workspaces/acme/icon.png"
+      example: "https://cdn.quckapp.io/workspaces/acme/icon.png"
     domain:
       type: string
       description: Custom domain for the workspace
-      example: "acme.quikapp.io"
+      example: "acme.quckapp.io"
     plan:
       type: string
       enum: [free, pro, business, enterprise]

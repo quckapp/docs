@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Testing & Quality Overview
 
-Testing and quality documents ensure QuikApp works correctly and meets quality standards.
+Testing and quality documents ensure QuckApp works correctly and meets quality standards.
 
 ## Document Types
 

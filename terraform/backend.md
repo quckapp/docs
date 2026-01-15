@@ -1,6 +1,6 @@
 # Terraform Backend Configuration
 
-This document describes the Terraform remote state backend setup for QuikApp infrastructure.
+This document describes the Terraform remote state backend setup for QuckApp infrastructure.
 
 ## Overview
 
@@ -17,7 +17,7 @@ Terraform state is stored remotely in AWS using:
 │                                                                          │
 │  ┌─────────────────────────────────────────────────────────────────┐   │
 │  │                        S3 Bucket                                 │   │
-│  │              quikapp-terraform-state-{account_id}                │   │
+│  │              quckapp-terraform-state-{account_id}                │   │
 │  │                                                                  │   │
 │  │  ┌──────────────────┐    ┌──────────────────┐                   │   │
 │  │  │ dev/             │    │ prod/            │                   │   │
@@ -31,7 +31,7 @@ Terraform state is stored remotely in AWS using:
 │                                                                          │
 │  ┌─────────────────────────────────────────────────────────────────┐   │
 │  │                    DynamoDB Table                                │   │
-│  │                quikapp-terraform-locks                           │   │
+│  │                quckapp-terraform-locks                           │   │
 │  │                                                                  │   │
 │  │  Purpose: State locking to prevent concurrent modifications      │   │
 │  │  Mode: PAY_PER_REQUEST (on-demand)                              │   │
@@ -40,7 +40,7 @@ Terraform state is stored remotely in AWS using:
 │                                                                          │
 │  ┌─────────────────────────────────────────────────────────────────┐   │
 │  │                    KMS Key (Optional)                            │   │
-│  │              alias/quikapp-terraform-state                       │   │
+│  │              alias/quckapp-terraform-state                       │   │
 │  │                                                                  │   │
 │  │  Purpose: Customer-managed encryption for S3 and DynamoDB        │   │
 │  │  Features: Automatic rotation, audit logging                     │   │
@@ -68,9 +68,9 @@ terraform apply
 ```
 
 This creates:
-- S3 bucket: `quikapp-terraform-state-{account_id}`
-- DynamoDB table: `quikapp-terraform-locks`
-- KMS key (if enabled): `alias/quikapp-terraform-state`
+- S3 bucket: `quckapp-terraform-state-{account_id}`
+- DynamoDB table: `quckapp-terraform-locks`
+- KMS key (if enabled): `alias/quckapp-terraform-state`
 - IAM policy for state access
 - Backend configuration files for each environment
 
@@ -120,11 +120,11 @@ Answer `yes` to migrate existing state to S3.
 ### backend.hcl Format
 
 ```hcl
-bucket         = "quikapp-terraform-state-123456789012"
+bucket         = "quckapp-terraform-state-123456789012"
 key            = "dev/terraform.tfstate"
 region         = "us-east-1"
 encrypt        = true
-dynamodb_table = "quikapp-terraform-locks"
+dynamodb_table = "quckapp-terraform-locks"
 kms_key_id     = "arn:aws:kms:us-east-1:123456789012:key/xxx"  # Optional
 ```
 
@@ -144,7 +144,7 @@ kms_key_id     = "arn:aws:kms:us-east-1:123456789012:key/xxx"  # Optional
 ## State File Structure
 
 ```
-s3://quikapp-terraform-state-{account_id}/
+s3://quckapp-terraform-state-{account_id}/
 ├── dev/
 │   └── terraform.tfstate
 ├── prod/
@@ -184,7 +184,7 @@ The backend module creates an IAM policy for state access:
     {
       "Effect": "Allow",
       "Action": ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem"],
-      "Resource": "arn:aws:dynamodb:*:*:table/quikapp-terraform-locks"
+      "Resource": "arn:aws:dynamodb:*:*:table/quckapp-terraform-locks"
     }
   ]
 }
@@ -233,13 +233,13 @@ To recover from a corrupted state:
    ```bash
    # List versions
    aws s3api list-object-versions \
-     --bucket quikapp-terraform-state-xxx \
+     --bucket quckapp-terraform-state-xxx \
      --prefix dev/terraform.tfstate
 
    # Restore previous version
    aws s3api copy-object \
-     --bucket quikapp-terraform-state-xxx \
-     --copy-source quikapp-terraform-state-xxx/dev/terraform.tfstate?versionId=VERSION_ID \
+     --bucket quckapp-terraform-state-xxx \
+     --copy-source quckapp-terraform-state-xxx/dev/terraform.tfstate?versionId=VERSION_ID \
      --key dev/terraform.tfstate
    ```
 
@@ -264,7 +264,7 @@ terraform state push state.json
 
 ## Workspaces vs Separate State Files
 
-QuikApp uses **separate state files** (recommended):
+QuckApp uses **separate state files** (recommended):
 
 | Approach | Pros | Cons |
 |----------|------|------|
@@ -294,8 +294,8 @@ Lock Info:
 2. If stuck, check who has the lock:
    ```bash
    aws dynamodb get-item \
-     --table-name quikapp-terraform-locks \
-     --key '{"LockID":{"S":"quikapp-terraform-state-xxx/dev/terraform.tfstate"}}'
+     --table-name quckapp-terraform-locks \
+     --key '{"LockID":{"S":"quckapp-terraform-state-xxx/dev/terraform.tfstate"}}'
    ```
 3. Force unlock if necessary:
    ```bash

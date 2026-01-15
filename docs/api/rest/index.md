@@ -4,12 +4,12 @@ sidebar_position: 1
 
 # REST API
 
-QuikApp provides a comprehensive REST API for all platform operations.
+QuckApp provides a comprehensive REST API for all platform operations.
 
 ## Base URL
 
 ```
-https://api.QuikApp.dev/api/v1
+https://api.QuckApp.dev/api/v1
 ```
 
 ## Authentication

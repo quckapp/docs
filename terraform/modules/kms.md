@@ -62,7 +62,7 @@ provider "aws" {
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────┐  │
 │  │   S3 Media Key  │  │  Secrets Key    │  │ Database Key│  │
 │  │                 │  │                 │  │             │  │
-│  │  alias/quikapp- │  │  alias/quikapp- │  │alias/quikapp│  │
+│  │  alias/quckapp- │  │  alias/quckapp- │  │alias/quckapp│  │
 │  │  s3-media-{env} │  │  secrets-{env}  │  │-db-{env}    │  │
 │  └────────┬────────┘  └────────┬────────┘  └──────┬──────┘  │
 │           │                    │                   │         │
@@ -82,7 +82,7 @@ Primary key for encrypting media objects in S3:
 
 ```hcl
 key {
-  description         = "QuikApp S3 media encryption key"
+  description         = "QuckApp S3 media encryption key"
   enable_key_rotation = true
   multi_region        = true  # For cross-region replication
 
@@ -91,7 +91,7 @@ key {
 }
 
 alias {
-  name = "alias/quikapp-s3-media-{env}"
+  name = "alias/quckapp-s3-media-{env}"
 }
 ```
 
@@ -101,7 +101,7 @@ For encrypting secrets in Secrets Manager:
 
 ```hcl
 key {
-  description         = "QuikApp application secrets key"
+  description         = "QuckApp application secrets key"
   enable_key_rotation = true
 
   # Secrets Manager access
@@ -109,7 +109,7 @@ key {
 }
 
 alias {
-  name = "alias/quikapp-secrets-{env}"
+  name = "alias/quckapp-secrets-{env}"
 }
 ```
 
@@ -119,7 +119,7 @@ For encrypting RDS, Aurora, and DynamoDB:
 
 ```hcl
 key {
-  description         = "QuikApp database encryption key"
+  description         = "QuckApp database encryption key"
   enable_key_rotation = true
 
   # Database service access
@@ -127,7 +127,7 @@ key {
 }
 
 alias {
-  name = "alias/quikapp-db-{env}"
+  name = "alias/quckapp-db-{env}"
 }
 ```
 

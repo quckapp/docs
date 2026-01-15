@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Nginx Configuration
 
-Nginx serves as the reverse proxy and load balancer for QuikApp, handling SSL termination, rate limiting, and routing.
+Nginx serves as the reverse proxy and load balancer for QuckApp, handling SSL termination, rate limiting, and routing.
 
 ## Main Configuration
 
@@ -109,22 +109,22 @@ http {
 ## Server Configuration
 
 ```nginx
-# nginx/conf.d/QuikApp.conf
+# nginx/conf.d/QuckApp.conf
 
 # HTTP to HTTPS Redirect
 server {
     listen 80;
-    server_name QuikApp.dev www.QuikApp.dev api.QuikApp.dev;
+    server_name QuckApp.dev www.QuckApp.dev api.QuckApp.dev;
     return 301 https://$server_name$request_uri;
 }
 
 # Main API Server
 server {
     listen 443 ssl http2;
-    server_name api.QuikApp.dev;
+    server_name api.QuckApp.dev;
 
-    ssl_certificate /etc/nginx/ssl/QuikApp.crt;
-    ssl_certificate_key /etc/nginx/ssl/QuikApp.key;
+    ssl_certificate /etc/nginx/ssl/QuckApp.crt;
+    ssl_certificate_key /etc/nginx/ssl/QuckApp.key;
 
     # Connection limits
     limit_conn conn_limit 20;
@@ -222,10 +222,10 @@ server {
 # WebSocket Server
 server {
     listen 443 ssl http2;
-    server_name realtime.QuikApp.dev;
+    server_name realtime.QuckApp.dev;
 
-    ssl_certificate /etc/nginx/ssl/QuikApp.crt;
-    ssl_certificate_key /etc/nginx/ssl/QuikApp.key;
+    ssl_certificate /etc/nginx/ssl/QuckApp.crt;
+    ssl_certificate_key /etc/nginx/ssl/QuckApp.key;
 
     location /socket {
         proxy_pass http://websocket;
@@ -256,10 +256,10 @@ server {
 # CDN / Static Assets
 server {
     listen 443 ssl http2;
-    server_name cdn.QuikApp.dev;
+    server_name cdn.QuckApp.dev;
 
-    ssl_certificate /etc/nginx/ssl/QuikApp.crt;
-    ssl_certificate_key /etc/nginx/ssl/QuikApp.key;
+    ssl_certificate /etc/nginx/ssl/QuckApp.crt;
+    ssl_certificate_key /etc/nginx/ssl/QuckApp.key;
 
     root /var/www/cdn;
 
@@ -351,7 +351,7 @@ upstream backend {
 apt-get install certbot python3-certbot-nginx
 
 # Obtain certificate
-certbot --nginx -d api.QuikApp.dev -d realtime.QuikApp.dev -d cdn.QuikApp.dev
+certbot --nginx -d api.QuckApp.dev -d realtime.QuckApp.dev -d cdn.QuckApp.dev
 
 # Auto-renewal
 certbot renew --dry-run
@@ -361,7 +361,7 @@ certbot renew --dry-run
 
 ```
 /etc/nginx/ssl/
-├── QuikApp.crt      # Certificate
-├── QuikApp.key      # Private key
-└── QuikApp.chain    # Certificate chain
+├── QuckApp.crt      # Certificate
+├── QuckApp.key      # Private key
+└── QuckApp.chain    # Certificate chain
 ```

@@ -48,7 +48,7 @@ interface NotificationPayload {
 ## Kafka Consumer
 
 ```typescript
-@EventPattern('QuikApp.notifications.events')
+@EventPattern('QuckApp.notifications.events')
 async handleNotification(payload: NotificationPayload) {
   const userPrefs = await this.getUserPreferences(payload.userId);
 
@@ -62,7 +62,7 @@ async handleNotification(payload: NotificationPayload) {
 
 ## MongoDB Database Integration
 
-QuikApp Notification Service uses MongoDB for flexible document storage, enabling efficient handling of diverse notification types, delivery tracking, and user preferences with varying schemas.
+QuckApp Notification Service uses MongoDB for flexible document storage, enabling efficient handling of diverse notification types, delivery tracking, and user preferences with varying schemas.
 
 ### MongoDB Architecture
 
@@ -98,7 +98,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('MONGODB_URI'),
-        dbName: configService.get<string>('MONGODB_DATABASE', 'quikapp_notifications'),
+        dbName: configService.get<string>('MONGODB_DATABASE', 'quckapp_notifications'),
 
         // Connection pool settings
         maxPoolSize: 100,
@@ -778,7 +778,7 @@ version: '3.8'
 services:
   mongodb-primary:
     image: mongo:7.0
-    container_name: quikapp-mongo-primary
+    container_name: quckapp-mongo-primary
     command: mongod --replSet rs0 --bind_ip_all
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
@@ -788,7 +788,7 @@ services:
     volumes:
       - mongodb_primary_data:/data/db
     networks:
-      - quikapp-network
+      - quckapp-network
     healthcheck:
       test: mongosh --eval 'db.runCommand("ping").ok' --quiet
       interval: 10s
@@ -797,7 +797,7 @@ services:
 
   mongodb-secondary1:
     image: mongo:7.0
-    container_name: quikapp-mongo-secondary1
+    container_name: quckapp-mongo-secondary1
     command: mongod --replSet rs0 --bind_ip_all
     ports:
       - "27018:27017"
@@ -807,11 +807,11 @@ services:
       mongodb-primary:
         condition: service_healthy
     networks:
-      - quikapp-network
+      - quckapp-network
 
   mongodb-secondary2:
     image: mongo:7.0
-    container_name: quikapp-mongo-secondary2
+    container_name: quckapp-mongo-secondary2
     command: mongod --replSet rs0 --bind_ip_all
     ports:
       - "27019:27017"
@@ -821,7 +821,7 @@ services:
       mongodb-primary:
         condition: service_healthy
     networks:
-      - quikapp-network
+      - quckapp-network
 
 volumes:
   mongodb_primary_data:
@@ -829,7 +829,7 @@ volumes:
   mongodb_secondary2_data:
 
 networks:
-  quikapp-network:
+  quckapp-network:
     external: true
 ```
 
@@ -839,8 +839,8 @@ networks:
 apiVersion: psmdb.percona.com/v1
 kind: PerconaServerMongoDB
 metadata:
-  name: quikapp-mongodb
-  namespace: quikapp
+  name: quckapp-mongodb
+  namespace: quckapp
 spec:
   crVersion: 1.15.0
   image: percona/percona-server-mongodb:7.0.4
@@ -868,7 +868,7 @@ spec:
               storage: 100Gi
 
   secrets:
-    users: quikapp-mongodb-secrets
+    users: quckapp-mongodb-secrets
 
   backup:
     enabled: true
@@ -877,7 +877,7 @@ spec:
       s3-backup:
         type: s3
         s3:
-          bucket: quikapp-mongodb-backups
+          bucket: quckapp-mongodb-backups
           region: us-east-1
           credentialsSecret: aws-s3-secret
     tasks:
@@ -892,8 +892,8 @@ spec:
 
 ```bash
 # MongoDB Connection
-MONGODB_URI=mongodb://quikapp:password@mongodb-primary:27017,mongodb-secondary1:27017,mongodb-secondary2:27017/quikapp_notifications?replicaSet=rs0&readPreference=secondaryPreferred
-MONGODB_DATABASE=quikapp_notifications
+MONGODB_URI=mongodb://quckapp:password@mongodb-primary:27017,mongodb-secondary1:27017,mongodb-secondary2:27017/quckapp_notifications?replicaSet=rs0&readPreference=secondaryPreferred
+MONGODB_DATABASE=quckapp_notifications
 
 # Connection Pool
 MONGODB_MAX_POOL_SIZE=100

@@ -23,7 +23,7 @@ module "rds" {
   source = "../../modules/rds"
 
   environment = "prod"
-  identifier  = "quikapp-prod"
+  identifier  = "quckapp-prod"
 
   # Engine
   engine         = "postgres"
@@ -35,8 +35,8 @@ module "rds" {
   storage_type      = "gp3"
 
   # Database
-  database_name   = "quikapp"
-  master_username = "quikapp_admin"
+  database_name   = "quckapp"
+  master_username = "quckapp_admin"
   manage_master_password = true  # Use Secrets Manager
 
   # Network
@@ -61,7 +61,7 @@ module "rds" {
   source = "../../modules/rds"
 
   environment = "prod"
-  identifier  = "quikapp-prod"
+  identifier  = "quckapp-prod"
 
   # Engine
   engine         = "aurora-postgresql"

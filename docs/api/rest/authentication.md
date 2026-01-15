@@ -77,7 +77,7 @@ Authorization: Bearer <access_token>
 ```json
 {
   "secret": "JBSWY3DPEHPK3PXP",
-  "qrCode": "otpauth://totp/QuikApp:user@example.com?secret=..."
+  "qrCode": "otpauth://totp/QuckApp:user@example.com?secret=..."
 }
 ```
 

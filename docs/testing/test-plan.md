@@ -8,7 +8,7 @@ sidebar_position: 2
 
 | Field | Value |
 |-------|-------|
-| **Document ID** | QUIKAPP-TP-001 |
+| **Document ID** | QUCKAPP-TP-001 |
 | **Version** | 1.5 |
 | **Status** | Approved |
 | **Last Updated** | 2024-01-15 |
@@ -17,7 +17,7 @@ sidebar_position: 2
 ## 1. Introduction
 
 ### 1.1 Purpose
-This test plan defines the testing approach, scope, resources, and schedule for QuikApp releases.
+This test plan defines the testing approach, scope, resources, and schedule for QuckApp releases.
 
 ### 1.2 Scope
 

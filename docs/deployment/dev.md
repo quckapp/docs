@@ -10,8 +10,8 @@ The development environment serves as the integration testing ground where all f
 
 | Aspect | Configuration |
 |--------|---------------|
-| **URL** | `https://dev.QuikApp.com` |
-| **API** | `https://api.dev.QuikApp.com` |
+| **URL** | `https://dev.QuckApp.com` |
+| **API** | `https://api.dev.QuckApp.com` |
 | **Purpose** | Integration testing, feature validation |
 | **Data** | Synthetic test data |
 | **Deployment** | Automatic on commit to `develop` branch |
@@ -44,7 +44,7 @@ The development environment serves as the integration testing ground where all f
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: QuikApp-dev
+namespace: QuckApp
 
 resources:
   - ../../base
@@ -58,9 +58,9 @@ replicas:
     count: 1
 
 images:
-  - name: registry.QuikApp.dev/backend
+  - name: registry.QuckApp.dev/backend
     newTag: develop
-  - name: registry.QuikApp.dev/auth-service
+  - name: registry.QuckApp.dev/auth-service
     newTag: develop
 
 configMapGenerator:
@@ -87,30 +87,30 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: dev-config
-  namespace: QuikApp-dev
+  namespace: QuckApp
 data:
   # Environment
   ENVIRONMENT: "dev"
   LOG_LEVEL: "debug"
 
   # URLs
-  API_URL: "https://api.dev.QuikApp.com"
-  WS_URL: "wss://ws.dev.QuikApp.com"
-  CDN_URL: "https://cdn.dev.QuikApp.com"
+  API_URL: "https://api.dev.QuckApp.com"
+  WS_URL: "wss://ws.dev.QuckApp.com"
+  CDN_URL: "https://cdn.dev.QuckApp.com"
 
   # Database endpoints
-  POSTGRES_HOST: "QuikApp-dev.cluster-xxxxx.us-east-1.rds.amazonaws.com"
-  MYSQL_HOST: "QuikApp-dev-mysql.cluster-xxxxx.us-east-1.rds.amazonaws.com"
-  MONGODB_HOST: "QuikApp-dev-docdb.cluster-xxxxx.us-east-1.docdb.amazonaws.com"
+  POSTGRES_HOST: "QuckApp.cluster-xxxxx.us-east-1.rds.amazonaws.com"
+  MYSQL_HOST: "QuckApp-mysql.cluster-xxxxx.us-east-1.rds.amazonaws.com"
+  MONGODB_HOST: "QuckApp-docdb.cluster-xxxxx.us-east-1.docdb.amazonaws.com"
 
   # Cache
-  REDIS_HOST: "QuikApp-dev.xxxxx.cache.amazonaws.com"
+  REDIS_HOST: "QuckApp.xxxxx.cache.amazonaws.com"
 
   # Kafka
-  KAFKA_BROKERS: "b-1.QuikApp-dev.xxxxx.kafka.us-east-1.amazonaws.com:9092"
+  KAFKA_BROKERS: "b-1.QuckApp.xxxxx.kafka.us-east-1.amazonaws.com:9092"
 
   # Elasticsearch
-  ELASTICSEARCH_URL: "https://QuikApp-dev.us-east-1.es.amazonaws.com"
+  ELASTICSEARCH_URL: "https://QuckApp.us-east-1.es.amazonaws.com"
 
   # Feature Flags
   ENABLE_SWAGGER: "true"
@@ -131,8 +131,8 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  EKS_CLUSTER: QuikApp-dev
-  REGISTRY: registry.QuikApp.dev
+  EKS_CLUSTER: QuckApp
+  REGISTRY: registry.QuckApp.dev
 
 jobs:
   build-and-deploy:
@@ -163,11 +163,11 @@ jobs:
       - name: Deploy to Dev
         run: |
           kubectl apply -k k8s/overlays/dev
-          kubectl rollout status deployment/backend -n QuikApp-dev
+          kubectl rollout status deployment/backend -n QuckApp
 
       - name: Run smoke tests
         run: |
-          ./scripts/smoke-tests.sh https://api.dev.QuikApp.com
+          ./scripts/smoke-tests.sh https://api.dev.QuckApp.com
 
       - name: Notify Slack
         if: always()
@@ -185,15 +185,15 @@ jobs:
 
 ```bash
 # Connect to Dev PostgreSQL
-psql -h QuikApp-dev.cluster-xxxxx.us-east-1.rds.amazonaws.com \
-     -U QuikApp -d QuikApp
+psql -h QuckApp.cluster-xxxxx.us-east-1.rds.amazonaws.com \
+     -U QuckApp -d QuckApp
 
 # Run migrations
-kubectl exec -it deployment/backend -n QuikApp-dev -- \
+kubectl exec -it deployment/backend -n QuckApp -- \
   npm run migration:run
 
 # Reset database (caution!)
-kubectl exec -it deployment/backend -n QuikApp-dev -- \
+kubectl exec -it deployment/backend -n QuckApp -- \
   npm run db:reset && npm run db:seed
 ```
 
@@ -203,7 +203,7 @@ kubectl exec -it deployment/backend -n QuikApp-dev -- \
 
 ```bash
 # Connect to Dev VPN
-openvpn --config QuikApp-dev.ovpn
+openvpn --config QuckApp.ovpn
 
 # Or AWS Client VPN
 aws ec2 create-client-vpn-connection \
@@ -214,22 +214,22 @@ aws ec2 create-client-vpn-connection \
 
 ```bash
 # Configure kubectl for Dev
-aws eks update-kubeconfig --name QuikApp-dev --region us-east-1
+aws eks update-kubeconfig --name QuckApp --region us-east-1
 
 # Verify access
-kubectl get pods -n QuikApp-dev
+kubectl get pods -n QuckApp
 
 # Port forward for debugging
-kubectl port-forward svc/backend 3000:3000 -n QuikApp-dev
+kubectl port-forward svc/backend 3000:3000 -n QuckApp
 ```
 
 ## Monitoring
 
 | Tool | URL |
 |------|-----|
-| Grafana | https://grafana.dev.QuikApp.com |
-| Jaeger | https://jaeger.dev.QuikApp.com |
-| Kibana | https://logs.dev.QuikApp.com |
+| Grafana | https://grafana.dev.QuckApp.com |
+| Jaeger | https://jaeger.dev.QuckApp.com |
+| Kibana | https://logs.dev.QuckApp.com |
 
 ## Data Reset Schedule
 
@@ -241,7 +241,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: dev-data-reset
-  namespace: QuikApp-dev
+  namespace: QuckApp
 spec:
   schedule: "0 0 * * 0"  # Every Sunday at midnight
   jobTemplate:
@@ -250,7 +250,7 @@ spec:
         spec:
           containers:
             - name: data-reset
-              image: registry.QuikApp.dev/db-tools:latest
+              image: registry.QuckApp.dev/db-tools:latest
               command: ["/scripts/reset-dev-data.sh"]
           restartPolicy: OnFailure
 ```

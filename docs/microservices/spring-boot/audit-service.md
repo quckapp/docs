@@ -66,7 +66,7 @@ public enum AuditSeverity {
 ## Kafka Consumer
 
 ```java
-@KafkaListener(topics = "QuikApp.audit.events")
+@KafkaListener(topics = "QuckApp.audit.events")
 public void handleAuditEvent(AuditEvent event) {
     AuditLog log = AuditLog.builder()
         .action(event.getAction())

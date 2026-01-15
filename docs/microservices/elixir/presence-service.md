@@ -60,12 +60,12 @@ config :presence_service, :redis,
 # Redis Cluster configuration
 config :presence_service, :redis_cluster,
   cluster: [
-    [host: "redis-1.quikapp.internal", port: 6379],
-    [host: "redis-2.quikapp.internal", port: 6379],
-    [host: "redis-3.quikapp.internal", port: 6379],
-    [host: "redis-4.quikapp.internal", port: 6379],
-    [host: "redis-5.quikapp.internal", port: 6379],
-    [host: "redis-6.quikapp.internal", port: 6379]
+    [host: "redis-1.quckapp.internal", port: 6379],
+    [host: "redis-2.quckapp.internal", port: 6379],
+    [host: "redis-3.quckapp.internal", port: 6379],
+    [host: "redis-4.quckapp.internal", port: 6379],
+    [host: "redis-5.quckapp.internal", port: 6379],
+    [host: "redis-6.quckapp.internal", port: 6379]
   ],
   password: System.get_env("REDIS_PASSWORD"),
   pool_size: 5
@@ -840,12 +840,12 @@ volumes:
 
 ```conf
 # sentinel.conf
-sentinel monitor quikapp-master redis-master 6379 2
-sentinel down-after-milliseconds quikapp-master 5000
-sentinel failover-timeout quikapp-master 60000
-sentinel parallel-syncs quikapp-master 1
+sentinel monitor quckapp-master redis-master 6379 2
+sentinel down-after-milliseconds quckapp-master 5000
+sentinel failover-timeout quckapp-master 60000
+sentinel parallel-syncs quckapp-master 1
 
-sentinel auth-pass quikapp-master your-redis-password
+sentinel auth-pass quckapp-master your-redis-password
 ```
 
 ### Production Kubernetes Configuration
@@ -854,7 +854,7 @@ sentinel auth-pass quikapp-master your-redis-password
 apiVersion: redis.redis.opstreelabs.in/v1beta2
 kind: RedisCluster
 metadata:
-  name: quikapp-redis
+  name: quckapp-redis
   namespace: presence
 spec:
   clusterSize: 3

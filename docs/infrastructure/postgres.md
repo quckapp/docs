@@ -4,7 +4,7 @@ sidebar_position: 8
 
 # PostgreSQL
 
-QuikApp uses PostgreSQL as the primary relational database for most microservices, providing ACID compliance, advanced querying, and reliable data persistence.
+QuckApp uses PostgreSQL as the primary relational database for most microservices, providing ACID compliance, advanced querying, and reliable data persistence.
 
 ## Architecture
 
@@ -37,22 +37,22 @@ QuikApp uses PostgreSQL as the primary relational database for most microservice
 
 | Service | Database | Purpose |
 |---------|----------|---------|
-| **workspace-service** (Go) | `QuikApp_workspace` | Workspace metadata, membership |
-| **channel-service** (Go) | `QuikApp_channel` | Channels, DMs, permissions |
-| **thread-service** (Go) | `QuikApp_thread` | Thread metadata, replies |
-| **bookmark-service** (Go) | `QuikApp_bookmark` | User bookmarks |
-| **reminder-service** (Go) | `QuikApp_reminder` | Scheduled reminders |
-| **analytics-service** (Python) | `QuikApp_analytics` | Usage metrics, reports |
-| **export-service** (Python) | `QuikApp_export` | Export jobs, history |
-| **integration-service** (Python) | `QuikApp_integration` | Third-party integrations |
-| **backend-gateway** (NestJS) | `QuikApp_main` | Sessions, cache metadata |
+| **workspace-service** (Go) | `QuckApp_workspace` | Workspace metadata, membership |
+| **channel-service** (Go) | `QuckApp_channel` | Channels, DMs, permissions |
+| **thread-service** (Go) | `QuckApp_thread` | Thread metadata, replies |
+| **bookmark-service** (Go) | `QuckApp_bookmark` | User bookmarks |
+| **reminder-service** (Go) | `QuckApp_reminder` | Scheduled reminders |
+| **analytics-service** (Python) | `QuckApp_analytics` | Usage metrics, reports |
+| **export-service** (Python) | `QuckApp_export` | Export jobs, history |
+| **integration-service** (Python) | `QuckApp_integration` | Third-party integrations |
+| **backend-gateway** (NestJS) | `QuckApp_main` | Sessions, cache metadata |
 
 ## Database Schema
 
 ### Workspace Database
 
 ```sql
--- QuikApp_workspace
+-- QuckApp_workspace
 
 CREATE TABLE workspaces (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -100,7 +100,7 @@ CREATE INDEX idx_workspace_members_workspace ON workspace_members(workspace_id);
 ### Channel Database
 
 ```sql
--- QuikApp_channel
+-- QuckApp_channel
 
 CREATE TABLE channels (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -146,7 +146,7 @@ CREATE INDEX idx_channel_members_channel ON channel_members(channel_id);
 ### Analytics Database
 
 ```sql
--- QuikApp_analytics
+-- QuckApp_analytics
 
 CREATE TABLE daily_active_users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -214,21 +214,21 @@ CREATE INDEX idx_events_workspace ON events(workspace_id, created_at);
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: QuikApp-postgres
+    container_name: QuckApp-postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-QuikApp}
+      POSTGRES_USER: ${POSTGRES_USER:-QuckApp}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
-      POSTGRES_DB: ${POSTGRES_DB:-QuikApp}
-      POSTGRES_MULTIPLE_DATABASES: QuikApp_workspace,QuikApp_channel,QuikApp_analytics
+      POSTGRES_DB: ${POSTGRES_DB:-QuckApp}
+      POSTGRES_MULTIPLE_DATABASES: QuckApp_workspace,QuckApp_channel,QuckApp_analytics
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts/postgres:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
-      - QuikApp-network
+      - QuckApp-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U QuikApp"]
+      test: ["CMD-SHELL", "pg_isready -U QuckApp"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -324,9 +324,9 @@ func NewDBConfig() *DBConfig {
     return &DBConfig{
         Host:         getEnv("DB_HOST", "localhost"),
         Port:         getEnv("DB_PORT", "5432"),
-        User:         getEnv("DB_USER", "QuikApp"),
+        User:         getEnv("DB_USER", "QuckApp"),
         Password:     getEnv("DB_PASSWORD", "secret"),
-        Database:     getEnv("DB_NAME", "QuikApp_workspace"),
+        Database:     getEnv("DB_NAME", "QuckApp_workspace"),
         SSLMode:      getEnv("DB_SSLMODE", "disable"),
         MaxOpenConns: 25,
         MaxIdleConns: 10,
@@ -373,7 +373,7 @@ from sqlalchemy.pool import QueuePool
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://QuikApp:secret@localhost:5432/QuikApp_analytics"
+    "postgresql://QuckApp:secret@localhost:5432/QuckApp_analytics"
 )
 
 engine = create_engine(
@@ -407,9 +407,9 @@ export const databaseConfig: TypeOrmModuleOptions = {
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT, 10) || 5432,
-  username: process.env.DB_USER || 'QuikApp',
+  username: process.env.DB_USER || 'QuckApp',
   password: process.env.DB_PASSWORD || 'secret',
-  database: process.env.DB_NAME || 'QuikApp_main',
+  database: process.env.DB_NAME || 'QuckApp_main',
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: process.env.NODE_ENV !== 'production',
   logging: process.env.NODE_ENV !== 'production',
@@ -434,10 +434,10 @@ go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@lat
 migrate create -ext sql -dir migrations -seq create_workspaces
 
 # Run migrations
-migrate -path migrations -database "postgresql://QuikApp:secret@localhost:5432/QuikApp_workspace?sslmode=disable" up
+migrate -path migrations -database "postgresql://QuckApp:secret@localhost:5432/QuckApp_workspace?sslmode=disable" up
 
 # Rollback
-migrate -path migrations -database "postgresql://QuikApp:secret@localhost:5432/QuikApp_workspace?sslmode=disable" down 1
+migrate -path migrations -database "postgresql://QuckApp:secret@localhost:5432/QuckApp_workspace?sslmode=disable" down 1
 ```
 
 ### Using Alembic (Python Services)
@@ -589,13 +589,13 @@ FROM pg_statio_user_tables;
 services:
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter:v0.14.0
-    container_name: QuikApp-postgres-exporter
+    container_name: QuckApp-postgres-exporter
     environment:
-      DATA_SOURCE_NAME: "postgresql://QuikApp:secret@postgres:5432/QuikApp?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://QuckApp:secret@postgres:5432/QuckApp?sslmode=disable"
     ports:
       - "9187:9187"
     networks:
-      - QuikApp-network
+      - QuckApp-network
 ```
 
 ## Backup & Recovery
@@ -608,17 +608,17 @@ services:
 
 BACKUP_DIR="/backups/postgres"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-DATABASES="QuikApp_workspace QuikApp_channel QuikApp_analytics"
+DATABASES="QuckApp_workspace QuckApp_channel QuckApp_analytics"
 
 for DB in $DATABASES; do
-    pg_dump -h localhost -U QuikApp -Fc $DB > "$BACKUP_DIR/${DB}_${TIMESTAMP}.dump"
+    pg_dump -h localhost -U QuckApp -Fc $DB > "$BACKUP_DIR/${DB}_${TIMESTAMP}.dump"
 done
 
 # Keep only last 30 days
 find $BACKUP_DIR -name "*.dump" -mtime +30 -delete
 
 # Upload to S3
-aws s3 sync $BACKUP_DIR s3://QuikApp-backups/postgres/
+aws s3 sync $BACKUP_DIR s3://QuckApp-backups/postgres/
 ```
 
 ### Point-in-Time Recovery
@@ -626,10 +626,10 @@ aws s3 sync $BACKUP_DIR s3://QuikApp-backups/postgres/
 ```bash
 # Enable WAL archiving in postgresql.conf
 archive_mode = on
-archive_command = 'aws s3 cp %p s3://QuikApp-wal-archive/%f'
+archive_command = 'aws s3 cp %p s3://QuckApp-wal-archive/%f'
 
 # Restore to specific point in time
-pg_restore -h localhost -U QuikApp -d QuikApp_workspace \
+pg_restore -h localhost -U QuckApp -d QuckApp_workspace \
     --target-time="2024-01-15 10:30:00" \
-    /backups/postgres/QuikApp_workspace_20240115.dump
+    /backups/postgres/QuckApp_workspace_20240115.dump
 ```

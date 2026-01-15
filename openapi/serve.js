@@ -93,7 +93,7 @@ server.listen(PORT, () => {
   console.log(`
 ╔════════════════════════════════════════════════════════════╗
 ║                                                            ║
-║   QuikApp API Documentation Server                         ║
+║   QuckApp API Documentation Server                         ║
 ║                                                            ║
 ║   Swagger UI:  http://localhost:${PORT}                       ║
 ║   OpenAPI Spec: http://localhost:${PORT}/openapi.yaml          ║

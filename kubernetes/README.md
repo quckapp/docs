@@ -1,6 +1,6 @@
 # Kubernetes Deployment Guide
 
-This guide covers deploying QuikApp to Kubernetes using the manifests in the `k8s/` directory.
+This guide covers deploying QuckApp to Kubernetes using the manifests in the `k8s/` directory.
 
 ## Architecture Overview
 
@@ -14,14 +14,14 @@ This guide covers deploying QuikApp to Kubernetes using the manifests in the `k8
                                     │  ┌──────────────────┴─────────────────────┐ │
                                     │  │           EKS Cluster                   │ │
                                     │  │  ┌─────────────────────────────────────┐│ │
-                                    │  │  │         quikapp-prod namespace      ││ │
+                                    │  │  │         quckapp-prod namespace      ││ │
                                     │  │  │                                     ││ │
                                     │  │  │  ┌─────────┐  ┌─────────┐          ││ │
                                     │  │  │  │ API Pod │  │ API Pod │  (HPA)   ││ │
                                     │  │  │  └────┬────┘  └────┬────┘          ││ │
                                     │  │  │       │            │               ││ │
                                     │  │  │  ┌────┴────────────┴────┐          ││ │
-                                    │  │  │  │    quikapp-api svc   │          ││ │
+                                    │  │  │  │    quckapp-api svc   │          ││ │
                                     │  │  │  └──────────────────────┘          ││ │
                                     │  │  │                                     ││ │
                                     │  │  │  ┌──────────┐ ┌──────────┐ (HPA)   ││ │
@@ -64,7 +64,7 @@ This guide covers deploying QuikApp to Kubernetes using the manifests in the `k8
 
 ```bash
 # For EKS
-aws eks update-kubeconfig --name quikapp-dev --region us-east-1
+aws eks update-kubeconfig --name quckapp --region us-east-1
 
 # Verify connection
 kubectl cluster-info
@@ -78,7 +78,7 @@ kubectl get nodes
 helm repo add eks https://aws.github.io/eks-charts
 helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   -n kube-system \
-  --set clusterName=quikapp-dev
+  --set clusterName=quckapp
 
 # External Secrets Operator (prod only)
 helm repo add external-secrets https://charts.external-secrets.io
@@ -94,11 +94,11 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
 ### 3. Create Image Pull Secret (if using private registry)
 
 ```bash
-kubectl create secret docker-registry quikapp-registry \
+kubectl create secret docker-registry quckapp-registry \
   --docker-server=123456789.dkr.ecr.us-east-1.amazonaws.com \
   --docker-username=AWS \
   --docker-password=$(aws ecr get-login-password) \
-  -n quikapp-dev
+  -n quckapp
 ```
 
 ## Deployment
@@ -113,7 +113,7 @@ kubectl apply -f k8s/overlays/dev/namespace.yaml
 kubectl apply -k k8s/overlays/dev
 
 # Verify deployment
-kubectl get all -n quikapp-dev
+kubectl get all -n quckapp
 ```
 
 ### Production Environment
@@ -126,13 +126,13 @@ kubectl apply -f k8s/overlays/prod/namespace.yaml
 kubectl apply -f k8s/overlays/prod/external-secrets.yaml
 
 # Wait for secrets to sync
-kubectl wait --for=condition=SecretSynced externalsecret/quikapp-secrets -n quikapp-prod
+kubectl wait --for=condition=SecretSynced externalsecret/quckapp-secrets -n quckapp-prod
 
 # Deploy all resources
 kubectl apply -k k8s/overlays/prod
 
 # Verify deployment
-kubectl get all -n quikapp-prod
+kubectl get all -n quckapp-prod
 ```
 
 ## Resource Details
@@ -150,18 +150,18 @@ kubectl get all -n quikapp-prod
 
 | Service | Type | Port | Endpoint |
 |---------|------|------|----------|
-| quikapp-api | ClusterIP | 80 | Internal only |
-| quikapp-api-headless | ClusterIP (None) | 3000 | Service discovery |
+| quckapp-api | ClusterIP | 80 | Internal only |
+| quckapp-api-headless | ClusterIP (None) | 3000 | Service discovery |
 
 ### Ingress
 
 **Dev (nginx)**:
-- URL: `https://api-dev.quikapp.com`
+- URL: `https://api-dev.quckapp.com`
 - TLS: Let's Encrypt or self-signed
 - Rate limiting: 100 req/s
 
 **Prod (ALB)**:
-- URL: `https://api.quikapp.com`
+- URL: `https://api.quckapp.com`
 - TLS: ACM certificate
 - WAF: Enabled
 - Shield: Optional
@@ -174,7 +174,7 @@ Production uses IRSA for AWS access:
 
 ```yaml
 # ServiceAccount annotation
-eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/quikapp-prod-api-role
+eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/quckapp-prod-api-role
 ```
 
 Required IAM policies:
@@ -256,32 +256,32 @@ Import dashboards for:
 
 ```bash
 # Update image
-kubectl set image deployment/prod-quikapp-api \
-  api=123456789.dkr.ecr.us-east-1.amazonaws.com/quikapp/api:v1.2.0 \
-  -n quikapp-prod
+kubectl set image deployment/prod-quckapp-api \
+  api=123456789.dkr.ecr.us-east-1.amazonaws.com/quckapp/api:v1.2.0 \
+  -n quckapp-prod
 
 # Watch rollout
-kubectl rollout status deployment/prod-quikapp-api -n quikapp-prod
+kubectl rollout status deployment/prod-quckapp-api -n quckapp-prod
 ```
 
 ### Rollback
 
 ```bash
 # Rollback to previous version
-kubectl rollout undo deployment/prod-quikapp-api -n quikapp-prod
+kubectl rollout undo deployment/prod-quckapp-api -n quckapp-prod
 
 # Rollback to specific revision
-kubectl rollout undo deployment/prod-quikapp-api --to-revision=3 -n quikapp-prod
+kubectl rollout undo deployment/prod-quckapp-api --to-revision=3 -n quckapp-prod
 ```
 
 ### Scaling
 
 ```bash
 # Manual scale
-kubectl scale deployment/prod-quikapp-worker --replicas=10 -n quikapp-prod
+kubectl scale deployment/prod-quckapp-worker --replicas=10 -n quckapp-prod
 
 # Patch HPA limits
-kubectl patch hpa prod-quikapp-worker-hpa -n quikapp-prod \
+kubectl patch hpa prod-quckapp-worker-hpa -n quckapp-prod \
   --type merge -p '{"spec":{"maxReplicas":100}}'
 ```
 
@@ -289,13 +289,13 @@ kubectl patch hpa prod-quikapp-worker-hpa -n quikapp-prod \
 
 ```bash
 # Get pod logs
-kubectl logs -f deployment/prod-quikapp-api -n quikapp-prod
+kubectl logs -f deployment/prod-quckapp-api -n quckapp-prod
 
 # Exec into pod
-kubectl exec -it deployment/prod-quikapp-api -n quikapp-prod -- /bin/sh
+kubectl exec -it deployment/prod-quckapp-api -n quckapp-prod -- /bin/sh
 
 # Port forward for local testing
-kubectl port-forward svc/prod-quikapp-api 3000:80 -n quikapp-prod
+kubectl port-forward svc/prod-quckapp-api 3000:80 -n quckapp-prod
 ```
 
 ## Disaster Recovery
@@ -304,10 +304,10 @@ kubectl port-forward svc/prod-quikapp-api 3000:80 -n quikapp-prod
 
 ```bash
 # Backup all resources
-kubectl get all -n quikapp-prod -o yaml > backup.yaml
+kubectl get all -n quckapp-prod -o yaml > backup.yaml
 
 # Backup secrets (encrypted)
-kubectl get secrets -n quikapp-prod -o yaml | \
+kubectl get secrets -n quckapp-prod -o yaml | \
   kubeseal --format yaml > sealed-secrets-backup.yaml
 ```
 
@@ -325,7 +325,7 @@ kubectl apply -f backup.yaml
 Use VPA (Vertical Pod Autoscaler) for recommendations:
 
 ```bash
-kubectl get vpa -n quikapp-prod
+kubectl get vpa -n quckapp-prod
 ```
 
 ### Spot Instances

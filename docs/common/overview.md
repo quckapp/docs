@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Common Utilities Overview
 
-Shared utilities and modules used across QuikApp's NestJS services.
+Shared utilities and modules used across QuckApp's NestJS services.
 
 ## Directory Structure
 

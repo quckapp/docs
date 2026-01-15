@@ -28,7 +28,7 @@ module "cloudfront" {
   thumbnails_bucket_arn             = module.s3.thumbnails_bucket_arn
 
   # Custom domain
-  domain_aliases      = ["cdn.quikapp.com"]
+  domain_aliases      = ["cdn.quckapp.com"]
   acm_certificate_arn = var.cdn_certificate_arn
 
   # Signed URLs
@@ -127,7 +127,7 @@ def generate_signed_url(file_path, expiration_minutes=60):
         private_key=PRIVATE_KEY
     )
 
-    url = f"https://cdn.quikapp.com/{file_path}"
+    url = f"https://cdn.quckapp.com/{file_path}"
     expires = datetime.utcnow() + timedelta(minutes=expiration_minutes)
 
     return cloudfront_signer.generate_presigned_url(

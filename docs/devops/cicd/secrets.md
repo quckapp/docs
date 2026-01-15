@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Secrets Management
 
-QuikApp uses a multi-layer secrets management strategy with Azure Key Vault, GitHub Secrets, and Azure DevOps Variable Groups.
+QuckApp uses a multi-layer secrets management strategy with Azure Key Vault, GitHub Secrets, and Azure DevOps Variable Groups.
 
 ## Secrets Architecture
 
@@ -43,16 +43,16 @@ QuikApp uses a multi-layer secrets management strategy with Azure Key Vault, Git
 
 | Environment | Key Vault Name | Resource Group | Access Policy |
 |-------------|----------------|----------------|---------------|
-| Dev | `kv-quikapp-dev` | `rg-quikapp-dev` | Dev Team + CI/CD |
-| QA | `kv-quikapp-qa` | `rg-quikapp-qa` | QA Team + CI/CD |
-| UAT | `kv-quikapp-uat` | `rg-quikapp-uat` | UAT Team + CI/CD |
-| Staging | `kv-quikapp-staging` | `rg-quikapp-staging` | Ops + CI/CD |
-| Production | `kv-quikapp-prod` | `rg-quikapp-prod` | Ops Only (RBAC) |
+| Dev | `kv-quckapp` | `rg-quckapp` | Dev Team + CI/CD |
+| QA | `kv-quckapp-qa` | `rg-quckapp-qa` | QA Team + CI/CD |
+| UAT | `kv-quckapp-uat` | `rg-quckapp-uat` | UAT Team + CI/CD |
+| Staging | `kv-quckapp-staging` | `rg-quckapp-staging` | Ops + CI/CD |
+| Production | `kv-quckapp-prod` | `rg-quckapp-prod` | Ops Only (RBAC) |
 
 ### Secret Categories
 
 ```
-kv-quikapp-{env}/
+kv-quckapp-{env}/
 ├── databases/
 │   ├── mysql-connection-string
 │   ├── mysql-admin-password
@@ -94,14 +94,14 @@ apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
   name: azure-kv-secrets
-  namespace: quikapp-prod
+  namespace: quckapp-prod
 spec:
   provider: azure
   parameters:
     usePodIdentity: "false"
     useVMManagedIdentity: "true"
     userAssignedIdentityID: "<managed-identity-client-id>"
-    keyvaultName: "kv-quikapp-prod"
+    keyvaultName: "kv-quckapp-prod"
     cloudName: "AzurePublicCloud"
     objects: |
       array:
@@ -123,7 +123,7 @@ spec:
           objectVersion: ""
     tenantId: "<tenant-id>"
   secretObjects:
-    - secretName: quikapp-secrets
+    - secretName: quckapp-secrets
       type: Opaque
       data:
         - objectName: mysql-connection-string
@@ -171,7 +171,7 @@ jobs:
       - name: Login to Azure ACR
         uses: azure/docker-login@v1
         with:
-          login-server: quikapp.azurecr.io
+          login-server: quckapp.azurecr.io
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
@@ -190,7 +190,7 @@ jobs:
 ### Variable Group Structure
 
 ```yaml
-# Variable Group: QuikApp-Dev-Secrets
+# Variable Group: QuckApp-Secrets
 variables:
   - name: DB_CONNECTION_STRING
     value: <linked from Key Vault>
@@ -202,7 +202,7 @@ variables:
     value: <linked from Key Vault>
     isSecret: true
 
-# Variable Group: QuikApp-Prod-Secrets
+# Variable Group: QuckApp-Prod-Secrets
 variables:
   - name: DB_CONNECTION_STRING
     value: <linked from Key Vault>
@@ -223,13 +223,13 @@ variables:
 ```yaml
 # azure-pipelines/variable-groups.yml
 variables:
-  - group: QuikApp-${{ parameters.environment }}-Secrets
+  - group: QuckApp-${{ parameters.environment }}-Secrets
 
 steps:
   - task: AzureKeyVault@2
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
-      KeyVaultName: 'kv-quikapp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
+      KeyVaultName: 'kv-quckapp-${{ parameters.environment }}'
       SecretsFilter: '*'
       RunAsPreJob: true
 
@@ -263,11 +263,11 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: auth-service
-  namespace: quikapp-prod
+  namespace: quckapp-prod
 spec:
   containers:
     - name: auth-service
-      image: quikapp.azurecr.io/auth-service:latest
+      image: quckapp.azurecr.io/auth-service:latest
       volumeMounts:
         - name: secrets-store
           mountPath: "/mnt/secrets"
@@ -276,12 +276,12 @@ spec:
         - name: DB_CONNECTION_STRING
           valueFrom:
             secretKeyRef:
-              name: quikapp-secrets
+              name: quckapp-secrets
               key: DB_CONNECTION_STRING
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
-              name: quikapp-secrets
+              name: quckapp-secrets
               key: JWT_SECRET
   volumes:
     - name: secrets-store
@@ -328,7 +328,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Rotate MySQL Password'
             inputs:
-              azureSubscription: 'QuikApp-Production'
+              azureSubscription: 'QuckApp-Production'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
@@ -337,18 +337,18 @@ stages:
 
                 # Update MySQL user password
                 az mysql flexible-server update \
-                  --resource-group rg-quikapp-prod \
-                  --name mysql-quikapp-prod \
+                  --resource-group rg-quckapp-prod \
+                  --name mysql-quckapp-prod \
                   --admin-password "$NEW_PASSWORD"
 
                 # Update Key Vault secret
                 az keyvault secret set \
-                  --vault-name kv-quikapp-prod \
+                  --vault-name kv-quckapp-prod \
                   --name mysql-admin-password \
                   --value "$NEW_PASSWORD"
 
                 # Trigger rolling restart of pods
-                kubectl rollout restart deployment -n quikapp-prod \
+                kubectl rollout restart deployment -n quckapp-prod \
                   -l uses-mysql=true
 
       - job: RotateJWTKeys
@@ -356,7 +356,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Rotate JWT Signing Key'
             inputs:
-              azureSubscription: 'QuikApp-Production'
+              azureSubscription: 'QuckApp-Production'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
@@ -366,7 +366,7 @@ stages:
 
                 # 2. Store as jwt-signing-key-new
                 az keyvault secret set \
-                  --vault-name kv-quikapp-prod \
+                  --vault-name kv-quckapp-prod \
                   --name jwt-signing-key-new \
                   --value "$NEW_KEY"
 
@@ -378,7 +378,7 @@ stages:
 
 ```elixir
 # Application code for dual-key JWT validation
-defmodule QuikApp.Auth.JWTValidator do
+defmodule QuckApp.Auth.JWTValidator do
   def validate_token(token) do
     primary_key = get_secret("jwt-signing-key")
     secondary_key = get_secret("jwt-signing-key-old")
@@ -407,14 +407,14 @@ end
 roles:
   - name: Key Vault Administrator
     principals:
-      - security-team@quikapp.com
-    scope: /subscriptions/.../resourceGroups/rg-quikapp-prod/providers/Microsoft.KeyVault/vaults/kv-quikapp-prod
+      - security-team@quckapp.com
+    scope: /subscriptions/.../resourceGroups/rg-quckapp-prod/providers/Microsoft.KeyVault/vaults/kv-quckapp-prod
 
   - name: Key Vault Secrets User
     principals:
       - aks-prod-managed-identity
       - ci-cd-service-principal
-    scope: /subscriptions/.../resourceGroups/rg-quikapp-prod/providers/Microsoft.KeyVault/vaults/kv-quikapp-prod
+    scope: /subscriptions/.../resourceGroups/rg-quckapp-prod/providers/Microsoft.KeyVault/vaults/kv-quckapp-prod
 ```
 
 ### Audit Logging
@@ -432,7 +432,7 @@ diagnosticSettings:
     metrics:
       - category: AllMetrics
         enabled: true
-    workspaceId: /subscriptions/.../workspaces/law-quikapp-security
+    workspaceId: /subscriptions/.../workspaces/law-quckapp-security
 ```
 
 ### Secret Scanning
@@ -463,19 +463,19 @@ echo "Emergency revocation of $SECRET_NAME in $ENVIRONMENT"
 
 # 1. Disable the secret in Key Vault
 az keyvault secret set-attributes \
-  --vault-name "kv-quikapp-$ENVIRONMENT" \
+  --vault-name "kv-quckapp-$ENVIRONMENT" \
   --name "$SECRET_NAME" \
   --enabled false
 
 # 2. Generate and set new secret
 NEW_VALUE=$(openssl rand -base64 32)
 az keyvault secret set \
-  --vault-name "kv-quikapp-$ENVIRONMENT" \
+  --vault-name "kv-quckapp-$ENVIRONMENT" \
   --name "$SECRET_NAME" \
   --value "$NEW_VALUE"
 
 # 3. Trigger pod restart to pick up new secret
-kubectl rollout restart deployment -n "quikapp-$ENVIRONMENT" --all
+kubectl rollout restart deployment -n "quckapp-$ENVIRONMENT" --all
 
 # 4. Send alert
 curl -X POST "$PAGERDUTY_WEBHOOK" \

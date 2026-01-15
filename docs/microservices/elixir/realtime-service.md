@@ -92,31 +92,31 @@ Consolidated Elixir/Phoenix service for real-time communication combining presen
 ## Supervision Tree
 
 ```elixir
-QuckChatRealtime.Application
-├── QuckChatRealtimeWeb.Telemetry
-├── QuckChatRealtime.Repo (MySQL)
+QuckAppRealtime.Application
+├── QuckAppRealtimeWeb.Telemetry
+├── QuckAppRealtime.Repo (MySQL)
 ├── Phoenix.PubSub
-├── QuckChatRealtime.Redis
+├── QuckAppRealtime.Redis
 ├── Finch (HTTP client)
 ├── Registry (UserRegistry)
 ├── Registry (CallRegistry)
-├── QuckChatRealtime.ConnectionSupervisor
-├── QuckChatRealtime.PresenceManager
-├── QuckChatRealtime.PresenceCleanup
-├── QuckChatRealtime.TypingTracker
-├── QuckChatRealtime.StoreAndForward
-├── QuckChatRealtime.SignalingServer
-├── QuckChatRealtime.CallManagerV2
-├── QuckChatRealtime.ClusterManager
-├── QuckChatRealtime.Kafka.Producer
-├── QuckChatRealtime.Kafka.Consumer
-├── QuckChatRealtime.Providers.APNs
-├── QuckChatRealtime.Providers.Email
-├── QuckChatRealtime.Presence
-├── QuckChatRealtime.CallManager
-├── QuckChatRealtime.HuddleManager
-├── QuckChatRealtime.NotificationDispatcher
-└── QuckChatRealtimeWeb.Endpoint
+├── QuckAppRealtime.ConnectionSupervisor
+├── QuckAppRealtime.PresenceManager
+├── QuckAppRealtime.PresenceCleanup
+├── QuckAppRealtime.TypingTracker
+├── QuckAppRealtime.StoreAndForward
+├── QuckAppRealtime.SignalingServer
+├── QuckAppRealtime.CallManagerV2
+├── QuckAppRealtime.ClusterManager
+├── QuckAppRealtime.Kafka.Producer
+├── QuckAppRealtime.Kafka.Consumer
+├── QuckAppRealtime.Providers.APNs
+├── QuckAppRealtime.Providers.Email
+├── QuckAppRealtime.Presence
+├── QuckAppRealtime.CallManager
+├── QuckAppRealtime.HuddleManager
+├── QuckAppRealtime.NotificationDispatcher
+└── QuckAppRealtimeWeb.Endpoint
 ```
 
 ## Components
@@ -126,7 +126,7 @@ QuckChatRealtime.Application
 ETS-based presence tracking with O(1) lookups.
 
 ```elixir
-defmodule QuckChatRealtime.PresenceManager do
+defmodule QuckAppRealtime.PresenceManager do
   # Track user online/offline status
   def track_user(user_id, device_id, metadata)
   def untrack_user(user_id, device_id)
@@ -147,7 +147,7 @@ presence:online:{workspace_id} # Sorted Set: online users
 Periodic cleanup of stale presence records.
 
 ```elixir
-defmodule QuckChatRealtime.PresenceCleanup do
+defmodule QuckAppRealtime.PresenceCleanup do
   @cleanup_interval 30_000   # 30 seconds
   @stale_threshold 120       # 2 minutes
 
@@ -162,7 +162,7 @@ end
 Enhanced typing indicators with MapSet and telemetry.
 
 ```elixir
-defmodule QuckChatRealtime.TypingTracker do
+defmodule QuckAppRealtime.TypingTracker do
   @typing_timeout 5_000  # 5 seconds
 
   def start_typing(conversation_id, user_id)
@@ -177,7 +177,7 @@ end
 WebRTC signaling with TURN credential generation.
 
 ```elixir
-defmodule QuckChatRealtime.SignalingServer do
+defmodule QuckAppRealtime.SignalingServer do
   # ICE server configuration
   def get_ice_config(user_id)
 
@@ -207,7 +207,7 @@ end
 Per-call GenServer with state machine.
 
 ```elixir
-defmodule QuckChatRealtime.Actors.CallSession do
+defmodule QuckAppRealtime.Actors.CallSession do
   use GenServer, restart: :transient
 
   @ringing_timeout 60_000     # 60 seconds
@@ -230,7 +230,7 @@ end
 Apple Push Notification Service with JWT authentication.
 
 ```elixir
-defmodule QuckChatRealtime.Providers.APNs do
+defmodule QuckAppRealtime.Providers.APNs do
   @apns_production_url "https://api.push.apple.com"
   @apns_sandbox_url "https://api.sandbox.push.apple.com"
 
@@ -253,7 +253,7 @@ end
 Multi-provider email notification support.
 
 ```elixir
-defmodule QuckChatRealtime.Providers.Email do
+defmodule QuckAppRealtime.Providers.Email do
   # Supported providers: :smtp, :sendgrid, :ses, :mailgun
 
   def send(user_id, notification, opts \\ [])
@@ -396,24 +396,24 @@ POST   /api/signaling/turn-credentials # Generate TURN credentials
 ### Produced Events
 
 ```
-quikapp.presence.events
+quckapp.presence.events
   - user_online
   - user_offline
   - status_changed
 
-quikapp.messages.events
+quckapp.messages.events
   - message_sent
   - message_delivered
   - message_read
 
-quikapp.calls.events
+quckapp.calls.events
   - call_started
   - call_answered
   - call_ended
   - recording_started
   - recording_stopped
 
-quikapp.notifications.events
+quckapp.notifications.events
   - notification_sent
   - notification_delivered
   - notification_failed
@@ -422,7 +422,7 @@ quikapp.notifications.events
 ### Consumed Events
 
 ```
-quikapp.users.events
+quckapp.users.events
   - user_created
   - user_updated
   - user_deleted
@@ -434,8 +434,8 @@ quikapp.users.events
 
 ```bash
 # Database
-DATABASE_URL=mysql://user:pass@localhost/quckchat_realtime
-MONGO_URL=mongodb://localhost:27017/quckchat
+DATABASE_URL=mysql://user:pass@localhost/quckapp_realtime
+MONGO_URL=mongodb://localhost:27017/quckapp
 
 # Redis
 REDIS_URL=redis://localhost:6379
@@ -444,7 +444,7 @@ REDIS_URL=redis://localhost:6379
 KAFKA_BROKERS=localhost:9092
 
 # WebRTC / TURN
-TURN_SERVERS=turn:turn.quikapp.com:3478
+TURN_SERVERS=turn:turn.quckapp.com:3478
 TURN_SECRET=your-turn-secret
 STUN_SERVERS=stun:stun.l.google.com:19302
 
@@ -452,13 +452,13 @@ STUN_SERVERS=stun:stun.l.google.com:19302
 APNS_KEY_ID=your-key-id
 APNS_TEAM_ID=your-team-id
 APNS_KEY_PATH=/path/to/AuthKey.p8
-APNS_BUNDLE_ID=com.quikapp.app
+APNS_BUNDLE_ID=com.quckapp.app
 APNS_ENVIRONMENT=production  # or sandbox
 
 # Email
 EMAIL_PROVIDER=sendgrid  # smtp, sendgrid, ses, mailgun
 SENDGRID_API_KEY=your-api-key
-EMAIL_FROM=noreply@quikapp.com
+EMAIL_FROM=noreply@quckapp.com
 
 # FCM
 FCM_SERVER_KEY=your-server-key
@@ -466,7 +466,7 @@ FCM_SERVER_KEY=your-server-key
 # Clustering
 CLUSTER_STRATEGY=kubernetes  # or dns, gossip
 CLUSTER_TOPOLOGY=kubernetes
-KUBERNETES_SELECTOR=app=quckchat-realtime
+KUBERNETES_SELECTOR=app=quckapp-realtime
 KUBERNETES_NAMESPACE=default
 
 # Service
@@ -477,19 +477,19 @@ SECRET_KEY_BASE=your-secret-key
 ### config/runtime.exs
 
 ```elixir
-config :quckchat_realtime, QuckChatRealtime.Repo,
+config :quckapp_realtime, QuckAppRealtime.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE", "10"))
 
-config :quckchat_realtime, :redis,
+config :quckapp_realtime, :redis,
   url: System.get_env("REDIS_URL", "redis://localhost:6379")
 
-config :quckchat_realtime, :turn,
-  servers: System.get_env("TURN_SERVERS", "turn:turn.quikapp.com:3478"),
+config :quckapp_realtime, :turn,
+  servers: System.get_env("TURN_SERVERS", "turn:turn.quckapp.com:3478"),
   secret: System.get_env("TURN_SECRET"),
   ttl: 86400
 
-config :quckchat_realtime, :apns,
+config :quckapp_realtime, :apns,
   key_id: System.get_env("APNS_KEY_ID"),
   team_id: System.get_env("APNS_TEAM_ID"),
   key_path: System.get_env("APNS_KEY_PATH"),
@@ -537,7 +537,7 @@ GET /health
   "status": "healthy",
   "version": "1.0.0",
   "uptime": 86400,
-  "node": "quckchat_realtime@node-1",
+  "node": "quckapp_realtime@node-1",
   "cluster": {
     "nodes": ["node-1", "node-2", "node-3"],
     "connected": true
@@ -578,12 +578,12 @@ FROM alpine:3.18
 RUN apk add --no-cache libstdc++ openssl ncurses-libs
 
 WORKDIR /app
-COPY --from=builder /app/_build/prod/rel/quckchat_realtime ./
+COPY --from=builder /app/_build/prod/rel/quckapp_realtime ./
 
 ENV PORT=4000
 EXPOSE 4000
 
-CMD ["bin/quckchat_realtime", "start"]
+CMD ["bin/quckapp_realtime", "start"]
 ```
 
 ### Kubernetes
@@ -592,20 +592,20 @@ CMD ["bin/quckchat_realtime", "start"]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: quckchat-realtime
+  name: quckapp-realtime
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: quckchat-realtime
+      app: quckapp-realtime
   template:
     metadata:
       labels:
-        app: quckchat-realtime
+        app: quckapp-realtime
     spec:
       containers:
-      - name: quckchat-realtime
-        image: quikapp/realtime:latest
+      - name: quckapp-realtime
+        image: quckapp/realtime:latest
         ports:
         - containerPort: 4000
         env:

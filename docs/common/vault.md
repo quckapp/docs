@@ -22,11 +22,11 @@ export class SecretService {
   constructor(private vault: VaultService) {}
 
   async getDatabaseCredentials() {
-    return this.vault.getDatabaseCredentials('QuikApp-role');
+    return this.vault.getDatabaseCredentials('QuckApp-role');
   }
 
   async encryptSensitiveData(data: string) {
-    return this.vault.encrypt('QuikApp-key', data);
+    return this.vault.encrypt('QuckApp-key', data);
   }
 }
 ```
@@ -35,10 +35,10 @@ export class SecretService {
 
 ```typescript
 export const VAULT_PATHS = {
-  APP_SECRETS: 'secret/data/QuikApp',
-  DATABASE: 'secret/data/QuikApp/database',
-  JWT: 'secret/data/QuikApp/jwt',
-  FIREBASE: 'secret/data/QuikApp/firebase',
-  SMTP: 'secret/data/QuikApp/smtp',
+  APP_SECRETS: 'secret/data/QuckApp',
+  DATABASE: 'secret/data/QuckApp/database',
+  JWT: 'secret/data/QuckApp/jwt',
+  FIREBASE: 'secret/data/QuckApp/firebase',
+  SMTP: 'secret/data/QuckApp/smtp',
 };
 ```

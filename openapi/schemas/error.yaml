@@ -42,7 +42,7 @@ Error:
           type: string
           format: uri
           description: Link to relevant documentation
-          example: "https://docs.quikapp.io/errors/BAD_REQUEST"
+          example: "https://docs.quckapp.io/errors/BAD_REQUEST"
 
 ErrorDetail:
   type: object

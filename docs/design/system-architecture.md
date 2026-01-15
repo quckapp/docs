@@ -8,7 +8,7 @@ sidebar_position: 2
 
 | Field | Value |
 |-------|-------|
-| **Document ID** | QUIKAPP-SAD-001 |
+| **Document ID** | QUCKAPP-SAD-001 |
 | **Version** | 2.0 |
 | **Status** | Approved |
 | **Last Updated** | 2024-01-15 |
@@ -17,15 +17,15 @@ sidebar_position: 2
 ## 1. Introduction
 
 ### 1.1 Purpose
-This document describes the high-level system architecture for QuikApp, defining the major components, their interactions, and the technology choices that support the platform.
+This document describes the high-level system architecture for QuckApp, defining the major components, their interactions, and the technology choices that support the platform.
 
 ### 1.2 Scope
-Covers all 32 microservices, infrastructure components, and integration patterns used in QuikApp.
+Covers all 32 microservices, infrastructure components, and integration patterns used in QuckApp.
 
 ## 2. Architecture Overview
 
 ### 2.1 Architecture Style
-QuikApp employs a **microservices architecture** with the following characteristics:
+QuckApp employs a **microservices architecture** with the following characteristics:
 
 - **Domain-Driven Design**: Services aligned with business domains
 - **Event-Driven**: Asynchronous communication via Kafka
@@ -48,7 +48,7 @@ QuikApp employs a **microservices architecture** with the following characterist
                                         │
                                         ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              QuikApp Platform                                │
+│                              QuckApp Platform                                │
 │                                                                              │
 │  ┌─────────────────────────────────────────────────────────────────────┐    │
 │  │                      API Gateway Layer                               │    │
@@ -283,7 +283,7 @@ QuikApp employs a **microservices architecture** with the following characterist
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌─────────────────────────────────────────────────────────────────────┐    │
-│  │  Namespace: quikapp-prod                                             │    │
+│  │  Namespace: quckapp-prod                                             │    │
 │  │  ┌──────────────────────────────────────────────────────────────┐   │    │
 │  │  │  Gateway Pods (3 replicas)                                    │   │    │
 │  │  │  ┌─────────┐  ┌─────────┐  ┌─────────┐                       │   │    │

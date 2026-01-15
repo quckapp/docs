@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Data Flow
 
-How data moves through QuikApp's microservices architecture.
+How data moves through QuckApp's microservices architecture.
 
 ## Request Flow
 
@@ -114,7 +114,7 @@ How data moves through QuikApp's microservices architecture.
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  ┌─────────────────────┐  ┌─────────────────────┐              │
-│  │ QuikApp.users      │  │ QuikApp.messages   │              │
+│  │ QuckApp.users      │  │ QuckApp.messages   │              │
 │  │ • USER_CREATED      │  │ • MESSAGE_SENT      │              │
 │  │ • USER_UPDATED      │  │ • MESSAGE_EDITED    │              │
 │  │ • USER_DELETED      │  │ • MESSAGE_DELETED   │              │
@@ -122,7 +122,7 @@ How data moves through QuikApp's microservices architecture.
 │  └─────────────────────┘  └─────────────────────┘              │
 │                                                                  │
 │  ┌─────────────────────┐  ┌─────────────────────┐              │
-│  │ QuikApp.presence   │  │ QuikApp.calls      │              │
+│  │ QuckApp.presence   │  │ QuckApp.calls      │              │
 │  │ • USER_ONLINE       │  │ • CALL_STARTED      │              │
 │  │ • USER_OFFLINE      │  │ • CALL_ENDED        │              │
 │  │ • USER_TYPING       │  │ • PARTICIPANT_JOINED│              │
@@ -130,7 +130,7 @@ How data moves through QuikApp's microservices architecture.
 │  └─────────────────────┘  └─────────────────────┘              │
 │                                                                  │
 │  ┌─────────────────────┐  ┌─────────────────────┐              │
-│  │ QuikApp.audit      │  │ QuikApp.analytics  │              │
+│  │ QuckApp.audit      │  │ QuckApp.analytics  │              │
 │  │ • LOGIN_SUCCESS     │  │ • PAGE_VIEW         │              │
 │  │ • LOGIN_FAILED      │  │ • FEATURE_USED      │              │
 │  │ • PERMISSION_DENIED │  │ • ERROR_OCCURRED    │              │
@@ -236,14 +236,14 @@ const user = await this.httpService.get(
 
 ```typescript
 // Publishing event
-await this.kafkaService.emit('QuikApp.users.events', {
+await this.kafkaService.emit('QuckApp.users.events', {
   type: 'USER_UPDATED',
   payload: { userId, changes },
   timestamp: new Date().toISOString(),
 });
 
 // Consuming event
-@EventPattern('QuikApp.users.events')
+@EventPattern('QuckApp.users.events')
 async handleUserEvent(data: UserEvent) {
   if (data.type === 'USER_UPDATED') {
     await this.cacheService.invalidate(`user:${data.payload.userId}`);

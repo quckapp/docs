@@ -8,7 +8,7 @@ sidebar_position: 3
 
 | Field | Value |
 |-------|-------|
-| **Document ID** | QUIKAPP-DDD-001 |
+| **Document ID** | QUCKAPP-DDD-001 |
 | **Version** | 1.5 |
 | **Status** | Approved |
 | **Last Updated** | 2024-01-10 |
@@ -16,7 +16,7 @@ sidebar_position: 3
 
 ## 1. Overview
 
-QuikApp uses a **polyglot persistence** strategy, selecting the optimal database technology for each service domain.
+QuckApp uses a **polyglot persistence** strategy, selecting the optimal database technology for each service domain.
 
 ### 1.1 Database Technologies
 
@@ -410,15 +410,15 @@ PARTITION BY RANGE (UNIX_TIMESTAMP(created_at)) (
 
 ```sql
 -- Role-based access
-CREATE USER 'quikapp_app'@'%' IDENTIFIED BY '***';
-GRANT SELECT, INSERT, UPDATE, DELETE ON quikapp.* TO 'quikapp_app'@'%';
+CREATE USER 'quckapp_app'@'%' IDENTIFIED BY '***';
+GRANT SELECT, INSERT, UPDATE, DELETE ON quckapp.* TO 'quckapp_app'@'%';
 
-CREATE USER 'quikapp_readonly'@'%' IDENTIFIED BY '***';
-GRANT SELECT ON quikapp.* TO 'quikapp_readonly'@'%';
+CREATE USER 'quckapp_readonly'@'%' IDENTIFIED BY '***';
+GRANT SELECT ON quckapp.* TO 'quckapp_readonly'@'%';
 
-CREATE USER 'quikapp_analytics'@'%' IDENTIFIED BY '***';
-GRANT SELECT ON quikapp.audit_logs TO 'quikapp_analytics'@'%';
-GRANT SELECT ON quikapp.analytics_* TO 'quikapp_analytics'@'%';
+CREATE USER 'quckapp_analytics'@'%' IDENTIFIED BY '***';
+GRANT SELECT ON quckapp.audit_logs TO 'quckapp_analytics'@'%';
+GRANT SELECT ON quckapp.analytics_* TO 'quckapp_analytics'@'%';
 ```
 
 ## Document History

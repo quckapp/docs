@@ -57,9 +57,9 @@ Elixir/Phoenix service for real-time messaging with Apache Kafka event streaming
 # config/config.exs
 config :message_service, :kafka,
   brokers: [
-    {"kafka-1.quikapp.internal", 9092},
-    {"kafka-2.quikapp.internal", 9092},
-    {"kafka-3.quikapp.internal", 9092}
+    {"kafka-1.quckapp.internal", 9092},
+    {"kafka-2.quckapp.internal", 9092},
+    {"kafka-3.quckapp.internal", 9092}
   ],
   client_id: :message_service,
   ssl: true,
@@ -339,7 +339,7 @@ end
 {
   "type": "record",
   "name": "MessageCreated",
-  "namespace": "com.quikapp.messages",
+  "namespace": "com.quckapp.messages",
   "fields": [
     {"name": "event_id", "type": "string"},
     {"name": "event_type", "type": "string"},
@@ -796,7 +796,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      KAFKA_CLUSTERS_0_NAME: quikapp-local
+      KAFKA_CLUSTERS_0_NAME: quckapp-local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1:29092,kafka-2:29093,kafka-3:29094
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
 ```
@@ -807,7 +807,7 @@ services:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
-  name: quikapp-kafka
+  name: quckapp-kafka
   namespace: messaging
 spec:
   kafka:

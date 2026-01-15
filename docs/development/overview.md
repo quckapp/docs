@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Development Documentation Overview
 
-Development documents help engineers **build and maintain** QuikApp. These documents bridge the gap between design specifications and working code.
+Development documents help engineers **build and maintain** QuckApp. These documents bridge the gap between design specifications and working code.
 
 ## Document Types
 

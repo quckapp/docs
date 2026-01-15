@@ -4,13 +4,13 @@ sidebar_position: 1
 
 # Environments Overview
 
-QuikApp uses 8 deployment environments to ensure quality, security, and compliance throughout the software delivery lifecycle.
+QuckApp uses 8 deployment environments to ensure quality, security, and compliance throughout the software delivery lifecycle.
 
 ## Environment Hierarchy
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                        QuikApp Environment Pipeline                         │
+│                        QuckApp Environment Pipeline                         │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │   Development                    Testing                    Production     │
@@ -47,7 +47,7 @@ QuikApp uses 8 deployment environments to ensure quality, security, and complian
 | **Purpose** | Developer local testing with mocked dependencies |
 | **URL** | `http://localhost:*` |
 | **Cluster** | Docker Desktop / Minikube |
-| **Namespace** | `quikapp-mock` |
+| **Namespace** | `quckapp-mock` |
 | **Database** | SQLite / H2 (in-memory) |
 | **External Services** | WireMock, LocalStack |
 | **Deployment** | Manual (`make dev`) |
@@ -60,7 +60,7 @@ QuikApp uses 8 deployment environments to ensure quality, security, and complian
 ENVIRONMENT=local
 LOG_LEVEL=debug
 DB_HOST=localhost
-DB_NAME=quikapp_local
+DB_NAME=quckapp_local
 REDIS_HOST=localhost:6379
 KAFKA_BROKERS=localhost:9092
 MOCK_EXTERNAL_SERVICES=true
@@ -74,9 +74,9 @@ FEATURE_FLAGS_SOURCE=local
 | Attribute | Value |
 |-----------|-------|
 | **Purpose** | Integration testing, feature branch testing |
-| **URL** | `https://*.dev.quikapp.dev` |
+| **URL** | `https://*.dev.quckapp.dev` |
 | **Cluster** | `aks-dev` (Azure Kubernetes Service) |
-| **Namespace** | `quikapp-dev` |
+| **Namespace** | `quckapp` |
 | **Database** | MySQL 8.0 (shared dev instance) |
 | **External Services** | Sandboxed third-party APIs |
 | **Deployment** | Auto on merge to `develop` |
@@ -88,11 +88,11 @@ FEATURE_FLAGS_SOURCE=local
 # config/dev.env
 ENVIRONMENT=dev
 LOG_LEVEL=debug
-DB_HOST=mysql-dev.quikapp.internal
-DB_NAME=quikapp_dev
+DB_HOST=mysql-dev.quckapp.internal
+DB_NAME=quckapp_dev
 DB_POOL_SIZE=10
-REDIS_HOST=redis-dev.quikapp.internal:6379
-KAFKA_BROKERS=kafka-dev.quikapp.internal:9092
+REDIS_HOST=redis-dev.quckapp.internal:6379
+KAFKA_BROKERS=kafka-dev.quckapp.internal:9092
 APM_ENABLED=true
 APM_SAMPLE_RATE=1.0
 FEATURE_FLAGS_SOURCE=launchdarkly-dev
@@ -117,9 +117,9 @@ replicas: 2
 | Attribute | Value |
 |-----------|-------|
 | **Purpose** | QA team testing, regression testing |
-| **URL** | `https://*.qa.quikapp.dev` |
+| **URL** | `https://*.qa.quckapp.dev` |
 | **Cluster** | `aks-qa` |
-| **Namespace** | `quikapp-qa` |
+| **Namespace** | `quckapp-qa` |
 | **Database** | MySQL 8.0 (dedicated QA instance) |
 | **External Services** | Sandboxed third-party APIs |
 | **Deployment** | Manual trigger with QA Lead approval |
@@ -131,11 +131,11 @@ replicas: 2
 # config/qa.env
 ENVIRONMENT=qa
 LOG_LEVEL=info
-DB_HOST=mysql-qa.quikapp.internal
-DB_NAME=quikapp_qa
+DB_HOST=mysql-qa.quckapp.internal
+DB_NAME=quckapp_qa
 DB_POOL_SIZE=20
-REDIS_HOST=redis-qa.quikapp.internal:6379
-KAFKA_BROKERS=kafka-qa.quikapp.internal:9092
+REDIS_HOST=redis-qa.quckapp.internal:6379
+KAFKA_BROKERS=kafka-qa.quckapp.internal:9092
 APM_ENABLED=true
 APM_SAMPLE_RATE=0.5
 SELENIUM_GRID_URL=http://selenium-hub.qa:4444
@@ -161,9 +161,9 @@ replicas: 2
 | Attribute | Value |
 |-----------|-------|
 | **Purpose** | User acceptance testing for internal Team A |
-| **URL** | `https://*.uat1.quikapp.dev` |
+| **URL** | `https://*.uat1.quckapp.dev` |
 | **Cluster** | `aks-uat` |
-| **Namespace** | `quikapp-uat1` |
+| **Namespace** | `quckapp-uat1` |
 | **Database** | MySQL 8.0 (UAT shared instance) |
 | **External Services** | Sandbox APIs with rate limiting |
 | **Deployment** | Manual trigger with Product Owner approval |
@@ -175,11 +175,11 @@ replicas: 2
 # config/uat1.env
 ENVIRONMENT=uat1
 LOG_LEVEL=info
-DB_HOST=mysql-uat.quikapp.internal
-DB_NAME=quikapp_uat1
+DB_HOST=mysql-uat.quckapp.internal
+DB_NAME=quckapp_uat1
 DB_POOL_SIZE=20
-REDIS_HOST=redis-uat.quikapp.internal:6379
-KAFKA_BROKERS=kafka-uat.quikapp.internal:9092
+REDIS_HOST=redis-uat.quckapp.internal:6379
+KAFKA_BROKERS=kafka-uat.quckapp.internal:9092
 APM_ENABLED=true
 APM_SAMPLE_RATE=0.3
 FEATURE_FLAGS_SOURCE=launchdarkly-uat
@@ -205,9 +205,9 @@ replicas: 2
 | Attribute | Value |
 |-----------|-------|
 | **Purpose** | User acceptance testing for internal Team B |
-| **URL** | `https://*.uat2.quikapp.dev` |
+| **URL** | `https://*.uat2.quckapp.dev` |
 | **Cluster** | `aks-uat` |
-| **Namespace** | `quikapp-uat2` |
+| **Namespace** | `quckapp-uat2` |
 | **Database** | MySQL 8.0 (UAT shared instance) |
 | **External Services** | Sandbox APIs with rate limiting |
 | **Deployment** | Manual trigger with Product Owner approval |
@@ -219,11 +219,11 @@ replicas: 2
 # config/uat2.env
 ENVIRONMENT=uat2
 LOG_LEVEL=info
-DB_HOST=mysql-uat.quikapp.internal
-DB_NAME=quikapp_uat2
+DB_HOST=mysql-uat.quckapp.internal
+DB_NAME=quckapp_uat2
 DB_POOL_SIZE=20
-REDIS_HOST=redis-uat.quikapp.internal:6379
-KAFKA_BROKERS=kafka-uat.quikapp.internal:9092
+REDIS_HOST=redis-uat.quckapp.internal:6379
+KAFKA_BROKERS=kafka-uat.quckapp.internal:9092
 APM_ENABLED=true
 APM_SAMPLE_RATE=0.3
 FEATURE_FLAGS_SOURCE=launchdarkly-uat
@@ -249,9 +249,9 @@ replicas: 2
 | Attribute | Value |
 |-----------|-------|
 | **Purpose** | External stakeholder testing, security testing |
-| **URL** | `https://*.uat3.quikapp.dev` |
+| **URL** | `https://*.uat3.quckapp.dev` |
 | **Cluster** | `aks-uat` |
-| **Namespace** | `quikapp-uat3` |
+| **Namespace** | `quckapp-uat3` |
 | **Database** | MySQL 8.0 (isolated UAT3 instance) |
 | **External Services** | Production-equivalent sandbox |
 | **Deployment** | Manual with PO + Security approval |
@@ -263,11 +263,11 @@ replicas: 2
 # config/uat3.env
 ENVIRONMENT=uat3
 LOG_LEVEL=info
-DB_HOST=mysql-uat3.quikapp.internal
-DB_NAME=quikapp_uat3
+DB_HOST=mysql-uat3.quckapp.internal
+DB_NAME=quckapp_uat3
 DB_POOL_SIZE=30
-REDIS_HOST=redis-uat3.quikapp.internal:6379
-KAFKA_BROKERS=kafka-uat3.quikapp.internal:9092
+REDIS_HOST=redis-uat3.quckapp.internal:6379
+KAFKA_BROKERS=kafka-uat3.quckapp.internal:9092
 APM_ENABLED=true
 APM_SAMPLE_RATE=0.5
 FEATURE_FLAGS_SOURCE=launchdarkly-uat
@@ -301,9 +301,9 @@ replicas: 3
 | Attribute | Value |
 |-----------|-------|
 | **Purpose** | Pre-production validation, performance testing |
-| **URL** | `https://*.staging.quikapp.dev` |
+| **URL** | `https://*.staging.quckapp.dev` |
 | **Cluster** | `aks-staging` |
-| **Namespace** | `quikapp-staging` |
+| **Namespace** | `quckapp-staging` |
 | **Database** | MySQL 8.0 (production replica - read) |
 | **External Services** | Production APIs (limited quota) |
 | **Deployment** | Manual with Release Manager approval |
@@ -315,13 +315,13 @@ replicas: 3
 # config/staging.env
 ENVIRONMENT=staging
 LOG_LEVEL=info
-DB_HOST=mysql-staging.quikapp.internal
-DB_NAME=quikapp_staging
+DB_HOST=mysql-staging.quckapp.internal
+DB_NAME=quckapp_staging
 DB_POOL_SIZE=50
-DB_READ_REPLICA=mysql-staging-ro.quikapp.internal
-REDIS_HOST=redis-staging.quikapp.internal:6379
+DB_READ_REPLICA=mysql-staging-ro.quckapp.internal
+REDIS_HOST=redis-staging.quckapp.internal:6379
 REDIS_CLUSTER_MODE=true
-KAFKA_BROKERS=kafka-staging.quikapp.internal:9092
+KAFKA_BROKERS=kafka-staging.quckapp.internal:9092
 APM_ENABLED=true
 APM_SAMPLE_RATE=0.1
 FEATURE_FLAGS_SOURCE=launchdarkly-staging
@@ -359,9 +359,9 @@ autoscaling:
 | Attribute | Value |
 |-----------|-------|
 | **Purpose** | Production workloads, real users |
-| **URL** | `https://*.quikapp.com` |
+| **URL** | `https://*.quckapp.com` |
 | **Cluster** | `aks-prod` (multi-region) |
-| **Namespace** | `quikapp-prod` |
+| **Namespace** | `quckapp-prod` |
 | **Database** | MySQL 8.0 (HA cluster, multi-AZ) |
 | **External Services** | Production APIs (full access) |
 | **Deployment** | Manual with CAB + Release Manager approval |
@@ -373,14 +373,14 @@ autoscaling:
 # config/live.env
 ENVIRONMENT=production
 LOG_LEVEL=warn
-DB_HOST=mysql-prod.quikapp.internal
-DB_NAME=quikapp_prod
+DB_HOST=mysql-prod.quckapp.internal
+DB_NAME=quckapp_prod
 DB_POOL_SIZE=100
-DB_READ_REPLICAS=mysql-prod-ro-1.quikapp.internal,mysql-prod-ro-2.quikapp.internal
-REDIS_HOST=redis-prod.quikapp.internal:6379
+DB_READ_REPLICAS=mysql-prod-ro-1.quckapp.internal,mysql-prod-ro-2.quckapp.internal
+REDIS_HOST=redis-prod.quckapp.internal:6379
 REDIS_CLUSTER_MODE=true
 REDIS_SENTINEL_ENABLED=true
-KAFKA_BROKERS=kafka-prod-1.quikapp.internal:9092,kafka-prod-2.quikapp.internal:9092,kafka-prod-3.quikapp.internal:9092
+KAFKA_BROKERS=kafka-prod-1.quckapp.internal:9092,kafka-prod-2.quckapp.internal:9092,kafka-prod-3.quckapp.internal:9092
 APM_ENABLED=true
 APM_SAMPLE_RATE=0.01
 FEATURE_FLAGS_SOURCE=launchdarkly-prod
@@ -454,9 +454,9 @@ autoscaling:
 │  │   aks-dev   │              │   aks-uat   │              │  aks-prod   │      │
 │  │  (East US)  │              │  (East US)  │              │ (Multi-AZ)  │      │
 │  ├─────────────┤              ├─────────────┤              ├─────────────┤      │
-│  │ quikapp-dev │              │ quikapp-uat1│              │ quikapp-prod│      │
-│  │             │              │ quikapp-uat2│              │             │      │
-│  │             │              │ quikapp-uat3│              │             │      │
+│  │ quckapp │              │ quckapp-uat1│              │ quckapp-prod│      │
+│  │             │              │ quckapp-uat2│              │             │      │
+│  │             │              │ quckapp-uat3│              │             │      │
 │  └─────────────┘              └─────────────┘              └─────────────┘      │
 │         │                             │                             │           │
 │         ▼                             ▼                             ▼           │

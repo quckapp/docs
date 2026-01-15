@@ -1,6 +1,6 @@
-# QuikApp API Documentation
+# QuckApp API Documentation
 
-This directory contains the OpenAPI 3.1.0 specification for the QuikApp API, along with tools for viewing and testing the API.
+This directory contains the OpenAPI 3.1.0 specification for the QuckApp API, along with tools for viewing and testing the API.
 
 ## Quick Start
 
@@ -154,7 +154,7 @@ swaggerUi:
   ingress:
     enabled: true
     hosts:
-      - host: api.quikapp.local
+      - host: api.quckapp.local
         paths:
           - path: /docs
             pathType: Prefix
@@ -163,10 +163,10 @@ swaggerUi:
 Then deploy with:
 
 ```bash
-helm upgrade --install quikapp ./helm/quikapp
+helm upgrade --install quckapp ./helm/quckapp
 ```
 
-Access at: https://api.quikapp.local/docs
+Access at: https://api.quckapp.local/docs
 
 ## API Overview
 

@@ -41,7 +41,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title={`${siteConfig.title} Documentation`}
-      description="QuikApp - Enterprise team communication platform documentation">
+      description="QuckApp - Enterprise team communication platform documentation">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

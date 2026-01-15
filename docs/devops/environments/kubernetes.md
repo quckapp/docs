@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Kubernetes Environments
 
-This document covers Kubernetes deployment configurations for all QuikApp environments using Kustomize.
+This document covers Kubernetes deployment configurations for all QuckApp environments using Kustomize.
 
 ## Directory Structure
 
@@ -38,14 +38,14 @@ k8s/
 
 | Environment | Namespace | API Replicas | Worker Replicas | HPA Max | Resources |
 |-------------|-----------|--------------|-----------------|---------|-----------|
-| **dev** | quikapp-dev | 1 | 1 | 3 | 128Mi-256Mi |
-| **qa** | quikapp-qa | 2 | 2 | 5 | 256Mi-512Mi |
-| **uat1** | quikapp-uat1 | 2 | 2 | 5 | 256Mi-512Mi |
-| **uat2** | quikapp-uat2 | 2 | 2 | 5 | 256Mi-512Mi |
-| **uat3** | quikapp-uat3 | 2 | 2 | 5 | 256Mi-512Mi |
-| **staging** | quikapp-staging | 3 | 3 | 15 | 512Mi-1Gi |
-| **prod** | quikapp-prod | 3 | 3 | 30 | 512Mi-1Gi |
-| **live** | quikapp-live | 5 | 5 | 50 | 1Gi-2Gi |
+| **dev** | quckapp | 1 | 1 | 3 | 128Mi-256Mi |
+| **qa** | quckapp-qa | 2 | 2 | 5 | 256Mi-512Mi |
+| **uat1** | quckapp-uat1 | 2 | 2 | 5 | 256Mi-512Mi |
+| **uat2** | quckapp-uat2 | 2 | 2 | 5 | 256Mi-512Mi |
+| **uat3** | quckapp-uat3 | 2 | 2 | 5 | 256Mi-512Mi |
+| **staging** | quckapp-staging | 3 | 3 | 15 | 512Mi-1Gi |
+| **prod** | quckapp-prod | 3 | 3 | 30 | 512Mi-1Gi |
+| **live** | quckapp-live | 5 | 5 | 50 | 1Gi-2Gi |
 
 ## Quick Commands
 
@@ -59,7 +59,7 @@ kustomize build k8s/overlays/<ENV> | kubectl diff -f -
 kubectl apply -k k8s/overlays/<ENV>
 
 # Check rollout status
-kubectl rollout status deployment/<ENV>-quikapp-api -n quikapp-<ENV>
+kubectl rollout status deployment/<ENV>-quckapp-api -n quckapp-<ENV>
 ```
 
 ### Environment-Specific Deployments
@@ -92,7 +92,7 @@ kubectl apply -k k8s/overlays/live
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: quikapp-dev
+namespace: quckapp
 namePrefix: dev-
 
 resources:
@@ -107,24 +107,24 @@ labels:
 patches:
   - target:
       kind: Deployment
-      name: quikapp-api
+      name: quckapp-api
     patch: |-
       - op: replace
         path: /spec/replicas
         value: 1
 
 configMapGenerator:
-  - name: quikapp-config
+  - name: quckapp-config
     behavior: merge
     literals:
       - NODE_ENV=development
       - LOG_LEVEL=debug
-      - S3_MEDIA_BUCKET=quikapp-media-dev
-      - CORS_ORIGINS=https://dev.quikapp.com
+      - S3_MEDIA_BUCKET=quckapp-media-dev
+      - CORS_ORIGINS=https://dev.quckapp.com
 
 images:
-  - name: quikapp/api
-    newName: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/quikapp/api
+  - name: quckapp/api
+    newName: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/quckapp/api
     newTag: dev-latest
 ```
 
@@ -135,7 +135,7 @@ images:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: quikapp-qa
+namespace: quckapp-qa
 namePrefix: qa-
 
 resources:
@@ -150,7 +150,7 @@ labels:
 patches:
   - target:
       kind: Deployment
-      name: quikapp-api
+      name: quckapp-api
     patch: |-
       - op: replace
         path: /spec/replicas
@@ -167,7 +167,7 @@ patches:
 
   - target:
       kind: HorizontalPodAutoscaler
-      name: quikapp-api-hpa
+      name: quckapp-api-hpa
     patch: |-
       - op: replace
         path: /spec/minReplicas
@@ -177,13 +177,13 @@ patches:
         value: 5
 
 configMapGenerator:
-  - name: quikapp-config
+  - name: quckapp-config
     behavior: merge
     literals:
       - NODE_ENV=qa
       - LOG_LEVEL=debug
-      - S3_MEDIA_BUCKET=quikapp-media-qa
-      - CORS_ORIGINS=https://qa.quikapp.com
+      - S3_MEDIA_BUCKET=quckapp-media-qa
+      - CORS_ORIGINS=https://qa.quckapp.com
 ```
 
 ### UAT Environments
@@ -193,7 +193,7 @@ configMapGenerator:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: quikapp-uat1
+namespace: quckapp-uat1
 namePrefix: uat1-
 
 resources:
@@ -208,7 +208,7 @@ labels:
 patches:
   - target:
       kind: Deployment
-      name: quikapp-api
+      name: quckapp-api
     patch: |-
       - op: replace
         path: /spec/replicas
@@ -216,7 +216,7 @@ patches:
 
   - target:
       kind: HorizontalPodAutoscaler
-      name: quikapp-api-hpa
+      name: quckapp-api-hpa
     patch: |-
       - op: replace
         path: /spec/minReplicas
@@ -226,13 +226,13 @@ patches:
         value: 5
 
 configMapGenerator:
-  - name: quikapp-config
+  - name: quckapp-config
     behavior: merge
     literals:
       - NODE_ENV=uat1
       - LOG_LEVEL=info
-      - S3_MEDIA_BUCKET=quikapp-media-uat1
-      - CORS_ORIGINS=https://uat1.quikapp.com
+      - S3_MEDIA_BUCKET=quckapp-media-uat1
+      - CORS_ORIGINS=https://uat1.quckapp.com
 ```
 
 ### Staging Environment
@@ -242,7 +242,7 @@ configMapGenerator:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: quikapp-staging
+namespace: quckapp-staging
 namePrefix: staging-
 
 resources:
@@ -258,7 +258,7 @@ labels:
 patches:
   - target:
       kind: Deployment
-      name: quikapp-api
+      name: quckapp-api
     patch: |-
       - op: replace
         path: /spec/replicas
@@ -275,7 +275,7 @@ patches:
 
   - target:
       kind: HorizontalPodAutoscaler
-      name: quikapp-api-hpa
+      name: quckapp-api-hpa
     patch: |-
       - op: replace
         path: /spec/minReplicas
@@ -285,13 +285,13 @@ patches:
         value: 15
 
 configMapGenerator:
-  - name: quikapp-config
+  - name: quckapp-config
     behavior: merge
     literals:
       - NODE_ENV=staging
       - LOG_LEVEL=info
-      - S3_MEDIA_BUCKET=quikapp-media-staging
-      - CORS_ORIGINS=https://staging.quikapp.com
+      - S3_MEDIA_BUCKET=quckapp-media-staging
+      - CORS_ORIGINS=https://staging.quckapp.com
       - RATE_LIMIT_ENABLED=true
 ```
 
@@ -302,7 +302,7 @@ configMapGenerator:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: quikapp-live
+namespace: quckapp-live
 namePrefix: live-
 
 resources:
@@ -319,7 +319,7 @@ patches:
   # High availability replicas
   - target:
       kind: Deployment
-      name: quikapp-api
+      name: quckapp-api
     patch: |-
       - op: replace
         path: /spec/replicas
@@ -337,7 +337,7 @@ patches:
   # Aggressive autoscaling
   - target:
       kind: HorizontalPodAutoscaler
-      name: quikapp-api-hpa
+      name: quckapp-api-hpa
     patch: |-
       - op: replace
         path: /spec/minReplicas
@@ -349,7 +349,7 @@ patches:
   # Stricter PDB
   - target:
       kind: PodDisruptionBudget
-      name: quikapp-api-pdb
+      name: quckapp-api-pdb
     patch: |-
       - op: replace
         path: /spec/minAvailable
@@ -358,25 +358,25 @@ patches:
   # IRSA annotations
   - target:
       kind: ServiceAccount
-      name: quikapp-api
+      name: quckapp-api
     patch: |-
       - op: add
         path: /metadata/annotations/eks.amazonaws.com~1role-arn
-        value: "arn:aws:iam::ACCOUNT_ID:role/quikapp-live-api-role"
+        value: "arn:aws:iam::ACCOUNT_ID:role/quckapp-live-api-role"
 
 configMapGenerator:
-  - name: quikapp-config
+  - name: quckapp-config
     behavior: merge
     literals:
       - NODE_ENV=production
       - LOG_LEVEL=warn
-      - S3_MEDIA_BUCKET=quikapp-media-live
-      - CORS_ORIGINS=https://quikapp.com,https://www.quikapp.com
+      - S3_MEDIA_BUCKET=quckapp-media-live
+      - CORS_ORIGINS=https://quckapp.com,https://www.quckapp.com
       - RATE_LIMIT_MAX_REQUESTS=500
 
 images:
-  - name: quikapp/api
-    newName: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/quikapp/api
+  - name: quckapp/api
+    newName: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/quckapp/api
     newTag: v1.0.0  # Pinned version in production
 ```
 
@@ -387,8 +387,8 @@ images:
 ```bash
 # List pods across all environments
 for ns in dev qa uat1 uat2 uat3 staging live; do
-  echo "=== quikapp-$ns ==="
-  kubectl get pods -n quikapp-$ns
+  echo "=== quckapp-$ns ==="
+  kubectl get pods -n quckapp-$ns
 done
 ```
 
@@ -396,47 +396,47 @@ done
 
 ```bash
 # Check specific environment
-kubectl rollout status deployment/live-quikapp-api -n quikapp-live
+kubectl rollout status deployment/live-quckapp-api -n quckapp-live
 
 # Watch rollout
-kubectl rollout status deployment/live-quikapp-api -n quikapp-live -w
+kubectl rollout status deployment/live-quckapp-api -n quckapp-live -w
 ```
 
 ### View Logs
 
 ```bash
 # Follow API logs
-kubectl logs -f deployment/live-quikapp-api -n quikapp-live
+kubectl logs -f deployment/live-quckapp-api -n quckapp-live
 
 # View previous container logs (after crash)
-kubectl logs deployment/live-quikapp-api -n quikapp-live --previous
+kubectl logs deployment/live-quckapp-api -n quckapp-live --previous
 
 # View logs with timestamps
-kubectl logs -f deployment/live-quikapp-api -n quikapp-live --timestamps
+kubectl logs -f deployment/live-quckapp-api -n quckapp-live --timestamps
 ```
 
 ### Scale Deployments
 
 ```bash
 # Manual scaling
-kubectl scale deployment live-quikapp-api --replicas=10 -n quikapp-live
+kubectl scale deployment live-quckapp-api --replicas=10 -n quckapp-live
 
 # View HPA status
-kubectl get hpa -n quikapp-live
-kubectl describe hpa live-quikapp-api-hpa -n quikapp-live
+kubectl get hpa -n quckapp-live
+kubectl describe hpa live-quckapp-api-hpa -n quckapp-live
 ```
 
 ### Rollback
 
 ```bash
 # View rollout history
-kubectl rollout history deployment/live-quikapp-api -n quikapp-live
+kubectl rollout history deployment/live-quckapp-api -n quckapp-live
 
 # Rollback to previous version
-kubectl rollout undo deployment/live-quikapp-api -n quikapp-live
+kubectl rollout undo deployment/live-quckapp-api -n quckapp-live
 
 # Rollback to specific revision
-kubectl rollout undo deployment/live-quikapp-api -n quikapp-live --to-revision=2
+kubectl rollout undo deployment/live-quckapp-api -n quckapp-live --to-revision=2
 ```
 
 ## Monitoring
@@ -445,7 +445,7 @@ kubectl rollout undo deployment/live-quikapp-api -n quikapp-live --to-revision=2
 
 ```bash
 # Port-forward to view metrics
-kubectl port-forward deployment/live-quikapp-api 9090:9090 -n quikapp-live
+kubectl port-forward deployment/live-quckapp-api 9090:9090 -n quckapp-live
 
 # View metrics
 curl http://localhost:9090/metrics
@@ -455,10 +455,10 @@ curl http://localhost:9090/metrics
 
 ```bash
 # View namespace events
-kubectl get events -n quikapp-live --sort-by='.lastTimestamp'
+kubectl get events -n quckapp-live --sort-by='.lastTimestamp'
 
 # Watch events
-kubectl get events -n quikapp-live -w
+kubectl get events -n quckapp-live -w
 ```
 
 ## Troubleshooting
@@ -467,31 +467,31 @@ kubectl get events -n quikapp-live -w
 
 ```bash
 # Describe pod for detailed info
-kubectl describe pod <pod-name> -n quikapp-live
+kubectl describe pod <pod-name> -n quckapp-live
 
 # Get pod logs
-kubectl logs <pod-name> -n quikapp-live
+kubectl logs <pod-name> -n quckapp-live
 
 # Execute into pod
-kubectl exec -it <pod-name> -n quikapp-live -- /bin/sh
+kubectl exec -it <pod-name> -n quckapp-live -- /bin/sh
 ```
 
 ### Network Issues
 
 ```bash
 # Check service endpoints
-kubectl get endpoints -n quikapp-live
+kubectl get endpoints -n quckapp-live
 
 # Test service connectivity
-kubectl run debug --rm -it --image=alpine -n quikapp-live -- \
-  wget -qO- http://live-quikapp-api:3000/health
+kubectl run debug --rm -it --image=alpine -n quckapp-live -- \
+  wget -qO- http://live-quckapp-api:3000/health
 ```
 
 ### Resource Issues
 
 ```bash
 # View resource usage
-kubectl top pods -n quikapp-live
+kubectl top pods -n quckapp-live
 
 # View node resources
 kubectl top nodes
@@ -539,15 +539,15 @@ jobs:
           aws-region: us-east-1
 
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name quikapp-${{ github.event.inputs.environment }}
+        run: aws eks update-kubeconfig --name quckapp-${{ github.event.inputs.environment }}
 
       - name: Deploy
         run: |
           cd k8s/overlays/${{ github.event.inputs.environment }}
-          kustomize edit set image quikapp/api=*:${{ github.event.inputs.image_tag }}
+          kustomize edit set image quckapp/api=*:${{ github.event.inputs.image_tag }}
           kubectl apply -k .
-          kubectl rollout status deployment/${{ github.event.inputs.environment }}-quikapp-api \
-            -n quikapp-${{ github.event.inputs.environment }} \
+          kubectl rollout status deployment/${{ github.event.inputs.environment }}-quckapp-api \
+            -n quckapp-${{ github.event.inputs.environment }} \
             --timeout=300s
 ```
 

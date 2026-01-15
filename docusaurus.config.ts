@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'QuikApp',
+  title: 'QuckApp',
   tagline: 'Enterprise-grade polyglot microservices chat platform',
   favicon: 'img/favicon.ico',
 
@@ -11,11 +11,11 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://quikapp.dev',
+  url: 'https://quckapp.dev',
   baseUrl: '/',
 
-  organizationName: 'quikapp',
-  projectName: 'quikapp',
+  organizationName: 'quckapp',
+  projectName: 'quckapp',
 
   onBrokenLinks: 'throw',
 
@@ -30,7 +30,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/quikapp/quikapp/tree/main/docs/',
+          editUrl: 'https://github.com/quckapp/quckapp/tree/main/docs/',
         },
         blog: false,
         theme: {
@@ -41,15 +41,15 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/quikapp-social-card.jpg',
+    image: 'img/quckapp-social-card.jpg',
     colorMode: {
       defaultMode: 'dark',
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'QuikApp',
+      title: 'QuckApp',
       logo: {
-        alt: 'QuikApp Logo',
+        alt: 'QuckApp Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -66,7 +66,7 @@ const config: Config = {
           label: 'API Reference',
         },
         {
-          href: 'https://github.com/quikapp/quikapp',
+          href: 'https://github.com/quckapp/quckapp',
           label: 'GitHub',
           position: 'right',
         },
@@ -94,12 +94,12 @@ const config: Config = {
         {
           title: 'Resources',
           items: [
-            { label: 'GitHub', href: 'https://github.com/quikapp/quikapp' },
-            { label: 'Docker Hub', href: 'https://hub.docker.com/u/quikapp' },
+            { label: 'GitHub', href: 'https://github.com/quckapp/quckapp' },
+            { label: 'Docker Hub', href: 'https://hub.docker.com/u/quckapp' },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} QuikApp. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} QuckApp. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

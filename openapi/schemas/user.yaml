@@ -31,7 +31,7 @@ User:
       type: string
       format: uri
       description: Avatar image URL
-      example: "https://cdn.quikapp.io/avatars/user123.jpg"
+      example: "https://cdn.quckapp.io/avatars/user123.jpg"
     title:
       type: string
       description: Job title

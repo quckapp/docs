@@ -1,6 +1,6 @@
 # VPC Module
 
-Creates a complete VPC networking infrastructure for QuikApp.
+Creates a complete VPC networking infrastructure for QuckApp.
 
 ## Features
 

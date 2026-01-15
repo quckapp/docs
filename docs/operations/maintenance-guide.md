@@ -47,7 +47,7 @@ sidebar_position: 4
 **Diagnosis:**
 ```bash
 # Check service metrics
-kubectl top pods -n quikapp-live
+kubectl top pods -n quckapp-live
 
 # Check database connections
 mysql -e "SHOW PROCESSLIST"
@@ -99,13 +99,13 @@ curl localhost:4000/dashboard
 **Diagnosis:**
 ```bash
 # Check auth service logs
-kubectl logs -l app=auth-service -n quikapp-live
+kubectl logs -l app=auth-service -n quckapp-live
 
 # Check OAuth provider
 curl -I https://login.microsoftonline.com
 
 # Check certificates
-openssl s_client -connect auth.quikapp.com:443
+openssl s_client -connect auth.quckapp.com:443
 ```
 
 **Resolution:**
@@ -125,7 +125,7 @@ openssl s_client -connect auth.quikapp.com:443
 **Diagnosis:**
 ```bash
 # Check RDS status
-aws rds describe-db-instances --db-instance-identifier quikapp-live
+aws rds describe-db-instances --db-instance-identifier quckapp-live
 
 # Check connection count
 mysql -e "SHOW STATUS LIKE 'Threads_connected'"
@@ -175,10 +175,10 @@ curl localhost:8080/actuator/health
 
 | Dashboard | URL | Purpose |
 |-----------|-----|---------|
-| System Overview | grafana.quikapp.com/d/overview | High-level health |
-| API Performance | grafana.quikapp.com/d/api | API metrics |
-| Database | grafana.quikapp.com/d/database | DB performance |
-| Kafka | grafana.quikapp.com/d/kafka | Message queue |
+| System Overview | grafana.quckapp.com/d/overview | High-level health |
+| API Performance | grafana.quckapp.com/d/api | API metrics |
+| Database | grafana.quckapp.com/d/database | DB performance |
+| Kafka | grafana.quckapp.com/d/kafka | Message queue |
 
 ### 3.2 Alert Runbooks
 
@@ -218,13 +218,13 @@ runbook:
 
 ```bash
 # List backups
-aws rds describe-db-snapshots --db-instance-identifier quikapp-live
+aws rds describe-db-snapshots --db-instance-identifier quckapp-live
 
 # Verify backup integrity
 ./scripts/verify-backup.sh --date=$(date +%Y-%m-%d)
 
 # Test restore (monthly)
-./scripts/test-restore.sh --snapshot=latest --target=quikapp-restore-test
+./scripts/test-restore.sh --snapshot=latest --target=quckapp-restore-test
 ```
 
 ### 4.2 Recovery Procedures
@@ -234,13 +234,13 @@ aws rds describe-db-snapshots --db-instance-identifier quikapp-live
 ```bash
 # Restore from snapshot
 aws rds restore-db-instance-from-db-snapshot \
-  --db-instance-identifier quikapp-live-restored \
-  --db-snapshot-identifier quikapp-live-snapshot-20240115
+  --db-instance-identifier quckapp-live-restored \
+  --db-snapshot-identifier quckapp-live-snapshot-20240115
 
 # Point-in-time recovery
 aws rds restore-db-instance-to-point-in-time \
-  --source-db-instance-identifier quikapp-live \
-  --target-db-instance-identifier quikapp-live-pitr \
+  --source-db-instance-identifier quckapp-live \
+  --target-db-instance-identifier quckapp-live-pitr \
   --restore-time 2024-01-15T10:00:00Z
 ```
 
@@ -248,11 +248,11 @@ aws rds restore-db-instance-to-point-in-time \
 
 ```bash
 # List S3 versions
-aws s3api list-object-versions --bucket quikapp-media-live --prefix files/
+aws s3api list-object-versions --bucket quckapp-media-live --prefix files/
 
 # Restore specific version
 aws s3api get-object \
-  --bucket quikapp-media-live \
+  --bucket quckapp-media-live \
   --key files/abc123.pdf \
   --version-id "xyz789" \
   restored-file.pdf
@@ -278,10 +278,10 @@ Detection → Containment → Investigation → Recovery → Lessons Learned
 
 | Role | Contact |
 |------|---------|
-| On-call Engineer | oncall@quikapp.com |
-| SRE Team | sre@quikapp.com |
-| Security Team | security@quikapp.com |
-| DBA | dba@quikapp.com |
+| On-call Engineer | oncall@quckapp.com |
+| SRE Team | sre@quckapp.com |
+| Security Team | security@quckapp.com |
+| DBA | dba@quckapp.com |
 
 ## Related Documentation
 

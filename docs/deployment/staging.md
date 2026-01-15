@@ -10,8 +10,8 @@ The staging environment is a production-mirror used for final validation before 
 
 | Aspect | Configuration |
 |--------|---------------|
-| **URL** | `https://staging.QuikApp.com` |
-| **API** | `https://api.staging.QuikApp.com` |
+| **URL** | `https://staging.QuckApp.com` |
+| **API** | `https://api.staging.QuckApp.com` |
 | **Purpose** | Pre-production validation |
 | **Data** | Production clone (sanitized) |
 | **Deployment** | On release branch creation |
@@ -61,7 +61,7 @@ Staging mirrors production infrastructure as closely as possible:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: QuikApp-staging
+namespace: QuckApp-staging
 
 resources:
   - ../../base
@@ -82,9 +82,9 @@ replicas:
     count: 3
 
 images:
-  - name: registry.QuikApp.dev/backend
+  - name: registry.QuckApp.dev/backend
     newTag: staging-latest
-  - name: registry.QuikApp.dev/auth-service
+  - name: registry.QuckApp.dev/auth-service
     newTag: staging-latest
 
 configMapGenerator:
@@ -112,7 +112,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: backend-hpa
-  namespace: QuikApp-staging
+  namespace: QuckApp-staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -143,7 +143,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: backend-pdb
-  namespace: QuikApp-staging
+  namespace: QuckApp-staging
 spec:
   minAvailable: 2
   selector:
@@ -159,32 +159,32 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: staging-config
-  namespace: QuikApp-staging
+  namespace: QuckApp-staging
 data:
   # Environment
   ENVIRONMENT: "staging"
   LOG_LEVEL: "info"
 
   # URLs
-  API_URL: "https://api.staging.QuikApp.com"
-  WS_URL: "wss://ws.staging.QuikApp.com"
-  CDN_URL: "https://cdn.staging.QuikApp.com"
+  API_URL: "https://api.staging.QuckApp.com"
+  WS_URL: "wss://ws.staging.QuckApp.com"
+  CDN_URL: "https://cdn.staging.QuckApp.com"
 
   # Database endpoints (Multi-AZ Aurora)
-  POSTGRES_HOST: "QuikApp-staging.cluster-xxxxx.us-east-1.rds.amazonaws.com"
-  POSTGRES_READ_HOST: "QuikApp-staging.cluster-ro-xxxxx.us-east-1.rds.amazonaws.com"
-  MYSQL_HOST: "QuikApp-staging-mysql.cluster-xxxxx.us-east-1.rds.amazonaws.com"
-  MONGODB_HOST: "QuikApp-staging-docdb.cluster-xxxxx.us-east-1.docdb.amazonaws.com"
+  POSTGRES_HOST: "QuckApp-staging.cluster-xxxxx.us-east-1.rds.amazonaws.com"
+  POSTGRES_READ_HOST: "QuckApp-staging.cluster-ro-xxxxx.us-east-1.rds.amazonaws.com"
+  MYSQL_HOST: "QuckApp-staging-mysql.cluster-xxxxx.us-east-1.rds.amazonaws.com"
+  MONGODB_HOST: "QuckApp-staging-docdb.cluster-xxxxx.us-east-1.docdb.amazonaws.com"
 
   # Cache (Cluster mode)
-  REDIS_HOST: "QuikApp-staging.xxxxx.clustercfg.use1.cache.amazonaws.com"
+  REDIS_HOST: "QuckApp-staging.xxxxx.clustercfg.use1.cache.amazonaws.com"
   REDIS_CLUSTER_MODE: "true"
 
   # Kafka (MSK Cluster)
-  KAFKA_BROKERS: "b-1.QuikApp-staging.xxxxx.kafka.us-east-1.amazonaws.com:9092,b-2.QuikApp-staging.xxxxx.kafka.us-east-1.amazonaws.com:9092,b-3.QuikApp-staging.xxxxx.kafka.us-east-1.amazonaws.com:9092"
+  KAFKA_BROKERS: "b-1.QuckApp-staging.xxxxx.kafka.us-east-1.amazonaws.com:9092,b-2.QuckApp-staging.xxxxx.kafka.us-east-1.amazonaws.com:9092,b-3.QuckApp-staging.xxxxx.kafka.us-east-1.amazonaws.com:9092"
 
   # Elasticsearch (OpenSearch)
-  ELASTICSEARCH_URL: "https://QuikApp-staging.us-east-1.es.amazonaws.com"
+  ELASTICSEARCH_URL: "https://QuckApp-staging.us-east-1.es.amazonaws.com"
 
   # Feature Flags (production-like)
   ENABLE_SWAGGER: "false"
@@ -211,8 +211,8 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  EKS_CLUSTER: QuikApp-staging
-  REGISTRY: registry.QuikApp.dev
+  EKS_CLUSTER: QuckApp-staging
+  REGISTRY: registry.QuckApp.dev
 
 jobs:
   validate:
@@ -290,8 +290,8 @@ jobs:
 
       - name: Run database migrations
         run: |
-          kubectl apply -f k8s/jobs/migration-job.yaml -n QuikApp-staging
-          kubectl wait --for=condition=complete job/db-migration -n QuikApp-staging --timeout=300s
+          kubectl apply -f k8s/jobs/migration-job.yaml -n QuckApp-staging
+          kubectl wait --for=condition=complete job/db-migration -n QuckApp-staging --timeout=300s
 
       - name: Deploy to Staging
         run: |
@@ -299,11 +299,11 @@ jobs:
 
           # Wait for all deployments
           for deploy in backend auth-service user-service message-service; do
-            kubectl rollout status deployment/$deploy -n QuikApp-staging --timeout=300s
+            kubectl rollout status deployment/$deploy -n QuckApp-staging --timeout=300s
           done
 
       - name: Run smoke tests
-        run: ./scripts/smoke-tests.sh https://api.staging.QuikApp.com
+        run: ./scripts/smoke-tests.sh https://api.staging.QuckApp.com
 
   performance-test:
     needs: deploy
@@ -394,9 +394,9 @@ Before promoting to production, validate:
 
 | Tool | URL | Purpose |
 |------|-----|---------|
-| Grafana | https://grafana.staging.QuikApp.com | Metrics dashboards |
-| Jaeger | https://jaeger.staging.QuikApp.com | Distributed tracing |
-| Kibana | https://logs.staging.QuikApp.com | Log analysis |
+| Grafana | https://grafana.staging.QuckApp.com | Metrics dashboards |
+| Jaeger | https://jaeger.staging.QuckApp.com | Distributed tracing |
+| Kibana | https://logs.staging.QuckApp.com | Log analysis |
 | PagerDuty | Integrated | Alerting |
 
 ### Key Metrics to Monitor
@@ -444,7 +444,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: staging-data-sync
-  namespace: QuikApp-staging
+  namespace: QuckApp-staging
 spec:
   schedule: "0 2 * * 0"  # Every Sunday at 2 AM
   jobTemplate:
@@ -453,7 +453,7 @@ spec:
         spec:
           containers:
             - name: data-sync
-              image: registry.QuikApp.dev/db-tools:latest
+              image: registry.QuckApp.dev/db-tools:latest
               command:
                 - /bin/sh
                 - -c
@@ -478,20 +478,20 @@ spec:
 
 ```bash
 # Connect to Staging VPN
-openvpn --config QuikApp-staging.ovpn
+openvpn --config QuckApp-staging.ovpn
 ```
 
 ### kubectl Access
 
 ```bash
 # Configure kubectl for Staging
-aws eks update-kubeconfig --name QuikApp-staging --region us-east-1
+aws eks update-kubeconfig --name QuckApp-staging --region us-east-1
 
 # Verify access
-kubectl get pods -n QuikApp-staging
+kubectl get pods -n QuckApp-staging
 
 # Check deployment status
-kubectl rollout status deployment/backend -n QuikApp-staging
+kubectl rollout status deployment/backend -n QuckApp-staging
 ```
 
 ## Rollback Procedure
@@ -505,7 +505,7 @@ PREVIOUS_VERSION=$1
 if [ -z "$PREVIOUS_VERSION" ]; then
   echo "Usage: ./rollback-staging.sh <version>"
   echo "Available versions:"
-  kubectl rollout history deployment/backend -n QuikApp-staging
+  kubectl rollout history deployment/backend -n QuckApp-staging
   exit 1
 fi
 
@@ -514,12 +514,12 @@ echo "Rolling back staging to version $PREVIOUS_VERSION..."
 # Rollback all services
 for service in backend auth-service user-service message-service; do
   kubectl set image deployment/$service \
-    $service=registry.QuikApp.dev/$service:$PREVIOUS_VERSION \
-    -n QuikApp-staging
+    $service=registry.QuckApp.dev/$service:$PREVIOUS_VERSION \
+    -n QuckApp-staging
 done
 
 # Wait for rollback
-kubectl rollout status deployment/backend -n QuikApp-staging
+kubectl rollout status deployment/backend -n QuckApp-staging
 
 echo "Rollback complete!"
 ```

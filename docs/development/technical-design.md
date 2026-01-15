@@ -8,7 +8,7 @@ sidebar_position: 2
 
 | Field | Value |
 |-------|-------|
-| **Document ID** | QUIKAPP-TDD-001 |
+| **Document ID** | QUCKAPP-TDD-001 |
 | **Version** | 1.5 |
 | **Status** | Approved |
 | **Last Updated** | 2024-01-15 |
@@ -16,7 +16,7 @@ sidebar_position: 2
 
 ## 1. Introduction
 
-This Technical Design Document (TDD) provides detailed specifications for implementing QuikApp's core features. It bridges the gap between high-level architecture and actual code implementation.
+This Technical Design Document (TDD) provides detailed specifications for implementing QuckApp's core features. It bridges the gap between high-level architecture and actual code implementation.
 
 ## 2. Message Service Design
 
@@ -372,8 +372,8 @@ Errors:
 // Payload
 {
   "sub": "user_456",           // User ID
-  "iss": "https://auth.quikapp.com",
-  "aud": "quikapp-api",
+  "iss": "https://auth.quckapp.com",
+  "aud": "quckapp-api",
   "exp": 1705399200,           // Expiry (1 hour)
   "iat": 1705395600,           // Issued at
   "jti": "jwt_789",            // JWT ID
@@ -463,8 +463,8 @@ presence:user:{userId}           // User presence
 {
   "specversion": "1.0",
   "id": "evt_abc123",
-  "source": "quikapp/message-service",
-  "type": "com.quikapp.message.sent",
+  "source": "quckapp/message-service",
+  "type": "com.quckapp.message.sent",
   "time": "2024-01-15T10:00:00Z",
   "datacontenttype": "application/json",
   "data": {

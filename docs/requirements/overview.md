@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Requirements & Planning Overview
 
-Requirements and planning documents define **what** QuikApp should do and **why**. These documents serve as the foundation for all development, testing, and deployment activities.
+Requirements and planning documents define **what** QuckApp should do and **why**. These documents serve as the foundation for all development, testing, and deployment activities.
 
 ## Document Types
 
@@ -38,7 +38,7 @@ Requirements and planning documents define **what** QuikApp should do and **why*
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## QuikApp Requirements Summary
+## QuckApp Requirements Summary
 
 ### Business Goals
 - Enterprise-grade team communication platform

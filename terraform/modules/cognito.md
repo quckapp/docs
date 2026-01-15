@@ -37,15 +37,15 @@ module "cognito" {
 
   # Domain
   create_user_pool_domain = true
-  user_pool_domain_prefix = "quikapp"
+  user_pool_domain_prefix = "quckapp"
 
   # Clients
   create_web_client     = true
   create_mobile_client  = true
   create_backend_client = true
 
-  web_callback_urls = ["https://app.quikapp.com/callback"]
-  web_logout_urls   = ["https://app.quikapp.com"]
+  web_callback_urls = ["https://app.quckapp.com/callback"]
+  web_logout_urls   = ["https://app.quckapp.com"]
 
   # Identity Pool
   create_identity_pool = true
@@ -105,13 +105,13 @@ client {
   ]
   supported_identity_providers = ["COGNITO"]
 
-  callback_urls = ["https://app.quikapp.com/callback"]
-  logout_urls   = ["https://app.quikapp.com"]
+  callback_urls = ["https://app.quckapp.com/callback"]
+  logout_urls   = ["https://app.quckapp.com"]
 
   allowed_oauth_flows = ["code"]
   allowed_oauth_scopes = [
     "email", "openid", "profile",
-    "quikapp-api/read", "quikapp-api/write"
+    "quckapp-api/read", "quckapp-api/write"
   ]
 }
 ```
@@ -129,8 +129,8 @@ client {
     "ALLOW_REFRESH_TOKEN_AUTH"
   ]
 
-  callback_urls = ["quikapp://callback"]
-  logout_urls   = ["quikapp://logout"]
+  callback_urls = ["quckapp://callback"]
+  logout_urls   = ["quckapp://logout"]
 
   # Token validity
   access_token_validity  = 1   # 1 hour
@@ -153,7 +153,7 @@ client {
   ]
 
   allowed_oauth_flows          = ["client_credentials"]
-  allowed_oauth_scopes         = ["quikapp-api/admin"]
+  allowed_oauth_scopes         = ["quckapp-api/admin"]
   allowed_oauth_flows_user_pool_client = true
 }
 ```
@@ -201,7 +201,7 @@ software_token_mfa_configuration {
 
 # SMS MFA (requires SNS)
 sms_mfa_configuration {
-  sms_authentication_message = "Your QuikApp code is {####}"
+  sms_authentication_message = "Your QuckApp code is {####}"
 }
 ```
 
@@ -243,7 +243,7 @@ Provides temporary AWS credentials:
 
 ```hcl
 identity_pool {
-  identity_pool_name               = "quikapp-prod"
+  identity_pool_name               = "quckapp-prod"
   allow_unauthenticated_identities = false
 
   cognito_identity_providers {

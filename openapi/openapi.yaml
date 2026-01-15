@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
-  title: QuikApp API
+  title: QuckApp API
   description: |
-    QuikApp is an enterprise communication platform providing real-time messaging,
+    QuckApp is an enterprise communication platform providing real-time messaging,
     voice/video calls, file sharing, and team collaboration features.
 
     ## Authentication
@@ -20,7 +20,7 @@ info:
     Some endpoints also support page-based pagination with `page` and `limit`.
 
     ## WebSocket
-    Real-time features are available via WebSocket at `wss://ws.quikapp.io`
+    Real-time features are available via WebSocket at `wss://ws.quckapp.io`
 
     ## Error Handling
     All errors return a consistent JSON structure with `error.code`, `error.message`,
@@ -28,19 +28,19 @@ info:
 
   version: 1.0.0
   contact:
-    name: QuikApp API Support
-    email: api-support@quikapp.io
-    url: https://docs.quikapp.io
+    name: QuckApp API Support
+    email: api-support@quckapp.io
+    url: https://docs.quckapp.io
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
   x-logo:
-    url: https://quikapp.io/logo.png
+    url: https://quckapp.io/logo.png
 
 servers:
-  - url: https://api.quikapp.io/v1
+  - url: https://api.quckapp.io/v1
     description: Production server
-  - url: https://api.staging.quikapp.io/v1
+  - url: https://api.staging.quckapp.io/v1
     description: Staging server
   - url: http://localhost:3000/v1
     description: Local development
@@ -390,8 +390,8 @@ components:
       type: oauth2
       flows:
         authorizationCode:
-          authorizationUrl: https://api.quikapp.io/oauth/authorize
-          tokenUrl: https://api.quikapp.io/oauth/token
+          authorizationUrl: https://api.quckapp.io/oauth/authorize
+          tokenUrl: https://api.quckapp.io/oauth/token
           scopes:
             read: Read access to user data
             write: Write access to user data

@@ -69,7 +69,7 @@ General media processing tasks:
 
 ```hcl
 queue {
-  name                       = "quikapp-{env}-media-processing"
+  name                       = "quckapp-{env}-media-processing"
   delay_seconds              = 0
   max_message_size           = 262144  # 256 KB
   message_retention_seconds  = 345600  # 4 days
@@ -84,7 +84,7 @@ Dedicated queue for thumbnail generation:
 
 ```hcl
 queue {
-  name                       = "quikapp-{env}-thumbnails"
+  name                       = "quckapp-{env}-thumbnails"
   visibility_timeout_seconds = 180     # 3 minutes
 }
 ```
@@ -95,7 +95,7 @@ Longer processing times for video:
 
 ```hcl
 queue {
-  name                       = "quikapp-{env}-video-processing"
+  name                       = "quckapp-{env}-video-processing"
   visibility_timeout_seconds = 900     # 15 minutes
 }
 ```
@@ -106,7 +106,7 @@ Push notifications and alerts:
 
 ```hcl
 queue {
-  name                       = "quikapp-{env}-notifications"
+  name                       = "quckapp-{env}-notifications"
   visibility_timeout_seconds = 60      # 1 minute
 }
 ```
@@ -117,7 +117,7 @@ For ordered processing:
 
 ```hcl
 queue {
-  name                        = "quikapp-{env}-ordered.fifo"
+  name                        = "quckapp-{env}-ordered.fifo"
   fifo_queue                  = true
   content_based_deduplication = true
   deduplication_scope         = "messageGroup"

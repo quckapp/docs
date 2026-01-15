@@ -71,7 +71,7 @@ Comprehensive monitoring and alerting for CI/CD pipelines across GitHub Actions 
 ```json
 {
   "dashboard": {
-    "title": "QuikApp CI - GitHub Actions",
+    "title": "QuckApp CI - GitHub Actions",
     "panels": [
       {
         "title": "Build Success Rate (24h)",
@@ -145,7 +145,7 @@ Comprehensive monitoring and alerting for CI/CD pipelines across GitHub Actions 
 ```json
 {
   "dashboard": {
-    "title": "QuikApp CD - Azure DevOps",
+    "title": "QuckApp CD - Azure DevOps",
     "panels": [
       {
         "title": "Deployment Pipeline",
@@ -212,7 +212,7 @@ Comprehensive monitoring and alerting for CI/CD pipelines across GitHub Actions 
 ```json
 {
   "dashboard": {
-    "title": "QuikApp DORA Metrics",
+    "title": "QuckApp DORA Metrics",
     "panels": [
       {
         "title": "Deployment Frequency",
@@ -327,7 +327,7 @@ groups:
         annotations:
           summary: "CI build failed for {{ $labels.service }}"
           description: "Build {{ $labels.run_id }} failed in {{ $labels.workflow }}"
-          runbook_url: "https://wiki.quikapp.dev/runbooks/ci-build-failure"
+          runbook_url: "https://wiki.quckapp.dev/runbooks/ci-build-failure"
 
       - alert: CIBuildDurationHigh
         expr: github_actions_job_duration_seconds > 600
@@ -346,7 +346,7 @@ groups:
         annotations:
           summary: "Critical security vulnerability found in {{ $labels.service }}"
           description: "{{ $value }} critical vulnerabilities detected"
-          runbook_url: "https://wiki.quikapp.dev/runbooks/security-vulnerability"
+          runbook_url: "https://wiki.quckapp.dev/runbooks/security-vulnerability"
 
       - alert: TestCoverageLow
         expr: codecov_coverage_percent < 70
@@ -367,7 +367,7 @@ groups:
         annotations:
           summary: "Deployment failed for {{ $labels.service }} to {{ $labels.environment }}"
           description: "Deployment {{ $labels.release_id }} failed"
-          runbook_url: "https://wiki.quikapp.dev/runbooks/deployment-failure"
+          runbook_url: "https://wiki.quckapp.dev/runbooks/deployment-failure"
 
       - alert: RollbackTriggered
         expr: increase(azure_devops_rollbacks_total[1h]) > 0
@@ -377,7 +377,7 @@ groups:
         annotations:
           summary: "Rollback triggered for {{ $labels.service }} in {{ $labels.environment }}"
           description: "Automatic rollback was triggered due to health check failures"
-          runbook_url: "https://wiki.quikapp.dev/runbooks/rollback"
+          runbook_url: "https://wiki.quckapp.dev/runbooks/rollback"
 
       - alert: ApprovalPending
         expr: azure_devops_pending_approval_hours > 24
@@ -552,7 +552,7 @@ def calculate_dora_metrics(start, end):
 ### Report Template
 
 ```markdown
-# QuikApp CI/CD Weekly Report
+# QuckApp CI/CD Weekly Report
 **Period:** {{ period }}
 
 ## Summary

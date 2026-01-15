@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Apache Kafka
 
-QuikApp uses Apache Kafka for event streaming, enabling real-time communication between microservices.
+QuckApp uses Apache Kafka for event streaming, enabling real-time communication between microservices.
 
 ## Architecture
 
@@ -44,29 +44,29 @@ QuikApp uses Apache Kafka for event streaming, enabling real-time communication 
 ### Topic Naming Convention
 
 ```
-QuikApp.{domain}.{event-type}
+QuckApp.{domain}.{event-type}
 ```
 
 ### Core Topics
 
 | Topic | Partitions | Retention | Description |
 |-------|------------|-----------|-------------|
-| `QuikApp.auth.user-registered` | 3 | 7 days | New user registrations |
-| `QuikApp.auth.user-login` | 3 | 1 day | Login events |
-| `QuikApp.auth.password-reset` | 1 | 1 day | Password reset requests |
-| `QuikApp.user.profile-updated` | 3 | 7 days | Profile changes |
-| `QuikApp.user.status-changed` | 6 | 1 day | Online status changes |
-| `QuikApp.message.sent` | 12 | 30 days | New messages |
-| `QuikApp.message.edited` | 6 | 7 days | Message edits |
-| `QuikApp.message.deleted` | 3 | 7 days | Message deletions |
-| `QuikApp.message.reaction` | 6 | 7 days | Emoji reactions |
-| `QuikApp.channel.created` | 3 | 30 days | New channels |
-| `QuikApp.channel.member-added` | 6 | 7 days | Member additions |
-| `QuikApp.workspace.created` | 1 | 30 days | New workspaces |
-| `QuikApp.notification.push` | 6 | 1 day | Push notifications |
-| `QuikApp.notification.email` | 3 | 1 day | Email notifications |
-| `QuikApp.audit.event` | 6 | 90 days | Audit log events |
-| `QuikApp.analytics.event` | 12 | 30 days | Analytics events |
+| `QuckApp.auth.user-registered` | 3 | 7 days | New user registrations |
+| `QuckApp.auth.user-login` | 3 | 1 day | Login events |
+| `QuckApp.auth.password-reset` | 1 | 1 day | Password reset requests |
+| `QuckApp.user.profile-updated` | 3 | 7 days | Profile changes |
+| `QuckApp.user.status-changed` | 6 | 1 day | Online status changes |
+| `QuckApp.message.sent` | 12 | 30 days | New messages |
+| `QuckApp.message.edited` | 6 | 7 days | Message edits |
+| `QuckApp.message.deleted` | 3 | 7 days | Message deletions |
+| `QuckApp.message.reaction` | 6 | 7 days | Emoji reactions |
+| `QuckApp.channel.created` | 3 | 30 days | New channels |
+| `QuckApp.channel.member-added` | 6 | 7 days | Member additions |
+| `QuckApp.workspace.created` | 1 | 30 days | New workspaces |
+| `QuckApp.notification.push` | 6 | 1 day | Push notifications |
+| `QuckApp.notification.email` | 3 | 1 day | Email notifications |
+| `QuckApp.audit.event` | 6 | 90 days | Audit log events |
+| `QuckApp.analytics.event` | 12 | 30 days | Analytics events |
 
 ### Topic Configuration
 
@@ -74,7 +74,7 @@ QuikApp.{domain}.{event-type}
 # Create topic with specific configuration
 kafka-topics --create \
   --bootstrap-server kafka:9092 \
-  --topic QuikApp.message.sent \
+  --topic QuckApp.message.sent \
   --partitions 12 \
   --replication-factor 3 \
   --config retention.ms=2592000000 \
@@ -303,7 +303,7 @@ export class KafkaConsumer implements OnModuleInit {
   async onModuleInit() {
     await this.consumer.connect();
     await this.consumer.subscribe({
-      topics: ['QuikApp.message.sent', 'QuikApp.message.reaction'],
+      topics: ['QuckApp.message.sent', 'QuckApp.message.reaction'],
       fromBeginning: false
     });
 
@@ -351,11 +351,11 @@ kafka-topics --bootstrap-server kafka:9092 --list
 
 # Describe topic
 kafka-topics --bootstrap-server kafka:9092 \
-  --topic QuikApp.message.sent --describe
+  --topic QuckApp.message.sent --describe
 
 # View messages
 kafka-console-consumer --bootstrap-server kafka:9092 \
-  --topic QuikApp.message.sent --from-beginning --max-messages 10
+  --topic QuckApp.message.sent --from-beginning --max-messages 10
 ```
 
 ## Production Configuration

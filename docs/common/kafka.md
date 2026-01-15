@@ -9,12 +9,12 @@ Apache Kafka for event streaming.
 ## Topics
 
 ```
-QuikApp.users.events
-QuikApp.messages.events
-QuikApp.presence.events
-QuikApp.notifications.events
-QuikApp.analytics.events
-QuikApp.audit.events
+QuckApp.users.events
+QuckApp.messages.events
+QuckApp.presence.events
+QuckApp.notifications.events
+QuckApp.analytics.events
+QuckApp.audit.events
 ```
 
 ## Publishing Events
@@ -27,7 +27,7 @@ export class UserService {
   async createUser(dto: CreateUserDto) {
     const user = await this.userRepo.save(dto);
 
-    await this.kafka.emit('QuikApp.users.events', {
+    await this.kafka.emit('QuckApp.users.events', {
       type: 'USER_CREATED',
       payload: { userId: user.id, email: user.email },
       timestamp: new Date().toISOString(),
@@ -43,7 +43,7 @@ export class UserService {
 ```typescript
 @Controller()
 export class AnalyticsConsumer {
-  @EventPattern('QuikApp.users.events')
+  @EventPattern('QuckApp.users.events')
   async handleUserEvent(data: UserEvent) {
     if (data.type === 'USER_CREATED') {
       await this.analyticsService.trackNewUser(data.payload);
