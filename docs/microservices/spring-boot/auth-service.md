@@ -524,17 +524,78 @@ Prometheus metrics available at: `http://localhost:8081/api/auth/actuator/promet
 ### API Documentation
 
 - **Swagger UI:** http://localhost:8081/api/auth/swagger-ui.html
-- **OpenAPI Spec:** http://localhost:8081/api/auth/v3/api-docs
+- **OpenAPI Spec (JSON):** http://localhost:8081/api/auth/v3/api-docs
+- **OpenAPI Spec (YAML):** http://localhost:8081/api/auth/v3/api-docs.yaml
 - **Full API Reference:** [Authentication API](/docs/api/rest/authentication)
+
+#### Swagger Configuration
+
+The auth-service uses SpringDoc OpenAPI with comprehensive configuration in `OpenApiConfig.java`:
+
+```java
+@OpenAPIDefinition(
+    info = @Info(
+        title = "QuckApp Auth Service API",
+        version = "1.0.0",
+        description = "Authentication & Authorization Service..."
+    ),
+    servers = {
+        @Server(url = "/api/auth", description = "Auth Service Base Path"),
+        @Server(url = "http://localhost:8081/api/auth", description = "Local Development"),
+        @Server(url = "https://api.quckapp.com/auth", description = "Production")
+    }
+)
+@SecuritySchemes({
+    @SecurityScheme(name = "bearerAuth", type = HTTP, scheme = "bearer", bearerFormat = "JWT"),
+    @SecurityScheme(name = "apiKey", type = APIKEY, in = HEADER, parameterName = "X-API-Key")
+})
+public class OpenApiConfig { ... }
+```
+
+#### API Groups
+
+The Swagger UI organizes endpoints into logical groups:
+
+| Group | Endpoints | Description |
+|-------|-----------|-------------|
+| **0. All Endpoints** | `/v1/**` | Complete API view |
+| **1. Public** | `/v1/register`, `/v1/login`, `/v1/oauth/**`, `/v1/auth/phone/**` | No authentication required |
+| **2. Authenticated** | `/v1/logout`, `/v1/2fa/**`, `/v1/sessions/**`, `/v1/users/me/**` | Requires JWT Bearer token |
+| **3. User Management** | `/v1/users/**` (excluding me, admin, internal) | User lookup and search |
+| **4. Admin** | `/v1/users/admin/**` | Admin-only operations |
+| **5. Internal** | `/v1/users/internal/**`, `/v1/migration/**` | Service-to-service APIs |
+
+#### Security Schemes
+
+| Scheme | Type | Usage |
+|--------|------|-------|
+| `bearerAuth` | JWT Bearer | Most authenticated endpoints |
+| `apiKey` | X-API-Key Header | Internal service communication |
 
 #### Swagger UI Features
 
-The Swagger UI provides:
 - **Grouped APIs** - Endpoints organized by Public, Authenticated, User Management, Admin, and Internal
 - **Try It Out** - Interactive API testing directly from the browser
 - **Authorization** - Persistent Bearer token storage for testing authenticated endpoints
 - **Request/Response Examples** - Full request and response schema documentation
-- **Rate Limit Headers** - Documentation for rate limiting on all endpoints
+- **Rate Limit Headers** - All responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+
+#### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Authentication | Login, registration, password management |
+| Token Management | JWT refresh, validate, revoke |
+| Two-Factor Authentication | 2FA setup and verification |
+| Phone Authentication | SMS OTP login |
+| OAuth2 | Social login providers |
+| Sessions | Session management |
+| User Profiles | Profile CRUD |
+| Devices | Device and FCM token management |
+| Blocked Users | User blocking |
+| Admin | Administrative operations |
+| Migration | Data migration (internal) |
+| Internal | Service-to-service endpoints |
 
 ## Testing
 
