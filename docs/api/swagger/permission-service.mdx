@@ -1,0 +1,96 @@
+---
+sidebar_position: 3
+title: Permission Service API
+description: Interactive API documentation for the Permission Service
+---
+
+import SwaggerUI from '@site/src/components/SwaggerUI';
+
+# Permission Service API
+
+Interactive OpenAPI documentation for the QuckApp Permission Service.
+
+## Overview
+
+The Permission Service provides role-based access control (RBAC) capabilities:
+
+| Feature | Description |
+|---------|-------------|
+| **Role Management** | Create, update, delete roles with permissions |
+| **Permission Management** | Define and query available permissions |
+| **User Role Assignment** | Assign/revoke roles to/from users |
+| **Permission Checking** | Verify user permissions in real-time |
+| **Workspace Scoping** | Permissions scoped to specific workspaces |
+
+## Base URL
+
+- **Local Development:** `http://localhost:8083`
+- **Staging:** `https://api.staging.quckapp.io/permissions`
+- **Production:** `https://api.quckapp.io/permissions`
+
+## Authentication
+
+Most endpoints require authentication via JWT Bearer token:
+
+```http
+Authorization: Bearer <access_token>
+```
+
+Service-to-service calls use API Key authentication:
+
+```http
+X-API-Key: <api_key>
+```
+
+## Data Model
+
+### Role Entity
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "workspace_admin",
+  "displayName": "Workspace Administrator",
+  "description": "Full access to workspace settings and members",
+  "workspaceId": "ws-12345",
+  "permissions": ["manage_members", "manage_channels", "manage_settings"],
+  "createdAt": "2024-01-15T10:30:00Z"
+}
+```
+
+### Permission Entity
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440001",
+  "name": "manage_members",
+  "displayName": "Manage Members",
+  "description": "Add, remove, and modify workspace members",
+  "category": "WORKSPACE",
+  "createdAt": "2024-01-15T10:30:00Z"
+}
+```
+
+### User Role Assignment
+
+```json
+{
+  "userId": "user-12345",
+  "roleId": "550e8400-e29b-41d4-a716-446655440000",
+  "workspaceId": "ws-12345",
+  "assignedAt": "2024-01-15T10:30:00Z",
+  "assignedBy": "admin-user-id"
+}
+```
+
+## Integration
+
+- Works with Casbin for policy enforcement
+- Integrates with Auth Service for user identity
+- Publishes permission events to Kafka
+
+---
+
+## Interactive API Explorer
+
+<SwaggerUI url="/api/permission-service.json" />

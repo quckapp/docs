@@ -272,6 +272,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'api/swagger/auth-service',
         'api/swagger/user-service',
+        'api/swagger/permission-service',
       ],
     },
   ],
