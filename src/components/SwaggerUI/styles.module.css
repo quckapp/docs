@@ -1,6 +1,59 @@
+.swaggerWrapper {
+  position: relative;
+}
+
+.swaggerWrapper.fullscreen {
+  background: var(--ifm-background-color);
+  overflow: auto;
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.toolbarButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.toolbarButton:hover {
+  background: var(--ifm-color-primary-dark);
+}
+
+.toolbarButton:active {
+  transform: scale(0.98);
+}
+
+.toolbarButton svg {
+  flex-shrink: 0;
+}
+
 .swaggerContainer {
   margin: 0 -1rem;
   padding: 1rem;
+}
+
+.fullscreen .swaggerContainer {
+  margin: 0;
+  padding: 1rem 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .loading {
@@ -34,6 +87,14 @@
 
 /* Make it responsive */
 @media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+  }
+
+  .toolbarButton {
+    justify-content: center;
+  }
+
   .swaggerContainer {
     margin: 0 -0.5rem;
     padding: 0.5rem;
