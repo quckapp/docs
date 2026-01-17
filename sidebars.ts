@@ -271,6 +271,7 @@ const sidebars: SidebarsConfig = {
       label: 'Spring Boot Services',
       items: [
         'api/swagger/auth-service',
+        'api/swagger/user-service',
       ],
     },
   ],
