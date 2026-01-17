@@ -240,6 +240,80 @@ public class UserBannedEvent {
 }
 ```
 
+## API Documentation
+
+### Swagger UI & OpenAPI
+
+- **Swagger UI:** http://localhost:8082/swagger-ui.html
+- **OpenAPI Spec (JSON):** http://localhost:8082/v3/api-docs
+- **OpenAPI Spec (YAML):** http://localhost:8082/v3/api-docs.yaml
+
+### Swagger Configuration
+
+The user-service uses SpringDoc OpenAPI with comprehensive configuration in `OpenApiConfig.java`:
+
+```java
+@OpenAPIDefinition(
+    info = @Info(
+        title = "QuckApp User Service API",
+        version = "1.0.0",
+        description = "User Management Service for the QuckApp ecosystem...",
+        contact = @Contact(name = "QuckApp Team", email = "support@quckapp.com"),
+        license = @License(name = "MIT License")
+    ),
+    servers = {
+        @Server(url = "/", description = "User Service Base Path"),
+        @Server(url = "http://localhost:8082", description = "Local Development"),
+        @Server(url = "https://api.quckapp.com/users", description = "Production")
+    }
+)
+@SecuritySchemes({
+    @SecurityScheme(name = "apiKey", type = APIKEY, in = HEADER, parameterName = "X-API-Key"),
+    @SecurityScheme(name = "serviceAuth", type = APIKEY, in = HEADER, parameterName = "X-Service-Name")
+})
+public class OpenApiConfig { ... }
+```
+
+### API Groups
+
+The Swagger UI organizes endpoints into logical groups:
+
+| Group | Endpoints | Description |
+|-------|-----------|-------------|
+| **0. All Endpoints** | `/api/**` | Complete API view |
+| **1. Users** | `/api/users`, `/api/users/{id}` | Core user CRUD operations |
+| **2. Profile** | `/api/users/{id}/profile` | Profile management (bio, avatar, social links) |
+| **3. Preferences** | `/api/users/{id}/preferences` | User preferences (notifications, theme, privacy) |
+| **4. Search** | `/api/users/search`, `/api/users/email/**`, `/api/users/username/**` | User search and discovery |
+| **5. Batch** | `/api/users/batch` | Batch operations for multiple users |
+| **6. Admin** | `/api/users/{id}/suspend`, `/api/users/{id}/activate` | Administrative operations |
+
+### Security Schemes
+
+| Scheme | Type | Header | Usage |
+|--------|------|--------|-------|
+| `apiKey` | API Key | `X-API-Key` | Service-to-service communication |
+| `serviceAuth` | API Key | `X-Service-Name` | Service mesh authentication (Istio, Consul) |
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Users | Core user management - create, read, update, delete |
+| Profile | User profile management - bio, avatar, social links |
+| Preferences | User preferences - notifications, theme, privacy settings |
+| Search | User search and discovery endpoints |
+| Batch | Batch operations for retrieving multiple users |
+| Admin | Administrative operations - suspend, deactivate users |
+
+### Swagger UI Features
+
+- **Grouped APIs** - Endpoints organized by Users, Profile, Preferences, Search, Batch, Admin
+- **Try It Out** - Interactive API testing directly from the browser
+- **Authorization** - Persistent API Key storage for testing endpoints
+- **Request/Response Examples** - Full request and response schema documentation
+- **Data Models** - Detailed schema documentation for all DTOs and entities
+
 ## MySQL Database Integration
 
 QuckApp User Service leverages MySQL 8.0 for reliable, ACID-compliant user data storage with advanced features for high-performance queries and horizontal scaling.
