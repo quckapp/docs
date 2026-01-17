@@ -1,6 +1,7 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+import type {Configuration} from 'webpack';
 
 const config: Config = {
   title: 'QuckApp',
@@ -23,6 +24,24 @@ const config: Config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
+
+  plugins: [
+    function webpackPolyfillPlugin() {
+      return {
+        name: 'webpack-polyfill-plugin',
+        configureWebpack() {
+          return {
+            resolve: {
+              fallback: {
+                stream: require.resolve('stream-browserify'),
+                buffer: require.resolve('buffer/'),
+              },
+            },
+          } as Configuration;
+        },
+      };
+    },
+  ],
 
   presets: [
     [
@@ -66,6 +85,12 @@ const config: Config = {
           label: 'API Reference',
         },
         {
+          type: 'docSidebar',
+          sidebarId: 'swaggerSidebar',
+          position: 'left',
+          label: 'Swagger',
+        },
+        {
           href: 'https://github.com/quckapp/quckapp',
           label: 'GitHub',
           position: 'right',
@@ -89,6 +114,7 @@ const config: Config = {
             { label: 'REST API', to: '/docs/api/rest/' },
             { label: 'WebSocket API', to: '/docs/api/websocket/' },
             { label: 'gRPC API', to: '/docs/api/grpc/' },
+            { label: 'Swagger UI', to: '/docs/api/swagger/' },
           ],
         },
         {

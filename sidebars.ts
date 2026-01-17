@@ -264,6 +264,16 @@ const sidebars: SidebarsConfig = {
       ],
     },
   ],
+  swaggerSidebar: [
+    'api/swagger/index',
+    {
+      type: 'category',
+      label: 'Spring Boot Services',
+      items: [
+        'api/swagger/auth-service',
+      ],
+    },
+  ],
 };
 
 export default sidebars;

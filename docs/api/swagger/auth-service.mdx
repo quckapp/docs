@@ -1,0 +1,52 @@
+---
+sidebar_position: 1
+title: Auth Service API
+description: Interactive API documentation for the Authentication Service
+---
+
+import SwaggerUI from '@site/src/components/SwaggerUI';
+
+# Auth Service API
+
+Interactive OpenAPI documentation for the QuckApp Authentication Service.
+
+## Overview
+
+The Auth Service provides comprehensive authentication and user management capabilities:
+
+| Feature | Description |
+|---------|-------------|
+| **Authentication** | Login, registration, logout |
+| **Token Management** | JWT access/refresh tokens, validation, revocation |
+| **Password Management** | Forgot password, reset, change |
+| **Two-Factor Auth** | TOTP setup, backup codes |
+| **OAuth2** | Social login (Google, GitHub, etc.) |
+| **Phone Auth** | OTP-based phone authentication |
+| **User Profiles** | Profile management, settings, devices |
+| **Sessions** | Session management across devices |
+
+## Base URL
+
+- **Local Development:** `http://localhost:8081/api/auth`
+- **Staging:** `https://api.staging.quckapp.io/auth`
+- **Production:** `https://api.quckapp.io/auth`
+
+## Authentication
+
+Most endpoints require authentication via JWT Bearer token:
+
+```http
+Authorization: Bearer <access_token>
+```
+
+Service-to-service calls use API Key authentication:
+
+```http
+X-API-Key: <api_key>
+```
+
+---
+
+## Interactive API Explorer
+
+<SwaggerUI url="/api/auth-service.json" />

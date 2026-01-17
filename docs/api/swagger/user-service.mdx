@@ -1,0 +1,74 @@
+---
+sidebar_position: 2
+title: User Service API
+description: Interactive API documentation for the User Service
+---
+
+import SwaggerUI from '@site/src/components/SwaggerUI';
+
+# User Service API
+
+Interactive OpenAPI documentation for the QuckApp User Service.
+
+## Overview
+
+The User Service provides comprehensive user management capabilities:
+
+| Feature | Description |
+|---------|-------------|
+| **User Management** | Create, read, update, delete users |
+| **Profile Management** | Bio, avatar, social links, custom status |
+| **User Preferences** | Notifications, theme, privacy settings |
+| **User Search** | Search and filter users with pagination |
+| **Batch Operations** | Retrieve multiple users by IDs |
+| **Status Management** | Deactivate, suspend users |
+
+## Base URL
+
+- **Local Development:** `http://localhost:8082/api/users`
+- **Staging:** `https://api.staging.quckapp.io/users`
+- **Production:** `https://api.quckapp.io/users`
+
+## Authentication
+
+Most endpoints require authentication via JWT Bearer token:
+
+```http
+Authorization: Bearer <access_token>
+```
+
+Service-to-service calls use API Key authentication:
+
+```http
+X-API-Key: <api_key>
+```
+
+## Data Model
+
+### User Entity
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "email": "john.doe@example.com",
+  "username": "john_doe",
+  "displayName": "John Doe",
+  "status": "ACTIVE",
+  "emailVerified": true,
+  "createdAt": "2024-01-15T10:30:00Z"
+}
+```
+
+### User Profile
+
+Extended profile information including bio, job title, social links, and custom status.
+
+### User Preferences
+
+Configurable settings for notifications, UI theme, privacy, and accessibility options.
+
+---
+
+## Interactive API Explorer
+
+<SwaggerUI url="/api/user-service.json" />

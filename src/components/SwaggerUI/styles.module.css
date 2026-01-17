@@ -1,0 +1,41 @@
+.swaggerContainer {
+  margin: 0 -1rem;
+  padding: 1rem;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.2rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Override Swagger UI styles for dark mode compatibility */
+:global([data-theme='dark']) .swaggerContainer :global(.swagger-ui) {
+  filter: invert(88%) hue-rotate(180deg);
+}
+
+:global([data-theme='dark']) .swaggerContainer :global(.swagger-ui) :global(.model-box),
+:global([data-theme='dark']) .swaggerContainer :global(.swagger-ui) :global(.opblock),
+:global([data-theme='dark']) .swaggerContainer :global(.swagger-ui) :global(img) {
+  filter: invert(100%) hue-rotate(180deg);
+}
+
+/* Improve spacing */
+.swaggerContainer :global(.swagger-ui) :global(.info) {
+  margin: 20px 0;
+}
+
+.swaggerContainer :global(.swagger-ui) :global(.scheme-container) {
+  padding: 15px 0;
+}
+
+/* Make it responsive */
+@media (max-width: 768px) {
+  .swaggerContainer {
+    margin: 0 -0.5rem;
+    padding: 0.5rem;
+  }
+}
