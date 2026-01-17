@@ -8,7 +8,7 @@ calls:
     description: Get call history for workspace
     operationId: listCalls
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -55,7 +55,7 @@ calls:
     description: Start a new call
     operationId: startCall
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -91,7 +91,7 @@ active-calls:
     description: Get all currently active calls in workspace
     operationId: listActiveCalls
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -120,7 +120,7 @@ call-by-id:
     description: Get call details by ID
     operationId: getCall
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -155,7 +155,7 @@ call-by-id:
     description: Update call settings (host only)
     operationId: updateCall
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -191,7 +191,7 @@ call-join:
     description: Join an active call
     operationId: joinCall
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -272,7 +272,7 @@ call-leave:
     description: Leave the current call
     operationId: leaveCall
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -298,7 +298,7 @@ call-end:
     description: End call for all participants (host only)
     operationId: endCall
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -334,7 +334,7 @@ call-action:
     description: Perform an action in the call (mute, screen share, etc.)
     operationId: callAction
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -375,7 +375,7 @@ call-invite:
     description: Invite users to join the call
     operationId: inviteToCall
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -423,7 +423,7 @@ call-participants:
     description: Get all participants in a call
     operationId: listCallParticipants
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -458,7 +458,7 @@ call-recording:
     description: Get recording details for a call
     operationId: getCallRecording
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -494,7 +494,7 @@ scheduled-calls:
     description: Get upcoming scheduled calls
     operationId: listScheduledCalls
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -532,7 +532,7 @@ scheduled-calls:
     description: Schedule a call for later
     operationId: scheduleCall
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path

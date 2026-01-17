@@ -1,60 +1,14 @@
 # Authentication API Paths
-
-login:
-  post:
-    tags:
-      - Authentication
-    summary: Login with credentials
-    description: Authenticate user with email and password. Returns tokens and user data.
-    operationId: login
-    security: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/auth.yaml#/LoginRequest'
-    responses:
-      '200':
-        description: Login successful
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/auth.yaml#/LoginResponse'
-      '401':
-        description: Invalid credentials
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
-      '403':
-        description: Account locked or MFA required
-        content:
-          application/json:
-            schema:
-              allOf:
-                - $ref: '../schemas/error.yaml#/Error'
-                - type: object
-                  properties:
-                    mfaRequired:
-                      type: boolean
-                    mfaMethods:
-                      type: array
-                      items:
-                        type: string
-      '429':
-        description: Too many login attempts
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
+# Base path: /api/auth/v1
 
 register:
   post:
     tags:
       - Authentication
-    summary: Register new account
-    description: Create a new user account. Optionally accepts workspace invite code.
+    summary: Register new user
+    description: |
+      Create a new user account with email and password.
+      Rate limited to 5 requests per hour per IP.
     operationId: register
     security: []
     requestBody:
@@ -64,12 +18,12 @@ register:
           schema:
             $ref: '../schemas/auth.yaml#/RegisterRequest'
     responses:
-      '201':
+      '200':
         description: Registration successful
         content:
           application/json:
             schema:
-              $ref: '../schemas/auth.yaml#/LoginResponse'
+              $ref: '../schemas/auth.yaml#/AuthResponse'
       '400':
         description: Invalid input or password requirements not met
         content:
@@ -82,18 +36,103 @@ register:
           application/json:
             schema:
               $ref: '../schemas/error.yaml#/Error'
+      '429':
+        description: Too many registration attempts
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+login:
+  post:
+    tags:
+      - Authentication
+    summary: Login with email/password
+    description: |
+      Authenticate user with email and password.
+      Rate limited: 5 attempts per 5 minutes, 15-minute block after exceeded.
+    operationId: login
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/LoginRequest'
+    responses:
+      '200':
+        description: Login successful or 2FA required
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/AuthResponse'
+      '401':
+        description: Invalid credentials
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+      '423':
+        description: Account locked due to too many failed attempts
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+      '429':
+        description: Too many login attempts
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+login-2fa:
+  post:
+    tags:
+      - Authentication
+      - MFA
+    summary: Complete login with 2FA code
+    description: |
+      Complete login by providing 2FA code after initial login returned requiresTwoFactor=true.
+      Rate limited: 5 attempts per 5 minutes per IP.
+    operationId: loginWith2FA
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/TwoFactorLoginRequest'
+    responses:
+      '200':
+        description: 2FA verification successful
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/AuthResponse'
+      '401':
+        description: Invalid 2FA code or token
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+      '429':
+        description: Too many 2FA attempts
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
 
 logout:
   post:
     tags:
       - Authentication
-    summary: Logout current session
+    summary: Logout and revoke tokens
     description: Invalidate current session tokens
     operationId: logout
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     responses:
-      '204':
+      '200':
         description: Logout successful
       '401':
         description: Not authenticated
@@ -102,12 +141,18 @@ logout:
             schema:
               $ref: '../schemas/error.yaml#/Error'
 
-refresh:
+# Token Management
+
+token-refresh:
   post:
     tags:
       - Authentication
+      - Token
     summary: Refresh access token
-    description: Exchange refresh token for new access token
+    description: |
+      Exchange refresh token for new access token.
+      Rate limited: 30 requests per minute per IP.
+      Refresh tokens are rotated on each use.
     operationId: refreshToken
     security: []
     requestBody:
@@ -122,9 +167,118 @@ refresh:
         content:
           application/json:
             schema:
-              $ref: '../schemas/auth.yaml#/TokenPair'
+              $ref: '../schemas/auth.yaml#/TokenResponse'
       '401':
         description: Invalid or expired refresh token
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+token-validate:
+  post:
+    tags:
+      - Authentication
+      - Token
+    summary: Validate JWT token
+    description: |
+      Validate a JWT token and return user information.
+      Rate limited: 100 requests per minute per IP.
+    operationId: validateToken
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/TokenValidationRequest'
+    responses:
+      '200':
+        description: Token validation result
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/TokenValidationResponse'
+
+token-revoke:
+  post:
+    tags:
+      - Authentication
+      - Token
+    summary: Revoke a specific token
+    description: |
+      Revoke a specific token.
+      Rate limited: 10 requests per minute per user.
+    operationId: revokeToken
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/RevokeTokenRequest'
+    responses:
+      '200':
+        description: Token revoked
+      '401':
+        description: Not authenticated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+token-revoke-all:
+  post:
+    tags:
+      - Authentication
+      - Token
+    summary: Revoke all tokens for current user
+    description: |
+      Revoke all tokens for the authenticated user (except the current token).
+      Rate limited: 5 requests per 5 minutes per user.
+    operationId: revokeAllTokens
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: All tokens revoked
+      '401':
+        description: Not authenticated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+# Password Management
+
+password-forgot:
+  post:
+    tags:
+      - Authentication
+      - Password
+    summary: Request password reset
+    description: |
+      Send password reset link to email.
+      Rate limited: 3 requests per hour per IP.
+      Always returns success to prevent email enumeration.
+    operationId: forgotPassword
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/ForgotPasswordRequest'
+    responses:
+      '200':
+        description: Reset email sent if account exists
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/MessageResponse'
+      '429':
+        description: Too many reset requests
         content:
           application/json:
             schema:
@@ -134,59 +288,26 @@ password-reset:
   post:
     tags:
       - Authentication
-    summary: Request password reset
-    description: Send password reset link to email
-    operationId: requestPasswordReset
+      - Password
+    summary: Reset password with token
+    description: |
+      Set new password using reset token from email.
+      Rate limited: 5 requests per hour per IP.
+    operationId: resetPassword
     security: []
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            $ref: '../schemas/auth.yaml#/PasswordResetRequest'
-    responses:
-      '200':
-        description: Reset email sent if account exists
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-                  example: "If an account exists, a reset link has been sent"
-      '429':
-        description: Too many reset requests
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
-
-password-reset-confirm:
-  post:
-    tags:
-      - Authentication
-    summary: Confirm password reset
-    description: Set new password using reset token
-    operationId: confirmPasswordReset
-    security: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/auth.yaml#/PasswordResetConfirm'
+            $ref: '../schemas/auth.yaml#/ResetPasswordRequest'
     responses:
       '200':
         description: Password reset successful
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                message:
-                  type: string
-                  example: "Password has been reset successfully"
+              $ref: '../schemas/auth.yaml#/MessageResponse'
       '400':
         description: Invalid or expired token
         content:
@@ -194,14 +315,190 @@ password-reset-confirm:
             schema:
               $ref: '../schemas/error.yaml#/Error'
 
-oauth:
+password-change:
   post:
     tags:
       - Authentication
-    summary: OAuth login/signup
-    description: Authenticate using OAuth provider (Google, GitHub, Microsoft, Apple)
+      - Password
+    summary: Change password (authenticated)
+    description: |
+      Change password for authenticated user.
+      Rate limited: 5 requests per hour per user.
+    operationId: changePassword
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/ChangePasswordRequest'
+    responses:
+      '200':
+        description: Password changed successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/MessageResponse'
+      '400':
+        description: Password requirements not met
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ValidationError'
+      '401':
+        description: Current password incorrect
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+# Two-Factor Authentication
+
+2fa-setup:
+  post:
+    tags:
+      - Authentication
+      - MFA
+    summary: Setup 2FA - get QR code
+    description: |
+      Initialize 2FA setup and return TOTP secret with QR code.
+      Rate limited: 10 requests per hour per user.
+    operationId: setup2FA
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: 2FA setup initiated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/TwoFactorSetupResponse'
+      '400':
+        description: 2FA already enabled
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+2fa-enable:
+  post:
+    tags:
+      - Authentication
+      - MFA
+    summary: Enable 2FA after verification
+    description: |
+      Verify TOTP code to complete 2FA setup.
+      Returns backup codes on success.
+      Rate limited: 5 requests per 5 minutes per user.
+    operationId: enable2FA
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/TwoFactorEnableRequest'
+    responses:
+      '200':
+        description: 2FA enabled successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/TwoFactorEnableResponse'
+      '401':
+        description: Invalid 2FA code
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+2fa-disable:
+  post:
+    tags:
+      - Authentication
+      - MFA
+    summary: Disable 2FA
+    description: |
+      Disable 2FA for current user (requires 2FA code and password).
+      Rate limited: 3 requests per hour per user.
+    operationId: disable2FA
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/TwoFactorDisableRequest'
+    responses:
+      '200':
+        description: 2FA disabled
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/MessageResponse'
+      '401':
+        description: Invalid password or 2FA code
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+2fa-backup-codes:
+  post:
+    tags:
+      - Authentication
+      - MFA
+    summary: Generate new backup codes
+    description: |
+      Generate new backup codes (invalidates previous codes).
+      Rate limited: 3 requests per hour per user.
+    operationId: generateBackupCodes
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/TwoFactorVerifyRequest'
+    responses:
+      '200':
+        description: New backup codes generated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/BackupCodesResponse'
+      '401':
+        description: Invalid 2FA code
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+# OAuth
+
+oauth-login:
+  post:
+    tags:
+      - Authentication
+      - OAuth2
+    summary: Login/register with OAuth provider
+    description: |
+      Authenticate using OAuth provider (google, facebook, github, apple).
+      Creates account if user doesn't exist.
+      Rate limited: 10 requests per minute per IP.
     operationId: oauthLogin
     security: []
+    parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+          enum: [google, facebook, github, apple]
     requestBody:
       required: true
       content:
@@ -214,7 +511,7 @@ oauth:
         content:
           application/json:
             schema:
-              $ref: '../schemas/auth.yaml#/LoginResponse'
+              $ref: '../schemas/auth.yaml#/AuthResponse'
       '400':
         description: Invalid OAuth code or configuration
         content:
@@ -222,180 +519,186 @@ oauth:
             schema:
               $ref: '../schemas/error.yaml#/Error'
 
-oauth-url:
-  get:
+oauth-link:
+  post:
     tags:
       - Authentication
-    summary: Get OAuth authorization URL
-    description: Get the authorization URL for the specified OAuth provider
-    operationId: getOAuthUrl
-    security: []
+      - OAuth2
+    summary: Link OAuth provider to existing account
+    description: |
+      Link an OAuth provider to the current user's account.
+      Rate limited: 5 requests per hour per user.
+    operationId: linkOAuthProvider
+    security:
+      - BearerAuth: []
     parameters:
       - name: provider
-        in: query
+        in: path
         required: true
         schema:
           type: string
-          enum: [google, github, microsoft, apple]
+          enum: [google, facebook, github, apple]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/OAuthRequest'
+    responses:
+      '200':
+        description: Provider linked successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/MessageResponse'
+      '400':
+        description: Provider already linked
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+oauth-unlink:
+  delete:
+    tags:
+      - Authentication
+      - OAuth2
+    summary: Unlink OAuth provider from account
+    description: |
+      Unlink an OAuth provider from the current user's account.
+      Cannot unlink the last authentication method.
+      Rate limited: 5 requests per hour per user.
+    operationId: unlinkOAuthProvider
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+          enum: [google, facebook, github, apple]
+    responses:
+      '200':
+        description: Provider unlinked successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/MessageResponse'
+      '400':
+        description: Cannot unlink last authentication method
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+# OAuth2 Additional Endpoints
+
+oauth2-providers:
+  get:
+    tags:
+      - OAuth2
+    summary: Get available OAuth2 providers
+    description: Get list of available OAuth2 providers with their authorization URLs
+    operationId: getOAuth2Providers
+    security: []
+    responses:
+      '200':
+        description: List of available providers
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/OAuth2ProvidersResponse'
+
+oauth2-linked:
+  get:
+    tags:
+      - OAuth2
+    summary: Get linked OAuth2 providers for current user
+    description: Get list of OAuth2 providers linked to the current user's account
+    operationId: getLinkedProviders
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Linked providers
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/LinkedProvidersResponse'
+
+oauth2-authorize:
+  get:
+    tags:
+      - OAuth2
+    summary: Get authorization URL for OAuth2 provider
+    description: Get the authorization URL for a specific OAuth2 provider
+    operationId: getAuthorizationUrl
+    security: []
+    parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+          enum: [google, facebook, github, apple]
       - name: redirectUri
         in: query
-        required: true
+        required: false
         schema:
           type: string
           format: uri
     responses:
       '200':
-        description: OAuth URL generated
+        description: Authorization URL
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                url:
-                  type: string
-                  format: uri
-                state:
-                  type: string
+              $ref: '../schemas/auth.yaml#/AuthorizationUrlResponse'
 
-mfa-setup:
-  post:
-    tags:
-      - Authentication
-      - MFA
-    summary: Setup MFA
-    description: Initialize MFA setup and return TOTP secret
-    operationId: setupMfa
-    security:
-      - bearerAuth: []
-    responses:
-      '200':
-        description: MFA setup initiated
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/auth.yaml#/MfaSetupResponse'
-      '400':
-        description: MFA already enabled
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
-
-mfa-verify:
-  post:
-    tags:
-      - Authentication
-      - MFA
-    summary: Verify MFA code
-    description: Verify TOTP code to complete MFA setup or login
-    operationId: verifyMfa
-    security:
-      - bearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/auth.yaml#/MfaVerifyRequest'
-    responses:
-      '200':
-        description: MFA verification successful
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                verified:
-                  type: boolean
-                tokens:
-                  $ref: '../schemas/auth.yaml#/TokenPair'
-      '401':
-        description: Invalid MFA code
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
-
-mfa-disable:
-  delete:
-    tags:
-      - Authentication
-      - MFA
-    summary: Disable MFA
-    description: Disable MFA for current user (requires password confirmation)
-    operationId: disableMfa
-    security:
-      - bearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - password
-            properties:
-              password:
-                type: string
-                format: password
-    responses:
-      '200':
-        description: MFA disabled
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-      '401':
-        description: Invalid password
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
+# Sessions
 
 sessions:
   get:
     tags:
       - Authentication
-    summary: List active sessions
-    description: Get all active sessions for current user
-    operationId: listSessions
+      - Sessions
+    summary: Get active sessions
+    description: |
+      Get all active sessions for current user.
+      Rate limited: 30 requests per minute per user.
+    operationId: getSessions
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     responses:
       '200':
         description: List of active sessions
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                sessions:
-                  type: array
-                  items:
-                    $ref: '../schemas/auth.yaml#/Session'
+              $ref: '../schemas/auth.yaml#/SessionsResponse'
 
-session-revoke:
+session-terminate:
   delete:
     tags:
       - Authentication
-    summary: Revoke session
-    description: Revoke a specific session by ID
-    operationId: revokeSession
+      - Sessions
+    summary: Terminate specific session
+    description: |
+      Terminate a specific session by ID.
+      Rate limited: 10 requests per minute per user.
+    operationId: terminateSession
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: sessionId
         in: path
         required: true
         schema:
           type: string
-          format: uuid
     responses:
-      '204':
-        description: Session revoked
+      '200':
+        description: Session terminated
       '404':
         description: Session not found
         content:
@@ -403,92 +706,141 @@ session-revoke:
             schema:
               $ref: '../schemas/error.yaml#/Error'
 
-sessions-revoke-all:
+sessions-terminate-all:
   delete:
     tags:
       - Authentication
-    summary: Revoke all other sessions
-    description: Revoke all sessions except current
-    operationId: revokeAllSessions
+      - Sessions
+    summary: Terminate all other sessions
+    description: |
+      Terminate all sessions except current.
+      Rate limited: 5 requests per 5 minutes per user.
+    operationId: terminateAllSessions
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     responses:
       '200':
-        description: All other sessions revoked
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                revokedCount:
-                  type: integer
+        description: All other sessions terminated
 
-verify-email:
+# Phone OTP
+
+phone-request-otp:
   post:
     tags:
       - Authentication
-    summary: Verify email address
-    description: Verify email using token from verification email
-    operationId: verifyEmail
+      - Phone OTP
+    summary: Request OTP
+    description: |
+      Request a one-time password sent via SMS.
+      Rate limits: 5 per day per phone, 10 per hour per IP.
+    operationId: requestPhoneOtp
     security: []
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            type: object
-            required:
-              - token
-            properties:
-              token:
-                type: string
+            $ref: '../schemas/auth.yaml#/PhoneOtpRequest'
     responses:
       '200':
-        description: Email verified
+        description: OTP sent successfully
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                message:
-                  type: string
-                verified:
-                  type: boolean
+              $ref: '../schemas/auth.yaml#/OtpResponse'
       '400':
-        description: Invalid or expired token
+        description: Invalid phone number or rate limit exceeded
         content:
           application/json:
             schema:
-              $ref: '../schemas/error.yaml#/Error'
+              $ref: '../schemas/auth.yaml#/OtpResponse'
 
-resend-verification:
+phone-verify-otp:
   post:
     tags:
       - Authentication
-    summary: Resend verification email
-    description: Resend email verification link
-    operationId: resendVerification
-    security:
-      - bearerAuth: []
+      - Phone OTP
+    summary: Verify OTP
+    description: Verify the OTP code without logging in
+    operationId: verifyPhoneOtp
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/PhoneVerifyRequest'
     responses:
       '200':
-        description: Verification email sent
+        description: OTP verified
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                message:
-                  type: string
+              $ref: '../schemas/auth.yaml#/OtpResponse'
       '400':
-        description: Email already verified
+        description: Invalid or expired OTP
         content:
           application/json:
             schema:
-              $ref: '../schemas/error.yaml#/Error'
-      '429':
-        description: Too many requests
+              $ref: '../schemas/auth.yaml#/OtpResponse'
+
+phone-login:
+  post:
+    tags:
+      - Authentication
+      - Phone OTP
+    summary: Login with OTP
+    description: |
+      Verify OTP and login. Creates account if phone number is new.
+    operationId: phoneLogin
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/PhoneLoginRequest'
+    responses:
+      '200':
+        description: Login successful
         content:
           application/json:
             schema:
-              $ref: '../schemas/error.yaml#/Error'
+              $ref: '../schemas/auth.yaml#/OtpResponse'
+      '400':
+        description: Invalid OTP
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/OtpResponse'
+
+phone-resend-otp:
+  post:
+    tags:
+      - Authentication
+      - Phone OTP
+    summary: Resend OTP
+    description: |
+      Resend OTP to the same phone number.
+      Cooldown: 60 seconds between resends.
+    operationId: resendPhoneOtp
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/PhoneOtpRequest'
+    responses:
+      '200':
+        description: OTP resent
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/OtpResponse'
+      '400':
+        description: Cooldown not elapsed
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/OtpResponse'

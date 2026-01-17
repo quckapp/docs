@@ -46,12 +46,33 @@ servers:
     description: Local development
 
 tags:
+  # Auth Service Tags
   - name: Authentication
     description: User authentication and authorization
+  - name: Token
+    description: JWT token management - refresh, validate, revoke
+  - name: Password
+    description: Password management - forgot, reset, change
   - name: MFA
-    description: Multi-factor authentication
+    description: Multi-factor authentication (2FA/TOTP)
+  - name: OAuth2
+    description: OAuth2 social login providers
+  - name: Sessions
+    description: Session management
+  - name: Phone OTP
+    description: Phone-based OTP authentication
+  # User Service Tags
   - name: Users
-    description: User management and profiles
+    description: User management and CRUD operations
+  - name: Profile
+    description: Extended user profile management
+  - name: Preferences
+    description: User preferences - notifications, theme, privacy
+  - name: Batch
+    description: Batch operations for multiple users
+  - name: Admin
+    description: Administrative operations - suspend, deactivate
+  # Other Service Tags
   - name: Bookmarks
     description: User bookmarks
   - name: Workspaces
@@ -90,61 +111,115 @@ paths:
   # All paths are defined in the paths/ directory
   # Reference: ./paths/_index.yaml
 
-  # Authentication endpoints
-  /auth/login:
-    $ref: './paths/auth.yaml#/login'
-  /auth/register:
-    $ref: './paths/auth.yaml#/register'
-  /auth/logout:
-    $ref: './paths/auth.yaml#/logout'
-  /auth/refresh:
-    $ref: './paths/auth.yaml#/refresh'
-  /auth/password-reset:
-    $ref: './paths/auth.yaml#/password-reset'
-  /auth/password-reset/confirm:
-    $ref: './paths/auth.yaml#/password-reset-confirm'
-  /auth/oauth:
-    $ref: './paths/auth.yaml#/oauth'
-  /auth/oauth/url:
-    $ref: './paths/auth.yaml#/oauth-url'
-  /auth/mfa/setup:
-    $ref: './paths/auth.yaml#/mfa-setup'
-  /auth/mfa/verify:
-    $ref: './paths/auth.yaml#/mfa-verify'
-  /auth/mfa:
-    $ref: './paths/auth.yaml#/mfa-disable'
-  /auth/sessions:
-    $ref: './paths/auth.yaml#/sessions'
-  /auth/sessions/{sessionId}:
-    $ref: './paths/auth.yaml#/session-revoke'
-  /auth/sessions/all:
-    $ref: './paths/auth.yaml#/sessions-revoke-all'
-  /auth/verify-email:
-    $ref: './paths/auth.yaml#/verify-email'
-  /auth/resend-verification:
-    $ref: './paths/auth.yaml#/resend-verification'
+  # ============================================
+  # Auth Service Endpoints (Base: /api/auth/v1)
+  # ============================================
 
-  # User endpoints
-  /users/me:
-    $ref: './paths/users.yaml#/me'
-  /users/{userId}:
+  # Registration & Login
+  /auth/v1/register:
+    $ref: './paths/auth.yaml#/register'
+  /auth/v1/login:
+    $ref: './paths/auth.yaml#/login'
+  /auth/v1/login/2fa:
+    $ref: './paths/auth.yaml#/login-2fa'
+  /auth/v1/logout:
+    $ref: './paths/auth.yaml#/logout'
+
+  # Token Management
+  /auth/v1/token/refresh:
+    $ref: './paths/auth.yaml#/token-refresh'
+  /auth/v1/token/validate:
+    $ref: './paths/auth.yaml#/token-validate'
+  /auth/v1/token/revoke:
+    $ref: './paths/auth.yaml#/token-revoke'
+  /auth/v1/token/revoke-all:
+    $ref: './paths/auth.yaml#/token-revoke-all'
+
+  # Password Management
+  /auth/v1/password/forgot:
+    $ref: './paths/auth.yaml#/password-forgot'
+  /auth/v1/password/reset:
+    $ref: './paths/auth.yaml#/password-reset'
+  /auth/v1/password/change:
+    $ref: './paths/auth.yaml#/password-change'
+
+  # Two-Factor Authentication
+  /auth/v1/2fa/setup:
+    $ref: './paths/auth.yaml#/2fa-setup'
+  /auth/v1/2fa/enable:
+    $ref: './paths/auth.yaml#/2fa-enable'
+  /auth/v1/2fa/disable:
+    $ref: './paths/auth.yaml#/2fa-disable'
+  /auth/v1/2fa/backup-codes:
+    $ref: './paths/auth.yaml#/2fa-backup-codes'
+
+  # OAuth
+  /auth/v1/oauth/{provider}:
+    $ref: './paths/auth.yaml#/oauth-login'
+  /auth/v1/oauth/{provider}/link:
+    $ref: './paths/auth.yaml#/oauth-link'
+  /auth/v1/oauth/{provider}/unlink:
+    $ref: './paths/auth.yaml#/oauth-unlink'
+
+  # OAuth2 Additional Endpoints
+  /auth/v1/oauth2/providers:
+    $ref: './paths/auth.yaml#/oauth2-providers'
+  /auth/v1/oauth2/linked:
+    $ref: './paths/auth.yaml#/oauth2-linked'
+  /auth/v1/oauth2/authorize/{provider}:
+    $ref: './paths/auth.yaml#/oauth2-authorize'
+
+  # Sessions
+  /auth/v1/sessions:
+    $ref: './paths/auth.yaml#/sessions'
+  /auth/v1/sessions/{sessionId}:
+    $ref: './paths/auth.yaml#/session-terminate'
+  /auth/v1/sessions/all:
+    $ref: './paths/auth.yaml#/sessions-terminate-all'
+
+  # Phone OTP
+  /auth/v1/auth/phone/request-otp:
+    $ref: './paths/auth.yaml#/phone-request-otp'
+  /auth/v1/auth/phone/verify-otp:
+    $ref: './paths/auth.yaml#/phone-verify-otp'
+  /auth/v1/auth/phone/login:
+    $ref: './paths/auth.yaml#/phone-login'
+  /auth/v1/auth/phone/resend-otp:
+    $ref: './paths/auth.yaml#/phone-resend-otp'
+
+  # ============================================
+  # User Service Endpoints (Base: /api/users)
+  # ============================================
+
+  # User Management
+  /users:
+    $ref: './paths/users.yaml#/users'
+  /users/{id}:
     $ref: './paths/users.yaml#/user-by-id'
+  /users/email/{email}:
+    $ref: './paths/users.yaml#/user-by-email'
   /users/username/{username}:
     $ref: './paths/users.yaml#/user-by-username'
-  /users/me/preferences:
+
+  # Admin Operations
+  /users/{id}/suspend:
+    $ref: './paths/users.yaml#/user-suspend'
+
+  # Search
+  /users/search:
+    $ref: './paths/users.yaml#/search'
+
+  # Batch Operations
+  /users/batch:
+    $ref: './paths/users.yaml#/batch'
+
+  # Profile Management
+  /users/{id}/profile:
+    $ref: './paths/users.yaml#/profile'
+
+  # Preferences Management
+  /users/{id}/preferences:
     $ref: './paths/users.yaml#/preferences'
-  /users/me/status:
-    $ref: './paths/users.yaml#/status'
-  /users/me/avatar:
-    $ref: './paths/users.yaml#/avatar'
-  /users/me/password:
-    $ref: './paths/users.yaml#/change-password'
-  /users/me/email:
-    $ref: './paths/users.yaml#/change-email'
-  /users/me/bookmarks:
-    $ref: './paths/users.yaml#/bookmarks'
-  /users/me/bookmarks/{bookmarkId}:
-    $ref: './paths/users.yaml#/bookmark-remove'
 
   # Workspace endpoints
   /workspaces:

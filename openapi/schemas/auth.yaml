@@ -1,5 +1,7 @@
 # Authentication Schema Definitions
 
+# Request DTOs
+
 LoginRequest:
   type: object
   required:
@@ -16,79 +18,21 @@ LoginRequest:
       format: password
       minLength: 8
       description: User password
-      example: "securePassword123"
-    mfaCode:
+      example: "SecurePassword123!"
+    deviceId:
       type: string
-      pattern: "^[0-9]{6}$"
-      description: MFA code if enabled
-      example: "123456"
-    rememberMe:
-      type: boolean
-      description: Extend session duration
-      default: false
-
-LoginResponse:
-  type: object
-  required:
-    - user
-    - tokens
-  properties:
-    user:
-      $ref: './user.yaml#/User'
-    tokens:
-      $ref: '#/TokenPair'
-    requiresMfa:
-      type: boolean
-      description: Whether MFA verification is required
-      default: false
-    mfaMethods:
-      type: array
-      items:
-        type: string
-        enum: [totp, sms, email]
-      description: Available MFA methods
-
-TokenPair:
-  type: object
-  required:
-    - accessToken
-    - refreshToken
-    - expiresIn
-  properties:
-    accessToken:
+      description: Unique device identifier
+      example: "device-uuid-123"
+    deviceName:
       type: string
-      description: JWT access token
-      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-    refreshToken:
-      type: string
-      description: Refresh token for obtaining new access tokens
-      example: "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
-    expiresIn:
-      type: integer
-      description: Access token expiration time in seconds
-      example: 3600
-    tokenType:
-      type: string
-      description: Token type
-      default: "Bearer"
-      example: "Bearer"
-
-RefreshTokenRequest:
-  type: object
-  required:
-    - refreshToken
-  properties:
-    refreshToken:
-      type: string
-      description: The refresh token
-      example: "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
+      description: Human-readable device name
+      example: "iPhone 15 Pro"
 
 RegisterRequest:
   type: object
   required:
     - email
     - password
-    - name
   properties:
     email:
       type: string
@@ -100,17 +44,54 @@ RegisterRequest:
       minLength: 8
       description: "Must contain uppercase, lowercase, number, and special character"
       example: "SecurePass123!"
-    name:
-      type: string
-      minLength: 2
-      maxLength: 100
-      example: "John Doe"
-    inviteCode:
-      type: string
-      description: Workspace invite code
-      example: "INV-ABC123"
 
-PasswordResetRequest:
+TwoFactorLoginRequest:
+  type: object
+  required:
+    - twoFactorToken
+    - code
+  properties:
+    twoFactorToken:
+      type: string
+      description: Temporary token from initial login
+      example: "temp-token-for-2fa"
+    code:
+      type: string
+      pattern: "^[0-9]{6}$"
+      description: 6-digit 2FA code
+      example: "123456"
+
+RefreshTokenRequest:
+  type: object
+  required:
+    - refreshToken
+  properties:
+    refreshToken:
+      type: string
+      description: The refresh token
+      example: "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
+
+TokenValidationRequest:
+  type: object
+  required:
+    - token
+  properties:
+    token:
+      type: string
+      description: JWT token to validate
+      example: "eyJhbGciOiJIUzI1NiIs..."
+
+RevokeTokenRequest:
+  type: object
+  required:
+    - token
+  properties:
+    token:
+      type: string
+      description: Token to revoke
+      example: "eyJhbGciOiJIUzI1NiIs..."
+
+ForgotPasswordRequest:
   type: object
   required:
     - email
@@ -120,7 +101,7 @@ PasswordResetRequest:
       format: email
       example: "user@example.com"
 
-PasswordResetConfirm:
+ResetPasswordRequest:
   type: object
   required:
     - token
@@ -136,17 +117,66 @@ PasswordResetConfirm:
       minLength: 8
       example: "NewSecurePass123!"
 
+ChangePasswordRequest:
+  type: object
+  required:
+    - currentPassword
+    - newPassword
+  properties:
+    currentPassword:
+      type: string
+      format: password
+      description: Current password
+    newPassword:
+      type: string
+      format: password
+      minLength: 8
+      description: New password
+
+TwoFactorEnableRequest:
+  type: object
+  required:
+    - code
+  properties:
+    code:
+      type: string
+      pattern: "^[0-9]{6}$"
+      description: 6-digit TOTP code
+      example: "123456"
+
+TwoFactorDisableRequest:
+  type: object
+  required:
+    - code
+    - password
+  properties:
+    code:
+      type: string
+      pattern: "^[0-9]{6}$"
+      description: 6-digit TOTP code
+      example: "123456"
+    password:
+      type: string
+      format: password
+      description: Account password for confirmation
+
+TwoFactorVerifyRequest:
+  type: object
+  required:
+    - code
+  properties:
+    code:
+      type: string
+      pattern: "^[0-9]{6}$"
+      description: 6-digit TOTP code
+      example: "123456"
+
 OAuthRequest:
   type: object
   required:
-    - provider
     - code
+    - redirectUri
   properties:
-    provider:
-      type: string
-      enum: [google, github, microsoft, apple]
-      description: OAuth provider
-      example: "google"
     code:
       type: string
       description: Authorization code from OAuth provider
@@ -156,68 +186,319 @@ OAuthRequest:
       format: uri
       description: Redirect URI used in authorization request
       example: "https://app.quckapp.io/auth/callback"
-
-MfaSetupResponse:
-  type: object
-  properties:
-    secret:
+    deviceId:
       type: string
-      description: TOTP secret for authenticator apps
-      example: "JBSWY3DPEHPK3PXP"
-    qrCode:
+      description: Unique device identifier
+      example: "device-uuid-123"
+    deviceName:
       type: string
-      format: uri
-      description: QR code image URL
-      example: "data:image/png;base64,..."
-    backupCodes:
-      type: array
-      items:
-        type: string
-      description: Backup codes for account recovery
-      example: ["ABC123", "DEF456", "GHI789"]
+      description: Human-readable device name
+      example: "My Device"
 
-MfaVerifyRequest:
+PhoneOtpRequest:
   type: object
   required:
+    - phoneNumber
+  properties:
+    phoneNumber:
+      type: string
+      description: Phone number in E.164 format
+      example: "+1234567890"
+
+PhoneVerifyRequest:
+  type: object
+  required:
+    - phoneNumber
     - code
   properties:
+    phoneNumber:
+      type: string
+      description: Phone number in E.164 format
+      example: "+1234567890"
     code:
       type: string
       pattern: "^[0-9]{6}$"
-      description: 6-digit MFA code
+      description: 6-digit OTP code
       example: "123456"
-    trustDevice:
-      type: boolean
-      description: Remember this device
-      default: false
 
-Session:
+PhoneLoginRequest:
+  type: object
+  required:
+    - phoneNumber
+    - code
+  properties:
+    phoneNumber:
+      type: string
+      description: Phone number in E.164 format
+      example: "+1234567890"
+    code:
+      type: string
+      pattern: "^[0-9]{6}$"
+      description: 6-digit OTP code
+      example: "123456"
+    deviceId:
+      type: string
+      description: Unique device identifier
+      example: "device-uuid-123"
+    deviceName:
+      type: string
+      description: Human-readable device name
+      example: "My Phone"
+
+# Response DTOs
+
+AuthResponse:
+  type: object
+  properties:
+    accessToken:
+      type: string
+      description: JWT access token
+      example: "eyJhbGciOiJIUzI1NiIs..."
+    refreshToken:
+      type: string
+      description: Refresh token for obtaining new access tokens
+      example: "dGhpcyBpcyBhIHJlZnJlc2gg..."
+    expiresIn:
+      type: integer
+      description: Access token expiration time in seconds
+      example: 900
+    tokenType:
+      type: string
+      default: "Bearer"
+      example: "Bearer"
+    user:
+      $ref: '#/AuthUser'
+    requiresTwoFactor:
+      type: boolean
+      description: Whether 2FA is required to complete login
+      default: false
+    twoFactorToken:
+      type: string
+      description: Temporary token for 2FA completion (only if requiresTwoFactor is true)
+
+AuthUser:
   type: object
   properties:
     id:
       type: string
       format: uuid
       example: "550e8400-e29b-41d4-a716-446655440000"
+    email:
+      type: string
+      format: email
+      example: "user@example.com"
+    twoFactorEnabled:
+      type: boolean
+      example: false
+
+TokenResponse:
+  type: object
+  required:
+    - accessToken
+    - refreshToken
+    - expiresIn
+  properties:
+    accessToken:
+      type: string
+      description: JWT access token
+      example: "eyJhbGciOiJIUzI1NiIs..."
+    refreshToken:
+      type: string
+      description: New refresh token
+      example: "dGhpcyBpcyBhIHJlZnJlc2gg..."
+    expiresIn:
+      type: integer
+      description: Access token expiration time in seconds
+      example: 900
+    tokenType:
+      type: string
+      default: "Bearer"
+
+TokenValidationResponse:
+  type: object
+  properties:
+    valid:
+      type: boolean
+      example: true
     userId:
       type: string
       format: uuid
-    device:
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    email:
       type: string
-      description: Device description
-      example: "Chrome on macOS"
-    ip:
+      format: email
+      example: "user@example.com"
+    expiresAt:
       type: string
-      description: IP address
-      example: "192.168.1.1"
+      format: date-time
+      example: "2024-01-15T11:30:00Z"
+
+MessageResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: "Operation completed successfully"
+
+TwoFactorSetupResponse:
+  type: object
+  properties:
+    secret:
+      type: string
+      description: TOTP secret for authenticator apps
+      example: "JBSWY3DPEHPK3PXP"
+    qrCodeUri:
+      type: string
+      description: OTP auth URI for QR code
+      example: "otpauth://totp/QuckApp:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=QuckApp"
+    qrCodeImage:
+      type: string
+      description: Base64 encoded QR code image
+      example: "data:image/png;base64,..."
+
+TwoFactorEnableResponse:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+      example: true
+    backupCodes:
+      type: array
+      items:
+        type: string
+      description: Backup codes for account recovery
+      example: ["ABCD-EFGH-IJKL", "MNOP-QRST-UVWX"]
+
+BackupCodesResponse:
+  type: object
+  properties:
+    backupCodes:
+      type: array
+      items:
+        type: string
+      description: New backup codes
+      example: ["ABCD-EFGH-IJKL", "MNOP-QRST-UVWX"]
+
+OAuth2ProvidersResponse:
+  type: object
+  properties:
+    providers:
+      type: array
+      items:
+        $ref: '#/ProviderInfo'
+    callbackUrl:
+      type: string
+      format: uri
+
+ProviderInfo:
+  type: object
+  properties:
+    name:
+      type: string
+      example: "google"
+    displayName:
+      type: string
+      example: "Google"
+    authorizationUrl:
+      type: string
+      example: "/oauth2/authorize/google"
+    icon:
+      type: string
+      example: "google"
+
+LinkedProvidersResponse:
+  type: object
+  properties:
+    linkedProviders:
+      type: array
+      items:
+        type: string
+      example: ["google", "github"]
+    availableProviders:
+      type: array
+      items:
+        type: string
+      example: ["facebook", "apple"]
+
+AuthorizationUrlResponse:
+  type: object
+  properties:
+    provider:
+      type: string
+      example: "google"
+    authorizationUrl:
+      type: string
+      format: uri
+      example: "https://accounts.google.com/o/oauth2/v2/auth?..."
+    redirectUri:
+      type: string
+      format: uri
+
+SessionsResponse:
+  type: object
+  properties:
+    sessions:
+      type: array
+      items:
+        $ref: '#/Session'
+    maxSessions:
+      type: integer
+      example: 5
+
+Session:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "session-uuid-123"
+    deviceName:
+      type: string
+      example: "iPhone 15 Pro"
+    deviceType:
+      type: string
+      enum: [MOBILE, WEB, DESKTOP]
+      example: "MOBILE"
+    ipAddress:
+      type: string
+      example: "192.168.1.100"
     location:
       type: string
-      description: Approximate location
       example: "San Francisco, CA"
     lastActive:
       type: string
       format: date-time
       example: "2024-01-15T10:30:00Z"
-    current:
+    createdAt:
+      type: string
+      format: date-time
+      example: "2024-01-10T08:00:00Z"
+    isCurrent:
       type: boolean
-      description: Whether this is the current session
       example: true
+
+OtpResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    message:
+      type: string
+      example: "OTP sent successfully"
+    expiresInSeconds:
+      type: integer
+      example: 300
+    accessToken:
+      type: string
+      description: JWT access token (only on successful login)
+    refreshToken:
+      type: string
+      description: Refresh token (only on successful login)
+    expiresIn:
+      type: integer
+      description: Token expiration (only on successful login)
+    user:
+      $ref: '#/AuthUser'
+    isNewUser:
+      type: boolean
+      description: Whether this is a newly created account

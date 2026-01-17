@@ -1,12 +1,259 @@
 # User Schema Definitions
+# User-Service DTOs
 
-User:
+# Request DTOs
+
+CreateUserRequest:
   type: object
   required:
-    - id
     - email
-    - name
-    - createdAt
+    - username
+  properties:
+    email:
+      type: string
+      format: email
+      description: User email address
+      example: "user@example.com"
+    username:
+      type: string
+      minLength: 3
+      maxLength: 50
+      pattern: "^[a-zA-Z0-9_-]+$"
+      description: Unique username (alphanumeric, underscore, hyphen)
+      example: "johndoe"
+    displayName:
+      type: string
+      maxLength: 100
+      description: Display name
+      example: "John Doe"
+    avatarUrl:
+      type: string
+      maxLength: 500
+      format: uri
+      description: Avatar image URL
+      example: "https://example.com/avatar.jpg"
+    phone:
+      type: string
+      description: Phone number
+      example: "+1234567890"
+    timezone:
+      type: string
+      description: User timezone (IANA format)
+      example: "America/New_York"
+    locale:
+      type: string
+      description: Preferred locale
+      example: "en-US"
+
+UpdateUserRequest:
+  type: object
+  properties:
+    displayName:
+      type: string
+      maxLength: 100
+      description: Display name
+      example: "John D. Doe"
+    avatarUrl:
+      type: string
+      maxLength: 500
+      format: uri
+      description: Avatar image URL
+    phone:
+      type: string
+      description: Phone number
+    timezone:
+      type: string
+      description: User timezone (IANA format)
+    locale:
+      type: string
+      description: Preferred locale
+
+UpdateProfileRequest:
+  type: object
+  properties:
+    title:
+      type: string
+      maxLength: 100
+      description: Job title
+      example: "Senior Software Engineer"
+    department:
+      type: string
+      maxLength: 100
+      description: Department
+      example: "Engineering"
+    location:
+      type: string
+      maxLength: 100
+      description: Location
+      example: "San Francisco, CA"
+    bio:
+      type: string
+      maxLength: 1000
+      description: User biography
+      example: "Passionate about building scalable systems."
+    customStatus:
+      type: string
+      maxLength: 200
+      description: Custom status text
+      example: "In a meeting"
+    statusEmoji:
+      type: string
+      maxLength: 10
+      description: Status emoji
+      example: "📅"
+    statusExpiry:
+      type: string
+      format: date-time
+      description: When the status expires
+    pronouns:
+      type: string
+      description: User pronouns
+      example: "he/him"
+    birthday:
+      type: string
+      format: date-time
+      description: Birthday
+    linkedinUrl:
+      type: string
+      format: uri
+      description: LinkedIn profile URL
+      example: "https://linkedin.com/in/johndoe"
+    twitterUrl:
+      type: string
+      format: uri
+      description: Twitter profile URL
+      example: "https://twitter.com/johndoe"
+    githubUrl:
+      type: string
+      format: uri
+      description: GitHub profile URL
+      example: "https://github.com/johndoe"
+
+UpdatePreferencesRequest:
+  type: object
+  properties:
+    # Notification settings
+    pushEnabled:
+      type: boolean
+      description: Enable push notifications
+    emailEnabled:
+      type: boolean
+      description: Enable email notifications
+    smsEnabled:
+      type: boolean
+      description: Enable SMS notifications
+    desktopNotifications:
+      type: boolean
+      description: Enable desktop notifications
+    soundEnabled:
+      type: boolean
+      description: Enable notification sounds
+    quietHoursStart:
+      type: string
+      format: time
+      description: Start of quiet hours (HH:mm:ss)
+      example: "22:00:00"
+    quietHoursEnd:
+      type: string
+      format: time
+      description: End of quiet hours (HH:mm:ss)
+      example: "08:00:00"
+    quietHoursEnabled:
+      type: boolean
+      description: Enable quiet hours
+    # Display settings
+    theme:
+      type: string
+      description: UI theme
+      example: "dark"
+    language:
+      type: string
+      description: Preferred language
+      example: "en"
+    compactMode:
+      type: boolean
+      description: Enable compact mode
+    sidebarCollapsed:
+      type: boolean
+      description: Collapse sidebar by default
+    showUnreadOnly:
+      type: boolean
+      description: Show only unread items
+    # Message settings
+    messagePreview:
+      type: boolean
+      description: Show message preview in notifications
+    enterToSend:
+      type: boolean
+      description: Press Enter to send messages
+    markdownEnabled:
+      type: boolean
+      description: Enable markdown in messages
+    emojiSuggestionsEnabled:
+      type: boolean
+      description: Enable emoji suggestions
+    # Privacy settings
+    showOnlineStatus:
+      type: boolean
+      description: Show online status to others
+    showTypingIndicator:
+      type: boolean
+      description: Show typing indicator to others
+    showReadReceipts:
+      type: boolean
+      description: Show read receipts to others
+    # Accessibility settings
+    reducedMotion:
+      type: boolean
+      description: Reduce motion/animations
+    highContrast:
+      type: boolean
+      description: Enable high contrast mode
+    fontSize:
+      type: integer
+      minimum: 10
+      maximum: 24
+      description: Font size
+      example: 14
+    # Custom settings
+    customSettings:
+      type: object
+      additionalProperties: true
+      description: Custom key-value settings
+
+# Response DTOs
+
+# Compact user profile for embedding in other objects
+UserProfile:
+  type: object
+  description: Compact user profile for embedding in messages, channels, etc.
+  properties:
+    id:
+      type: string
+      format: uuid
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    username:
+      type: string
+      example: "johndoe"
+    displayName:
+      type: string
+      example: "John Doe"
+    avatarUrl:
+      type: string
+      format: uri
+      description: Avatar image URL
+    status:
+      type: string
+      enum: [ACTIVE, INACTIVE, SUSPENDED, DEACTIVATED]
+      example: "ACTIVE"
+    presence:
+      type: string
+      enum: [online, away, busy, offline]
+      description: Current presence status
+      example: "online"
+
+UserResponse:
+  type: object
   properties:
     id:
       type: string
@@ -17,261 +264,277 @@ User:
       type: string
       format: email
       description: User email address
-      example: "john.doe@example.com"
-    name:
+      example: "user@example.com"
+    username:
+      type: string
+      description: Unique username
+      example: "johndoe"
+    displayName:
       type: string
       description: Display name
       example: "John Doe"
-    username:
-      type: string
-      pattern: "^[a-z0-9_-]{3,30}$"
-      description: Unique username
-      example: "johndoe"
-    avatar:
+    avatarUrl:
       type: string
       format: uri
       description: Avatar image URL
-      example: "https://cdn.quckapp.io/avatars/user123.jpg"
-    title:
+    phone:
       type: string
-      description: Job title
-      example: "Software Engineer"
+      description: Phone number
     timezone:
       type: string
       description: User timezone (IANA format)
-      example: "America/Los_Angeles"
+      example: "America/New_York"
     locale:
       type: string
       description: Preferred locale
       example: "en-US"
-    phone:
-      type: string
-      description: Phone number
-      example: "+1-555-123-4567"
     status:
-      $ref: '#/UserStatus'
-    role:
       type: string
-      enum: [user, admin, owner]
-      description: User role
-      example: "user"
-    isVerified:
+      enum: [ACTIVE, INACTIVE, SUSPENDED, DEACTIVATED]
+      description: User status
+      example: "ACTIVE"
+    emailVerified:
       type: boolean
       description: Email verification status
-      example: true
-    mfaEnabled:
+    phoneVerified:
       type: boolean
-      description: Whether MFA is enabled
-      example: false
-    lastSeenAt:
+      description: Phone verification status
+    lastLoginAt:
       type: string
       format: date-time
-      description: Last activity timestamp
-      example: "2024-01-15T10:30:00Z"
+      description: Last login timestamp
     createdAt:
       type: string
       format: date-time
       description: Account creation timestamp
-      example: "2024-01-01T00:00:00Z"
     updatedAt:
       type: string
       format: date-time
       description: Last update timestamp
-      example: "2024-01-15T10:30:00Z"
 
-UserProfile:
+UserSummaryResponse:
   type: object
   properties:
     id:
       type: string
       format: uuid
-    name:
-      type: string
-      example: "John Doe"
+      example: "550e8400-e29b-41d4-a716-446655440000"
     username:
       type: string
       example: "johndoe"
-    avatar:
+    displayName:
+      type: string
+      example: "John Doe"
+    avatarUrl:
       type: string
       format: uri
+    status:
+      type: string
+      enum: [ACTIVE, INACTIVE, SUSPENDED, DEACTIVATED]
+
+ProfileResponse:
+  type: object
+  properties:
+    userId:
+      type: string
+      format: uuid
     title:
       type: string
-      example: "Software Engineer"
-    bio:
+      example: "Senior Software Engineer"
+    department:
       type: string
-      maxLength: 500
-      description: User biography
-      example: "Passionate about building great products"
-    pronouns:
-      type: string
-      example: "he/him"
+      example: "Engineering"
     location:
       type: string
       example: "San Francisco, CA"
-    website:
+    bio:
       type: string
-      format: uri
-      example: "https://johndoe.dev"
-    socialLinks:
-      type: object
-      properties:
-        twitter:
-          type: string
-          example: "@johndoe"
-        github:
-          type: string
-          example: "johndoe"
-        linkedin:
-          type: string
-          example: "john-doe-12345"
-    status:
-      $ref: '#/UserStatus'
-    timezone:
+      example: "Passionate about building scalable systems."
+    customStatus:
       type: string
-      example: "America/Los_Angeles"
-    localTime:
+      example: "In a meeting"
+    statusEmoji:
       type: string
-      description: Current local time for the user
-      example: "10:30 AM"
-
-UserStatus:
-  type: object
-  properties:
-    emoji:
-      type: string
-      description: Status emoji
-      example: "🏠"
-    text:
-      type: string
-      maxLength: 100
-      description: Status text
-      example: "Working from home"
-    expiresAt:
+      example: "📅"
+    statusExpiry:
       type: string
       format: date-time
-      description: When the status expires
-      example: "2024-01-15T18:00:00Z"
-    clearAfter:
+    pronouns:
       type: string
-      enum: [never, "30min", "1h", "4h", "today", "this_week"]
-      description: When to automatically clear status
-      example: "today"
+      example: "he/him"
+    birthday:
+      type: string
+      format: date-time
+    linkedinUrl:
+      type: string
+      format: uri
+    twitterUrl:
+      type: string
+      format: uri
+    githubUrl:
+      type: string
+      format: uri
+    updatedAt:
+      type: string
+      format: date-time
 
-UserPreferences:
+PreferencesResponse:
   type: object
   properties:
+    userId:
+      type: string
+      format: uuid
+    pushEnabled:
+      type: boolean
+    emailEnabled:
+      type: boolean
+    smsEnabled:
+      type: boolean
+    desktopNotifications:
+      type: boolean
+    soundEnabled:
+      type: boolean
+    quietHoursStart:
+      type: string
+      format: time
+    quietHoursEnd:
+      type: string
+      format: time
+    quietHoursEnabled:
+      type: boolean
     theme:
       type: string
-      enum: [light, dark, system]
-      description: UI theme preference
-      default: system
       example: "dark"
     language:
       type: string
-      description: Preferred language
       example: "en"
-    notifications:
-      $ref: './notification.yaml#/NotificationSettings'
-    sidebar:
+    compactMode:
+      type: boolean
+    sidebarCollapsed:
+      type: boolean
+    showUnreadOnly:
+      type: boolean
+    messagePreview:
+      type: boolean
+    enterToSend:
+      type: boolean
+    markdownEnabled:
+      type: boolean
+    emojiSuggestionsEnabled:
+      type: boolean
+    showOnlineStatus:
+      type: boolean
+    showTypingIndicator:
+      type: boolean
+    showReadReceipts:
+      type: boolean
+    reducedMotion:
+      type: boolean
+    highContrast:
+      type: boolean
+    fontSize:
+      type: integer
+    customSettings:
       type: object
-      properties:
-        collapsed:
-          type: boolean
-          default: false
-        order:
-          type: array
-          items:
-            type: string
-          description: Custom sidebar item order
-    keyboard:
-      type: object
-      properties:
-        shortcuts:
-          type: boolean
-          description: Enable keyboard shortcuts
-          default: true
-        markdownShortcuts:
-          type: boolean
-          description: Enable markdown shortcuts
-          default: true
-    accessibility:
-      type: object
-      properties:
-        reduceMotion:
-          type: boolean
-          default: false
-        highContrast:
-          type: boolean
-          default: false
-        screenReader:
-          type: boolean
-          default: false
-    privacy:
-      type: object
-      properties:
-        showOnlineStatus:
-          type: boolean
-          default: true
-        showTypingIndicator:
-          type: boolean
-          default: true
-        showReadReceipts:
-          type: boolean
-          default: true
+      additionalProperties: true
+    updatedAt:
+      type: string
+      format: date-time
 
-UserCreateRequest:
-  type: object
-  required:
-    - email
-    - name
-    - password
-  properties:
-    email:
-      type: string
-      format: email
-    name:
-      type: string
-      minLength: 2
-      maxLength: 100
-    password:
-      type: string
-      format: password
-      minLength: 8
-    username:
-      type: string
-      pattern: "^[a-z0-9_-]{3,30}$"
-    title:
-      type: string
-    timezone:
-      type: string
-    locale:
-      type: string
-
-UserUpdateRequest:
+PageResponse:
   type: object
   properties:
-    name:
+    content:
+      type: array
+      items:
+        $ref: '#/UserSummaryResponse'
+    page:
+      type: integer
+      description: Current page number
+    size:
+      type: integer
+      description: Page size
+    totalElements:
+      type: integer
+      format: int64
+      description: Total number of elements
+    totalPages:
+      type: integer
+      description: Total number of pages
+    first:
+      type: boolean
+      description: Is this the first page
+    last:
+      type: boolean
+      description: Is this the last page
+
+# API Response Wrappers
+
+ApiResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    message:
       type: string
-      minLength: 2
-      maxLength: 100
-    username:
+      example: "User created"
+    data:
+      $ref: '#/UserResponse'
+    timestamp:
       type: string
-      pattern: "^[a-z0-9_-]{3,30}$"
-    title:
+      format: date-time
+
+PagedApiResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      $ref: '#/PageResponse'
+    timestamp:
       type: string
-    bio:
+      format: date-time
+
+BatchApiResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      type: array
+      items:
+        $ref: '#/UserSummaryResponse'
+    timestamp:
       type: string
-      maxLength: 500
-    pronouns:
+      format: date-time
+
+ProfileApiResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    message:
       type: string
-    location:
+    data:
+      $ref: '#/ProfileResponse'
+    timestamp:
       type: string
-    website:
+      format: date-time
+
+PreferencesApiResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    message:
       type: string
-      format: uri
-    timezone:
+    data:
+      $ref: '#/PreferencesResponse'
+    timestamp:
       type: string
-    locale:
-      type: string
-    phone:
-      type: string
+      format: date-time

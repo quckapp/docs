@@ -8,7 +8,7 @@ messages:
     description: Get messages from a channel with pagination
     operationId: listMessages
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -69,7 +69,7 @@ messages:
     description: Send a new message to a channel
     operationId: sendMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -117,7 +117,7 @@ message-by-id:
     description: Get a specific message by ID
     operationId: getMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -158,7 +158,7 @@ message-by-id:
     description: Edit a message (author only, within edit window)
     operationId: editMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -205,7 +205,7 @@ message-by-id:
     description: Delete a message (author or admin)
     operationId: deleteMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -244,7 +244,7 @@ message-reactions:
     description: Get all reactions on a message
     operationId: getMessageReactions
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -285,7 +285,7 @@ message-reactions:
     description: Add a reaction to a message
     operationId: addReaction
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -334,7 +334,7 @@ message-reaction-remove:
     description: Remove a reaction from a message
     operationId: removeReaction
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -377,7 +377,7 @@ message-pin:
     description: Pin a message to the channel
     operationId: pinMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -419,7 +419,7 @@ message-unpin:
     description: Unpin a message from the channel
     operationId: unpinMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -451,7 +451,7 @@ pinned-messages:
     description: Get all pinned messages in a channel
     operationId: listPinnedMessages
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -486,7 +486,7 @@ scheduled-messages:
     description: Get user's scheduled messages
     operationId: listScheduledMessages
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -519,15 +519,9 @@ scheduled-messages:
     description: Schedule a message for later delivery
     operationId: scheduleMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-      - name: channelId
         in: path
         required: true
         schema:
@@ -555,7 +549,7 @@ scheduled-message-by-id:
     description: Get a scheduled message by ID
     operationId: getScheduledMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -584,7 +578,7 @@ scheduled-message-by-id:
     description: Update a scheduled message
     operationId: updateScheduledMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -619,7 +613,7 @@ scheduled-message-by-id:
     description: Delete a scheduled message
     operationId: deleteScheduledMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -645,7 +639,7 @@ mark-read:
     description: Mark all messages in channel as read
     operationId: markChannelRead
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path

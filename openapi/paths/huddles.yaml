@@ -8,7 +8,7 @@ huddles:
     description: Get all active huddles in workspace
     operationId: listHuddles
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -37,7 +37,7 @@ channel-huddle:
     description: Get active huddle in a channel (if any)
     operationId: getChannelHuddle
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -71,7 +71,7 @@ channel-huddle:
     description: Start a new huddle in a channel
     operationId: startHuddle
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -112,7 +112,7 @@ huddle-by-id:
     description: Get huddle details by ID
     operationId: getHuddle
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -147,7 +147,7 @@ huddle-by-id:
     description: Update huddle topic
     operationId: updateHuddle
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -183,7 +183,7 @@ huddle-join:
     description: Join an active huddle
     operationId: joinHuddle
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -229,7 +229,7 @@ huddle-leave:
     description: Leave the huddle
     operationId: leaveHuddle
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -255,7 +255,7 @@ huddle-action:
     description: Perform action in huddle (mute, video, screen share, invite)
     operationId: huddleAction
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -294,7 +294,7 @@ huddle-end:
     description: End the huddle for everyone (starter only)
     operationId: endHuddle
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -330,7 +330,7 @@ huddle-participants:
     description: Get all participants in a huddle
     operationId: listHuddleParticipants
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -365,7 +365,7 @@ huddle-invite:
     description: Invite a user to join the huddle
     operationId: inviteToHuddle
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -407,7 +407,7 @@ huddle-thread:
     description: Get chat messages from huddle
     operationId: getHuddleThread
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -436,7 +436,7 @@ huddle-thread:
     description: Send a chat message in the huddle
     operationId: sendHuddleMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -478,7 +478,7 @@ huddle-notes:
     description: Get shared notes from huddle
     operationId: getHuddleNotes
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -507,7 +507,7 @@ huddle-notes:
     description: Update shared notes in huddle
     operationId: updateHuddleNotes
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path

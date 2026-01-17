@@ -8,7 +8,7 @@ workspaces:
     description: Get all workspaces the current user is a member of
     operationId: listWorkspaces
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     responses:
       '200':
         description: List of workspaces
@@ -29,7 +29,7 @@ workspaces:
     description: Create a new workspace
     operationId: createWorkspace
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     requestBody:
       required: true
       content:
@@ -64,7 +64,7 @@ workspace-by-id:
     description: Get workspace details by ID
     operationId: getWorkspace
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -99,7 +99,7 @@ workspace-by-id:
     description: Update workspace details (admin only)
     operationId: updateWorkspace
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -134,7 +134,7 @@ workspace-by-id:
     description: Delete workspace (owner only)
     operationId: deleteWorkspace
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -172,7 +172,7 @@ workspace-by-slug:
     description: Get workspace details by URL slug
     operationId: getWorkspaceBySlug
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: slug
         in: path
@@ -202,7 +202,7 @@ workspace-members:
     description: Get all members of a workspace
     operationId: listWorkspaceMembers
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -246,7 +246,7 @@ workspace-member-by-id:
     description: Get details of a specific workspace member
     operationId: getWorkspaceMember
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -282,7 +282,7 @@ workspace-member-by-id:
     description: Update a member's role in the workspace (admin only)
     operationId: updateWorkspaceMember
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -330,7 +330,7 @@ workspace-member-by-id:
     description: Remove a member from the workspace (admin only)
     operationId: removeWorkspaceMember
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -362,7 +362,7 @@ workspace-leave:
     description: Leave the workspace (cannot be owner)
     operationId: leaveWorkspace
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -389,7 +389,7 @@ workspace-invites:
     description: Get all pending invites for a workspace (admin only)
     operationId: listWorkspaceInvites
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -427,7 +427,7 @@ workspace-invites:
     description: Send workspace invitations by email (admin only)
     operationId: inviteMembers
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -470,7 +470,7 @@ workspace-invite-revoke:
     description: Revoke a pending invite
     operationId: revokeInvite
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -503,7 +503,7 @@ workspace-invite-accept:
     description: Accept a workspace invitation
     operationId: acceptInvite
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: inviteCode
         in: path
@@ -538,7 +538,7 @@ workspace-stats:
     description: Get workspace statistics
     operationId: getWorkspaceStats
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -562,7 +562,7 @@ workspace-icon:
     description: Upload a new workspace icon (admin only)
     operationId: uploadWorkspaceIcon
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -601,7 +601,7 @@ workspace-icon:
     description: Remove workspace icon (admin only)
     operationId: removeWorkspaceIcon
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path

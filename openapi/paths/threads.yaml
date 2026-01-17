@@ -8,7 +8,7 @@ threads:
     description: Get threads the user is subscribed to or all threads in workspace
     operationId: listThreads
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -56,7 +56,7 @@ thread-by-id:
     description: Get a thread with its parent message
     operationId: getThread
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -97,7 +97,7 @@ thread-by-id:
     description: Update thread properties (e.g., mark as resolved)
     operationId: updateThread
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -139,7 +139,7 @@ thread-replies:
     description: Get all replies in a thread
     operationId: listThreadReplies
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -191,7 +191,7 @@ thread-replies:
     description: Post a reply to a thread
     operationId: replyToThread
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -233,7 +233,7 @@ thread-subscribe:
     description: Subscribe to receive notifications for thread replies
     operationId: subscribeToThread
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -274,7 +274,7 @@ thread-unsubscribe:
     description: Unsubscribe from thread notifications
     operationId: unsubscribeFromThread
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -306,7 +306,7 @@ thread-mark-read:
     description: Mark all replies in thread as read
     operationId: markThreadRead
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -349,7 +349,7 @@ thread-participants:
     description: Get all users who have participated in a thread
     operationId: listThreadParticipants
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -392,7 +392,7 @@ mark-all-threads-read:
     description: Mark all threads in workspace as read
     operationId: markAllThreadsRead
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path

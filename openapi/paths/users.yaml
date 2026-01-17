@@ -1,85 +1,40 @@
 # Users API Paths
+# User-Service Base path: /api/users
 
-me:
-  get:
+# User Management
+
+users:
+  post:
     tags:
       - Users
-    summary: Get current user
-    description: Get the authenticated user's profile
-    operationId: getCurrentUser
+    summary: Create a new user
+    description: |
+      Create a new user in the system. This endpoint is typically called
+      by the auth-service after successful registration.
+    operationId: createUser
     security:
-      - bearerAuth: []
-    responses:
-      '200':
-        description: Current user profile
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/user.yaml#/User'
-      '401':
-        description: Not authenticated
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
-
-  patch:
-    tags:
-      - Users
-    summary: Update current user
-    description: Update the authenticated user's profile
-    operationId: updateCurrentUser
-    security:
-      - bearerAuth: []
+      - ApiKeyAuth: []
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            $ref: '../schemas/user.yaml#/UserUpdateRequest'
+            $ref: '../schemas/user.yaml#/CreateUserRequest'
     responses:
-      '200':
-        description: User updated
+      '201':
+        description: User created successfully
         content:
           application/json:
             schema:
-              $ref: '../schemas/user.yaml#/User'
+              $ref: '../schemas/user.yaml#/ApiResponse'
       '400':
         description: Invalid input
         content:
           application/json:
             schema:
               $ref: '../schemas/error.yaml#/ValidationError'
-
-  delete:
-    tags:
-      - Users
-    summary: Delete account
-    description: Permanently delete current user's account
-    operationId: deleteCurrentUser
-    security:
-      - bearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - password
-              - confirmation
-            properties:
-              password:
-                type: string
-                format: password
-              confirmation:
-                type: string
-                enum: ["DELETE MY ACCOUNT"]
-    responses:
-      '204':
-        description: Account deleted
-      '401':
-        description: Invalid password
+      '409':
+        description: Email or username already exists
         content:
           application/json:
             schema:
@@ -90,12 +45,12 @@ user-by-id:
     tags:
       - Users
     summary: Get user by ID
-    description: Get a user's public profile by ID
+    description: Get a user's data by their unique identifier
     operationId: getUserById
     security:
-      - bearerAuth: []
+      - ApiKeyAuth: []
     parameters:
-      - name: userId
+      - name: id
         in: path
         required: true
         schema:
@@ -103,11 +58,112 @@ user-by-id:
           format: uuid
     responses:
       '200':
-        description: User profile
+        description: User data
         content:
           application/json:
             schema:
-              $ref: '../schemas/user.yaml#/UserProfile'
+              $ref: '../schemas/user.yaml#/ApiResponse'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  put:
+    tags:
+      - Users
+    summary: Update user
+    description: Update user's basic information
+    operationId: updateUser
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/user.yaml#/UpdateUserRequest'
+    responses:
+      '200':
+        description: User updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/ApiResponse'
+      '400':
+        description: Invalid input
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ValidationError'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  delete:
+    tags:
+      - Users
+    summary: Deactivate user
+    description: Soft-delete a user by setting their status to DEACTIVATED
+    operationId: deactivateUser
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User deactivated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/ApiResponse'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+user-by-email:
+  get:
+    tags:
+      - Users
+      - Search
+    summary: Get user by email
+    description: Get a user's data by their email address
+    operationId: getUserByEmail
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: email
+        in: path
+        required: true
+        schema:
+          type: string
+          format: email
+    responses:
+      '200':
+        description: User data
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/ApiResponse'
       '404':
         description: User not found
         content:
@@ -119,11 +175,12 @@ user-by-username:
   get:
     tags:
       - Users
+      - Search
     summary: Get user by username
-    description: Get a user's public profile by username
+    description: Get a user's data by their username
     operationId: getUserByUsername
     security:
-      - bearerAuth: []
+      - ApiKeyAuth: []
     parameters:
       - name: username
         in: path
@@ -132,11 +189,11 @@ user-by-username:
           type: string
     responses:
       '200':
-        description: User profile
+        description: User data
         content:
           application/json:
             schema:
-              $ref: '../schemas/user.yaml#/UserProfile'
+              $ref: '../schemas/user.yaml#/ApiResponse'
       '404':
         description: User not found
         content:
@@ -144,373 +201,270 @@ user-by-username:
             schema:
               $ref: '../schemas/error.yaml#/Error'
 
-preferences:
-  get:
-    tags:
-      - Users
-    summary: Get user preferences
-    description: Get current user's preferences
-    operationId: getUserPreferences
-    security:
-      - bearerAuth: []
-    responses:
-      '200':
-        description: User preferences
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/user.yaml#/UserPreferences'
+# Admin Operations
 
-  patch:
-    tags:
-      - Users
-    summary: Update user preferences
-    description: Update current user's preferences
-    operationId: updateUserPreferences
-    security:
-      - bearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/user.yaml#/UserPreferences'
-    responses:
-      '200':
-        description: Preferences updated
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/user.yaml#/UserPreferences'
-
-status:
-  get:
-    tags:
-      - Users
-    summary: Get user status
-    description: Get current user's status
-    operationId: getUserStatus
-    security:
-      - bearerAuth: []
-    responses:
-      '200':
-        description: User status
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/user.yaml#/UserStatus'
-
-  put:
-    tags:
-      - Users
-    summary: Set user status
-    description: Set current user's status
-    operationId: setUserStatus
-    security:
-      - bearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/user.yaml#/UserStatus'
-    responses:
-      '200':
-        description: Status updated
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/user.yaml#/UserStatus'
-
-  delete:
-    tags:
-      - Users
-    summary: Clear user status
-    description: Clear current user's custom status
-    operationId: clearUserStatus
-    security:
-      - bearerAuth: []
-    responses:
-      '204':
-        description: Status cleared
-
-avatar:
-  put:
-    tags:
-      - Users
-    summary: Upload avatar
-    description: Upload a new avatar image
-    operationId: uploadAvatar
-    security:
-      - bearerAuth: []
-    requestBody:
-      required: true
-      content:
-        multipart/form-data:
-          schema:
-            type: object
-            required:
-              - avatar
-            properties:
-              avatar:
-                type: string
-                format: binary
-                description: Avatar image (JPEG, PNG, GIF, max 5MB)
-    responses:
-      '200':
-        description: Avatar uploaded
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                avatarUrl:
-                  type: string
-                  format: uri
-      '400':
-        description: Invalid image format or size
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
-
-  delete:
-    tags:
-      - Users
-    summary: Remove avatar
-    description: Remove current user's avatar
-    operationId: removeAvatar
-    security:
-      - bearerAuth: []
-    responses:
-      '204':
-        description: Avatar removed
-
-change-password:
+user-suspend:
   post:
     tags:
       - Users
-    summary: Change password
-    description: Change current user's password
-    operationId: changePassword
+      - Admin
+    summary: Suspend user
+    description: Suspend a user account. Suspended users cannot access the system until reactivated.
+    operationId: suspendUser
     security:
-      - bearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - currentPassword
-              - newPassword
-            properties:
-              currentPassword:
-                type: string
-                format: password
-              newPassword:
-                type: string
-                format: password
-                minLength: 8
-    responses:
-      '200':
-        description: Password changed
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-      '400':
-        description: Password requirements not met
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/ValidationError'
-      '401':
-        description: Current password incorrect
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
-
-change-email:
-  post:
-    tags:
-      - Users
-    summary: Change email
-    description: Request email address change
-    operationId: changeEmail
-    security:
-      - bearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - newEmail
-              - password
-            properties:
-              newEmail:
-                type: string
-                format: email
-              password:
-                type: string
-                format: password
-    responses:
-      '200':
-        description: Verification email sent to new address
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-      '400':
-        description: Invalid email
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/ValidationError'
-      '401':
-        description: Invalid password
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
-      '409':
-        description: Email already in use
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
-
-bookmarks:
-  get:
-    tags:
-      - Users
-      - Bookmarks
-    summary: List bookmarks
-    description: Get current user's bookmarked items
-    operationId: listBookmarks
-    security:
-      - bearerAuth: []
+      - ApiKeyAuth: []
     parameters:
-      - name: type
-        in: query
-        schema:
-          type: string
-          enum: [message, file, channel]
-      - name: workspaceId
-        in: query
-        schema:
-          type: string
-          format: uuid
-      - $ref: '../schemas/common.yaml#/PageParam'
-      - $ref: '../schemas/common.yaml#/LimitParam'
-    responses:
-      '200':
-        description: List of bookmarks
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                bookmarks:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
-                      type:
-                        type: string
-                        enum: [message, file, channel]
-                      itemId:
-                        type: string
-                        format: uuid
-                      note:
-                        type: string
-                      createdAt:
-                        type: string
-                        format: date-time
-                pagination:
-                  $ref: '../schemas/common.yaml#/Pagination'
-
-bookmark-add:
-  post:
-    tags:
-      - Users
-      - Bookmarks
-    summary: Add bookmark
-    description: Bookmark a message, file, or channel
-    operationId: addBookmark
-    security:
-      - bearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - type
-              - itemId
-            properties:
-              type:
-                type: string
-                enum: [message, file, channel]
-              itemId:
-                type: string
-                format: uuid
-              note:
-                type: string
-                maxLength: 500
-    responses:
-      '201':
-        description: Bookmark created
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: string
-                  format: uuid
-      '409':
-        description: Already bookmarked
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/error.yaml#/Error'
-
-bookmark-remove:
-  delete:
-    tags:
-      - Users
-      - Bookmarks
-    summary: Remove bookmark
-    description: Remove a bookmark
-    operationId: removeBookmark
-    security:
-      - bearerAuth: []
-    parameters:
-      - name: bookmarkId
+      - name: id
         in: path
         required: true
         schema:
           type: string
           format: uuid
     responses:
-      '204':
-        description: Bookmark removed
+      '200':
+        description: User suspended
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/ApiResponse'
       '404':
-        description: Bookmark not found
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+# Search
+
+search:
+  get:
+    tags:
+      - Users
+      - Search
+    summary: Search users
+    description: Search for users by query string with optional filtering and pagination
+    operationId: searchUsers
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: query
+        in: query
+        required: true
+        description: Search query (min 2 characters)
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 100
+      - name: status
+        in: query
+        required: false
+        description: Filter by user status
+        schema:
+          type: string
+          enum: [ACTIVE, INACTIVE, SUSPENDED, DEACTIVATED]
+      - name: page
+        in: query
+        required: false
+        description: Page number (0-indexed)
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+      - name: size
+        in: query
+        required: false
+        description: Page size
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+    responses:
+      '200':
+        description: Search results
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/PagedApiResponse'
+
+# Batch Operations
+
+batch:
+  post:
+    tags:
+      - Users
+      - Batch
+    summary: Get users by IDs
+    description: |
+      Retrieve multiple users by their IDs in a single request.
+      Useful for populating user data in lists.
+      Users not found will be silently omitted from the response.
+    operationId: getUsersByIds
+    security:
+      - ApiKeyAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+            maxItems: 100
+    responses:
+      '200':
+        description: List of users
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/BatchApiResponse'
+
+# Profile Management
+
+profile:
+  get:
+    tags:
+      - Users
+      - Profile
+    summary: Get user profile
+    description: Retrieve extended profile information for a user
+    operationId: getProfile
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User profile
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/ProfileApiResponse'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  patch:
+    tags:
+      - Users
+      - Profile
+    summary: Update user profile
+    description: Update profile fields. Only provided fields will be updated.
+    operationId: updateProfile
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/user.yaml#/UpdateProfileRequest'
+    responses:
+      '200':
+        description: Profile updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/ProfileApiResponse'
+      '400':
+        description: Invalid input
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ValidationError'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+# Preferences Management
+
+preferences:
+  get:
+    tags:
+      - Users
+      - Preferences
+    summary: Get user preferences
+    description: Retrieve user notification, display, and privacy preferences
+    operationId: getPreferences
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User preferences
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/PreferencesApiResponse'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+  patch:
+    tags:
+      - Users
+      - Preferences
+    summary: Update user preferences
+    description: Update preference fields. Only provided fields will be updated.
+    operationId: updatePreferences
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/user.yaml#/UpdatePreferencesRequest'
+    responses:
+      '200':
+        description: Preferences updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/PreferencesApiResponse'
+      '400':
+        description: Invalid input
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ValidationError'
+      '404':
+        description: User not found
         content:
           application/json:
             schema:

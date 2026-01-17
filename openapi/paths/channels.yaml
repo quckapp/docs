@@ -8,7 +8,7 @@ channels:
     description: Get all channels in a workspace that the user can access
     operationId: listChannels
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -55,7 +55,7 @@ channels:
     description: Create a new channel in the workspace
     operationId: createChannel
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -97,7 +97,7 @@ channel-by-id:
     description: Get channel details by ID
     operationId: getChannel
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -138,7 +138,7 @@ channel-by-id:
     description: Update channel details (admin only for settings)
     operationId: updateChannel
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -179,7 +179,7 @@ channel-by-id:
     description: Delete a channel (admin only, cannot delete default channel)
     operationId: deleteChannel
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -218,7 +218,7 @@ channel-members:
     description: Get all members of a channel
     operationId: listChannelMembers
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -257,7 +257,7 @@ channel-members:
     description: Add members to a channel
     operationId: addChannelMembers
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -299,7 +299,7 @@ channel-member-by-id:
     description: Get details of a channel member
     operationId: getChannelMember
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -341,7 +341,7 @@ channel-member-by-id:
     description: Update member role in channel (channel admin only)
     operationId: updateChannelMember
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -387,7 +387,7 @@ channel-member-by-id:
     description: Remove a member from the channel
     operationId: removeChannelMember
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -419,7 +419,7 @@ channel-join:
     description: Join a public channel
     operationId: joinChannel
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -455,7 +455,7 @@ channel-leave:
     description: Leave a channel (cannot leave default channel)
     operationId: leaveChannel
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -487,7 +487,7 @@ channel-archive:
     description: Archive a channel (admin only)
     operationId: archiveChannel
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -517,7 +517,7 @@ channel-unarchive:
     description: Unarchive a channel (admin only)
     operationId: unarchiveChannel
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -547,7 +547,7 @@ channel-notifications:
     description: Get notification settings for channel
     operationId: getChannelNotifications
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -576,7 +576,7 @@ channel-notifications:
     description: Update notification settings for channel
     operationId: updateChannelNotifications
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -613,7 +613,7 @@ direct-messages:
     description: Get all DM and group DM channels
     operationId: listDirectMessages
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -649,7 +649,7 @@ direct-message-open:
     description: Open or create a direct message channel with a user
     operationId: openDirectMessage
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -686,7 +686,7 @@ group-dm-create:
     description: Create a new group direct message channel
     operationId: createGroupDM
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path

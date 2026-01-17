@@ -4,414 +4,557 @@ sidebar_position: 1
 
 # Auth Service
 
-Spring Boot authentication service handling JWT, OAuth, 2FA, and session management.
+Spring Boot authentication and authorization microservice handling JWT, OAuth2, 2FA, phone OTP, session management, and comprehensive user security.
 
 ## Overview
 
 | Property | Value |
 |----------|-------|
 | **Port** | 8081 |
-| **Database** | MySQL |
-| **Framework** | Spring Boot 3.x |
+| **Context Path** | `/api/auth` |
+| **Database** | MySQL 8.0 |
+| **Cache** | Redis 7 |
+| **Message Queue** | Apache Kafka |
+| **Framework** | Spring Boot 3.2.0 |
 | **Language** | Java 21 |
+| **API Docs** | SpringDoc OpenAPI 2.3.0 |
 
 ## Features
 
-- JWT token generation and validation
-- OAuth 2.0 (Google, GitHub, Microsoft, Apple)
-- Two-factor authentication (TOTP, SMS, Email)
-- OTP verification
-- Session management
-- Password reset flow
-- Account lockout protection
+- Email/Password authentication with BCrypt hashing
+- Phone-based OTP authentication via SMS
+- OAuth2 social login (Google, Apple, Facebook, GitHub, Microsoft)
+- Two-Factor Authentication (TOTP) with backup codes
+- JWT token management with refresh token rotation
+- Multi-device session management
+- Device trust and linking
+- FCM token management for push notifications
+- User blocking functionality
+- Role-Based Access Control (RBAC)
+- Comprehensive login history with anomaly detection
+- Rate limiting with sliding window algorithm
+- Data migration support from MongoDB
+
+## Architecture
+
+### Package Structure
+
+```
+com.quckapp.auth/
+├── audit/              # Audit logging
+├── config/             # Configuration classes
+├── controller/         # REST API controllers
+│   ├── AuthController
+│   ├── UserProfileController
+│   ├── PhoneAuthController
+│   ├── OAuth2Controller
+│   └── MigrationController
+├── domain/
+│   ├── entity/         # JPA entities (28 entities)
+│   └── repository/     # Data access layer (18 repositories)
+├── dto/                # Data transfer objects
+├── kafka/              # Event publishing
+├── security/           # Security implementation
+│   ├── jwt/            # JWT services
+│   ├── oauth2/         # OAuth2 handlers
+│   └── ratelimit/      # Rate limiting
+└── service/            # Business logic (15+ services)
+    └── impl/           # Service implementations
+```
+
+## Domain Entities
+
+### Core Authentication
+
+| Entity | Description |
+|--------|-------------|
+| `AuthUser` | Core authentication record with email, password hash, 2FA settings |
+| `UserProfile` | Complete user profile (1:1 with AuthUser) |
+| `RefreshToken` | Token rotation and revocation tracking |
+| `PhoneOtp` | One-time passwords for phone authentication |
+
+### Session & Activity
+
+| Entity | Description |
+|--------|-------------|
+| `ActiveSession` | Tracks user sessions across devices with geolocation |
+| `SessionActivity` | Logs activities within a session |
+| `LoginHistory` | Records all login attempts with device/geo data |
+| `LoginAnomaly` | Tracks suspicious login activities |
+
+### OAuth2 & Security
+
+| Entity | Description |
+|--------|-------------|
+| `OAuthConnection` | Links OAuth providers to users |
+| `TrustedDevice` | Devices marked as trusted |
+| `LinkedDevice` | Connected user devices with FCM tokens |
+| `ApiKey` | Service-to-service API keys |
+
+### RBAC (Role-Based Access Control)
+
+| Entity | Description |
+|--------|-------------|
+| `Role` | Defines roles with priority and system flags |
+| `Permission` | Granular permissions (resource:action format) |
+| `RolePermission` | Many-to-many role-permission mapping |
+| `UserRoleAssignment` | User-to-role assignment with expiry |
+
+### User Preferences
+
+| Entity | Description |
+|--------|-------------|
+| `UserSettings` | User preferences (appearance, notifications, privacy) |
+| `UserSecurityPreferences` | Security settings (2FA, session limits, IP whitelist) |
+| `UserNotificationPreferences` | Notification channels and quiet hours |
+
+### Enums
+
+| Enum | Values |
+|------|--------|
+| `UserStatus` | ONLINE, OFFLINE, AWAY, DO_NOT_DISTURB |
+| `UserRole` | USER, MODERATOR, ADMIN, SUPER_ADMIN |
+| `DeviceType` | MOBILE, TABLET, WEB, DESKTOP |
+| `LoginStatus` | SUCCESS, FAILED, BLOCKED, PENDING_2FA |
+| `LoginMethod` | PASSWORD, OAUTH2, PHONE_OTP, 2FA |
+| `AnomalyType` | VPN_DETECTED, TOR_DETECTED, NEW_COUNTRY, NEW_DEVICE, etc. |
+| `AnomalySeverity` | LOW, MEDIUM, HIGH, CRITICAL |
+| `VisibilityLevel` | EVERYONE, FOLLOWERS_ONLY, PRIVATE |
+
+## Services
+
+### Core Services
+
+| Service | Responsibilities |
+|---------|------------------|
+| `AuthService` | Registration, login, logout, password management, OAuth |
+| `TwoFactorService` | 2FA setup, enable/disable, backup codes |
+| `PhoneOtpService` | OTP generation, verification, phone login |
+| `SessionManagementService` | Session lifecycle, activity logging |
+| `LoginHistoryService` | Login tracking, anomaly detection |
+
+### User Services
+
+| Service | Responsibilities |
+|---------|------------------|
+| `UserProfileService` | Profile CRUD, search, admin operations |
+| `UserSettingsService` | Settings management, user blocking |
+| `LinkedDeviceService` | Device linking, FCM token management |
+| `UserPreferencesService` | Security and notification preferences |
+
+### Security Services
+
+| Service | Responsibilities |
+|---------|------------------|
+| `JwtService` | JWT generation, validation, claims extraction |
+| `RateLimitService` | Sliding window rate limiting with Redis |
+| `TokenBlacklistService` | Redis-based token revocation |
+| `PermissionService` | Permission CRUD and assignment |
+| `RoleService` | Role CRUD and user assignment |
+
+### Integration Services
+
+| Service | Responsibilities |
+|---------|------------------|
+| `SmsService` / `KafkaSmsService` | SMS delivery via Kafka |
+| `MigrationService` | MongoDB to MySQL data migration |
+| `UserEventPublisher` | Kafka event publishing |
 
 ## API Endpoints
 
-### Authentication
+**Base URL:** `http://localhost:8081/api/auth`
 
-```http
-POST /api/auth/login
-POST /api/auth/logout
-POST /api/auth/refresh
-POST /api/auth/validate
-```
+### Authentication (`/v1`)
 
-### OTP
+| Method | Endpoint | Description | Rate Limit |
+|--------|----------|-------------|------------|
+| `POST` | `/register` | Register new user | 5/hour |
+| `POST` | `/login` | Login with email/password | Custom |
+| `POST` | `/login/2fa` | Complete 2FA verification | 5/5min |
+| `POST` | `/logout` | Logout and revoke tokens | - |
 
-```http
-POST /api/auth/otp/send
-POST /api/auth/otp/verify
-```
+### Token Management (`/v1/token`)
 
-### Two-Factor Authentication
+| Method | Endpoint | Description | Rate Limit |
+|--------|----------|-------------|------------|
+| `POST` | `/refresh` | Refresh access token | 30/min |
+| `POST` | `/validate` | Validate JWT token | 100/min |
+| `POST` | `/revoke` | Revoke specific token | 10/min/user |
+| `POST` | `/revoke-all` | Revoke all user tokens | 5/5min/user |
 
-```http
-POST /api/auth/2fa/enable
-POST /api/auth/2fa/disable
-POST /api/auth/2fa/verify
-GET  /api/auth/2fa/backup-codes
-```
+### Password Management (`/v1/password`)
 
-### OAuth
+| Method | Endpoint | Description | Rate Limit |
+|--------|----------|-------------|------------|
+| `POST` | `/forgot` | Request password reset | 3/hour |
+| `POST` | `/reset` | Reset password with token | 5/hour |
+| `POST` | `/change` | Change password (authenticated) | 5/hour/user |
 
-```http
-GET  /api/auth/oauth/{provider}
-GET  /api/auth/oauth/{provider}/callback
-POST /api/auth/oauth/link
-DELETE /api/auth/oauth/unlink/{provider}
-```
+### Two-Factor Authentication (`/v1/2fa`)
 
-### Sessions
+| Method | Endpoint | Description | Rate Limit |
+|--------|----------|-------------|------------|
+| `POST` | `/setup` | Setup 2FA - get QR code | 10/hour/user |
+| `POST` | `/enable` | Enable 2FA after verification | 5/5min/user |
+| `POST` | `/disable` | Disable 2FA | 3/hour/user |
+| `POST` | `/backup-codes` | Generate backup codes | 3/hour/user |
 
-```http
-GET    /api/auth/sessions
-DELETE /api/auth/sessions/{sessionId}
-DELETE /api/auth/sessions/all
-```
+### Phone Authentication (`/v1/auth/phone`)
 
-### Password
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/request-otp` | Request OTP via SMS |
+| `POST` | `/verify-otp` | Verify OTP code |
+| `POST` | `/login` | Login/register with OTP |
+| `POST` | `/resend-otp` | Resend OTP |
 
-```http
-POST /api/auth/password/change
-POST /api/auth/password/reset/request
-POST /api/auth/password/reset/confirm
-```
+### OAuth2 (`/v1/oauth` & `/v1/oauth2`)
 
-## Data Models
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/oauth2/providers` | Get available OAuth providers |
+| `GET` | `/oauth2/authorize/{provider}` | Get authorization URL |
+| `GET` | `/oauth2/linked` | Get linked providers for user |
+| `POST` | `/oauth/{provider}` | Login/register with OAuth |
+| `POST` | `/oauth/{provider}/link` | Link OAuth to account |
+| `DELETE` | `/oauth/{provider}/unlink` | Unlink OAuth provider |
 
-### User Credentials
+### Sessions (`/v1/sessions`)
 
-```java
-@Entity
-@Table(name = "user_credentials")
-public class UserCredentials {
-    @Id
-    private String userId;
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | Get active sessions |
+| `DELETE` | `/` | Terminate all other sessions |
+| `DELETE` | `/{sessionId}` | Terminate specific session |
 
-    @Column(unique = true)
-    private String email;
+### User Profiles (`/v1/users`)
 
-    private String passwordHash;
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/me` | Get current user profile |
+| `PUT` | `/me` | Update current user profile |
+| `PUT` | `/me/status` | Update user status |
+| `GET` | `/me/settings` | Get user settings |
+| `PUT` | `/me/settings` | Update user settings |
+| `GET` | `/{userId}` | Get profile by ID |
+| `GET` | `/by-username/{username}` | Get profile by username |
+| `GET` | `/by-phone/{phoneNumber}` | Get profile by phone |
+| `GET` | `/by-external-id/{externalId}` | Get profile by external ID |
+| `GET` | `/batch` | Get multiple profiles by IDs |
+| `GET` | `/batch/external` | Get profiles by external IDs |
+| `GET` | `/search` | Search users |
 
-    private boolean twoFactorEnabled;
-    private String twoFactorSecret;
+### Devices (`/v1/users/me/devices`)
 
-    private int failedLoginAttempts;
-    private LocalDateTime lockoutUntil;
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | Get linked devices |
+| `POST` | `/` | Link a device |
+| `DELETE` | `/{deviceId}` | Unlink a device |
+| `PUT` | `/{deviceId}/fcm-token` | Update FCM token |
+| `PUT` | `/{deviceId}/activity` | Update device activity |
 
-    private LocalDateTime lastLoginAt;
-    private LocalDateTime passwordChangedAt;
+### Blocked Users (`/v1/users/me/blocked-users`)
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | Get blocked users |
+| `POST` | `/` | Block a user |
+| `DELETE` | `/{blockedUserId}` | Unblock a user |
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-}
-```
+### Admin (`/v1/users/admin`)
 
-### Session
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/ban` | Ban a user |
+| `POST` | `/unban/{userId}` | Unban a user |
+| `POST` | `/role` | Update user role |
+| `POST` | `/permissions` | Update user permissions |
+| `GET` | `/statistics` | Get user statistics |
 
-```java
-@Entity
-@Table(name = "sessions")
-public class Session {
-    @Id
-    private String id;
+### Internal APIs (`/v1/users/internal`)
 
-    private String userId;
-    private String refreshToken;
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/fcm-tokens/{userId}` | Get FCM tokens for user |
+| `POST` | `/fcm-tokens/batch` | Get FCM tokens batch |
+| `GET` | `/check-blocked` | Check if users are blocked |
 
-    private String ipAddress;
-    private String userAgent;
-    private String deviceId;
+### Migration (`/v1/migration`)
 
-    private LocalDateTime expiresAt;
-    private LocalDateTime lastActiveAt;
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/users/batch` | Batch import users |
+| `POST` | `/settings/batch` | Batch import settings |
+| `GET` | `/status` | Get migration status |
+| `POST` | `/validate` | Validate migration |
 
-    @CreatedDate
-    private LocalDateTime createdAt;
-}
-```
+## Security Configuration
 
-### OAuth Connection
-
-```java
-@Entity
-@Table(name = "oauth_connections")
-public class OAuthConnection {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-
-    private String userId;
-
-    @Enumerated(EnumType.STRING)
-    private OAuthProvider provider;
-
-    private String providerUserId;
-    private String accessToken;
-    private String refreshToken;
-
-    private LocalDateTime tokenExpiresAt;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
-}
-```
-
-## Configuration
-
-### application.yml
+### JWT Configuration
 
 ```yaml
-server:
-  port: 8081
-
-spring:
-  datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/QuckApp_auth
-    username: ${MYSQL_USER:root}
-    password: ${MYSQL_PASSWORD:password}
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-
 jwt:
-  secret: ${JWT_SECRET}
-  access-token-expiry: 15m
-  refresh-token-expiry: 7d
-  issuer: QuckApp-auth
+  secret: ${JWT_SECRET}  # Min 32 characters
+  access-token-expiry: 900000    # 15 minutes
+  refresh-token-expiry: 604800000 # 7 days
+  issuer: QuckApp
 
+# Token claims include:
+# - userId, email, externalId
+# - 2fa flag, sessionId
+# - Token type (access, refresh, password_reset, etc.)
+```
+
+### OAuth2 Providers
+
+```yaml
 oauth:
   google:
     client-id: ${GOOGLE_CLIENT_ID}
     client-secret: ${GOOGLE_CLIENT_SECRET}
+  apple:
+    client-id: ${APPLE_CLIENT_ID}
+    client-secret: ${APPLE_CLIENT_SECRET}
+  facebook:
+    client-id: ${FACEBOOK_CLIENT_ID}
+    client-secret: ${FACEBOOK_CLIENT_SECRET}
   github:
     client-id: ${GITHUB_CLIENT_ID}
     client-secret: ${GITHUB_CLIENT_SECRET}
-
-otp:
-  length: 6
-  expiry: 5m
-  max-attempts: 3
-
-security:
-  lockout:
-    max-attempts: 5
-    duration: 30m
 ```
 
-## Security Implementation
-
-### JWT Generation
+### Rate Limiting
 
 ```java
-@Service
-public class JwtService {
+// Sliding window algorithm with Redis
+// Configuration per endpoint:
 
-    public TokenPair generateTokens(User user) {
-        String accessToken = Jwts.builder()
-            .setSubject(user.getId())
-            .claim("email", user.getEmail())
-            .claim("role", user.getRole())
-            .claim("permissions", user.getPermissions())
-            .setIssuedAt(new Date())
-            .setExpiration(Date.from(Instant.now().plus(15, ChronoUnit.MINUTES)))
-            .setIssuer("QuckApp-auth")
-            .signWith(privateKey, SignatureAlgorithm.RS256)
-            .compact();
+@RateLimit(key = "login", maxRequests = 5, windowSeconds = 300)
+public AuthResponse login(LoginRequest request) { ... }
 
-        String refreshToken = generateRefreshToken();
-
-        return new TokenPair(accessToken, refreshToken);
-    }
-}
+// Default limits:
+// - Login: 5 attempts per 5 minutes, 15-minute block
+// - API: 100 requests per minute per user
+// - Registration: 5 per hour
+// - Password reset: 3 per hour
 ```
 
-### Password Hashing
+### Security Features
 
-```java
-@Service
-public class PasswordService {
-
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-
-    public String hash(String password) {
-        return encoder.encode(password);
-    }
-
-    public boolean verify(String password, String hash) {
-        return encoder.matches(password, hash);
-    }
-}
-```
-
-### TOTP Implementation
-
-```java
-@Service
-public class TotpService {
-
-    public String generateSecret() {
-        return new DefaultSecretGenerator().generate();
-    }
-
-    public boolean verifyCode(String secret, String code) {
-        TimeBasedOneTimePasswordGenerator totp = new TimeBasedOneTimePasswordGenerator();
-        return totp.now(secret).equals(code);
-    }
-
-    public String generateQrCodeUri(String secret, String email) {
-        return String.format(
-            "otpauth://totp/QuckApp:%s?secret=%s&issuer=QuckApp",
-            email, secret
-        );
-    }
-}
-```
+| Feature | Implementation |
+|---------|----------------|
+| Password Hashing | BCrypt with strength 12 |
+| 2FA | TOTP with 6-digit codes, 30-second window |
+| Session Limits | Max 5 concurrent sessions (configurable) |
+| Login Anomaly Detection | VPN/Tor/Proxy detection, impossible travel |
+| Account Lockout | After 5 failed attempts, 15-minute lockout |
+| IP Blocking | Automatic after repeated failed attempts |
 
 ## Kafka Events
 
-### Published Events
+### Published Topics
 
-```java
-// Login events
-@KafkaPublish(topic = "QuckApp.auth.events")
-public class LoginSuccessEvent {
-    private String userId;
-    private String ip;
-    private String userAgent;
-    private LocalDateTime timestamp;
-}
+| Topic | Event Types |
+|-------|-------------|
+| `user.registered` | USER_REGISTERED |
+| `user.password.reset.requested` | PASSWORD_RESET_REQUESTED |
+| `user.password.changed` | PASSWORD_CHANGED |
+| `user.profile.created` | PROFILE_CREATED |
+| `user.profile.updated` | PROFILE_UPDATED |
+| `user.status.changed` | STATUS_CHANGED |
+| `user.banned` | USER_BANNED |
+| `user.unbanned` | USER_UNBANNED |
+| `user.role.changed` | ROLE_CHANGED |
+| `user.device.linked` | DEVICE_LINKED |
+| `user.device.unlinked` | DEVICE_UNLINKED |
+| `user.settings.updated` | SETTINGS_UPDATED |
+| `notification.sms.otp` | OTP SMS requests |
 
-@KafkaPublish(topic = "QuckApp.auth.events")
-public class LoginFailedEvent {
-    private String email;
-    private String ip;
-    private String reason;
-    private LocalDateTime timestamp;
-}
+### Event Payload Structure
 
-// Security events
-@KafkaPublish(topic = "QuckApp.security.events")
-public class BruteForceDetectedEvent {
-    private String ip;
-    private String targetEmail;
-    private int attemptCount;
-}
-```
-
-## Rate Limiting
-
-```java
-@Configuration
-public class RateLimitConfig {
-
-    @Bean
-    public RateLimiter loginRateLimiter() {
-        return RateLimiter.of("login", RateLimiterConfig.custom()
-            .limitRefreshPeriod(Duration.ofMinutes(15))
-            .limitForPeriod(10)
-            .timeoutDuration(Duration.ofMillis(500))
-            .build());
-    }
-
-    @Bean
-    public RateLimiter otpRateLimiter() {
-        return RateLimiter.of("otp", RateLimiterConfig.custom()
-            .limitRefreshPeriod(Duration.ofHours(1))
-            .limitForPeriod(5)
-            .build());
-    }
+```json
+{
+  "eventType": "USER_REGISTERED",
+  "userId": "550e8400-e29b-41d4-a716-446655440000",
+  "email": "user@example.com",
+  "externalId": "optional-external-id",
+  "timestamp": "2024-01-15T10:30:00Z"
 }
 ```
 
-## Health Check
+## Database Migrations (Flyway)
 
-```java
-@RestController
-@RequestMapping("/actuator")
-public class HealthController {
+| Version | Description |
+|---------|-------------|
+| V1 | Initial schema: auth_users, oauth_connections, refresh_tokens, api_keys |
+| V2 | User profiles: user_profiles, linked_devices, user_settings |
+| V3 | Phone OTP: phone_otps table with indexes |
+| V4 | RBAC & Sessions: roles, permissions, active_sessions, login_history |
+| V5 | OAuth2 enhancements: additional fields for profile data |
+| V6 | Security preferences fixes |
+| V7 | Session activities column fix |
+| V8 | Trusted devices created_at timestamp |
 
-    @GetMapping("/health")
-    public ResponseEntity<HealthResponse> health() {
-        return ResponseEntity.ok(HealthResponse.builder()
-            .status("UP")
-            .database(checkDatabase())
-            .redis(checkRedis())
-            .kafka(checkKafka())
-            .build());
-    }
+## Request/Response Examples
+
+### Register
+
+```bash
+curl -X POST http://localhost:8081/api/auth/v1/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "SecurePassword123!"
+  }'
+```
+
+### Login
+
+```bash
+curl -X POST http://localhost:8081/api/auth/v1/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "SecurePassword123!",
+    "deviceId": "device-123",
+    "deviceName": "My Phone"
+  }'
+```
+
+**Response:**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+  "refreshToken": "dGhpcyBpcyBhIHJlZnJlc2g...",
+  "expiresIn": 900,
+  "tokenType": "Bearer",
+  "user": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "email": "user@example.com",
+    "twoFactorEnabled": false
+  },
+  "requiresTwoFactor": false
 }
 ```
 
-## Docker
+### Phone OTP Login
 
-### Dockerfile
+```bash
+# Request OTP
+curl -X POST http://localhost:8081/api/auth/v1/auth/phone/request-otp \
+  -H "Content-Type: application/json" \
+  -d '{"phoneNumber": "+1234567890"}'
 
-```dockerfile
-FROM eclipse-temurin:21-jre-alpine
-
-WORKDIR /app
-
-COPY target/auth-service.jar app.jar
-
-EXPOSE 8081
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Login with OTP
+curl -X POST http://localhost:8081/api/auth/v1/auth/phone/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "phoneNumber": "+1234567890",
+    "code": "123456"
+  }'
 ```
 
-### docker-compose.yml
+### Refresh Token
+
+```bash
+curl -X POST http://localhost:8081/api/auth/v1/token/refresh \
+  -H "Content-Type: application/json" \
+  -d '{"refreshToken": "your-refresh-token"}'
+```
+
+## Configuration
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port | 8081 |
+| `DB_HOST` | MySQL host | localhost |
+| `DB_PORT` | MySQL port | 3306 |
+| `DB_NAME` | Database name | quckapp_auth |
+| `DB_USERNAME` | Database username | root |
+| `DB_PASSWORD` | Database password | - |
+| `REDIS_HOST` | Redis host | localhost |
+| `REDIS_PORT` | Redis port | 6379 |
+| `REDIS_PASSWORD` | Redis password | - |
+| `KAFKA_BROKERS` | Kafka bootstrap servers | localhost:9092 |
+| `JWT_SECRET` | JWT signing secret (min 32 chars) | - |
+| `ENCRYPTION_KEY` | Data encryption key (32 chars) | - |
+
+### Docker Compose
 
 ```yaml
 auth-service:
-  build:
-    context: ./services/auth-service
-    dockerfile: Dockerfile
+  build: .
   ports:
     - "8081:8081"
   environment:
-    - MYSQL_HOST=mysql
-    - MYSQL_USER=root
-    - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    - JWT_SECRET=${JWT_SECRET}
+    - PORT=8081
+    - DB_HOST=mysql
+    - DB_PORT=3306
+    - DB_NAME=quckapp_auth
+    - DB_USERNAME=root
+    - DB_PASSWORD=root_secret
     - REDIS_HOST=redis
+    - REDIS_PORT=6379
     - KAFKA_BROKERS=kafka:9092
+    - JWT_SECRET=${JWT_SECRET}
   depends_on:
     mysql:
       condition: service_healthy
     redis:
       condition: service_healthy
+    kafka:
+      condition: service_healthy
 ```
+
+## Monitoring
+
+### Health Check
+
+```bash
+curl http://localhost:8081/api/auth/actuator/health
+```
+
+### Metrics
+
+Prometheus metrics available at: `http://localhost:8081/api/auth/actuator/prometheus`
+
+### API Documentation
+
+- **Swagger UI:** http://localhost:8081/api/auth/swagger-ui.html
+- **OpenAPI Spec:** http://localhost:8081/api/auth/v3/api-docs
+- **Full API Reference:** [Authentication API](/docs/api/rest/authentication)
+
+#### Swagger UI Features
+
+The Swagger UI provides:
+- **Grouped APIs** - Endpoints organized by Public, Authenticated, User Management, Admin, and Internal
+- **Try It Out** - Interactive API testing directly from the browser
+- **Authorization** - Persistent Bearer token storage for testing authenticated endpoints
+- **Request/Response Examples** - Full request and response schema documentation
+- **Rate Limit Headers** - Documentation for rate limiting on all endpoints
 
 ## Testing
 
-```java
-@SpringBootTest
-@AutoConfigureMockMvc
-class AuthControllerTest {
+```bash
+# Run all tests
+./mvnw test
 
-    @Autowired
-    private MockMvc mockMvc;
+# Run with coverage
+./mvnw test jacoco:report
 
-    @Test
-    void login_WithValidCredentials_ReturnsTokens() throws Exception {
-        mockMvc.perform(post("/api/auth/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("""
-                {
-                    "email": "test@example.com",
-                    "password": "password123"
-                }
-                """))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.accessToken").exists())
-            .andExpect(jsonPath("$.refreshToken").exists());
-    }
-}
+# Run specific test class
+./mvnw test -Dtest=AuthControllerTest
 ```
+
+## Port Mapping (Development)
+
+| Service | Port |
+|---------|------|
+| Auth Service | 8081 |
+| MySQL | 3308 |
+| Redis | 6379 |
+| Kafka | 9092, 29092 |
+| Zookeeper | 2181 |

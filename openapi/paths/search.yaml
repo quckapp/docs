@@ -8,7 +8,7 @@ search:
     description: Search messages, files, channels, and users in workspace
     operationId: search
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -44,7 +44,7 @@ quick-search:
     description: Fast autocomplete search for UI suggestions
     operationId: quickSearch
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -83,7 +83,7 @@ search-messages:
     description: Search specifically for messages
     operationId: searchMessages
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -120,7 +120,7 @@ search-files:
     description: Search specifically for files
     operationId: searchFiles
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -157,7 +157,7 @@ saved-searches:
     description: Get user's saved searches
     operationId: listSavedSearches
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -185,7 +185,7 @@ saved-searches:
     description: Save a search for quick access
     operationId: createSavedSearch
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -215,7 +215,7 @@ saved-search-by-id:
     description: Get a saved search by ID
     operationId: getSavedSearch
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -250,7 +250,7 @@ saved-search-by-id:
     description: Delete a saved search
     operationId: deleteSavedSearch
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -276,7 +276,7 @@ saved-search-run:
     description: Execute a saved search
     operationId: runSavedSearch
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -321,7 +321,7 @@ search-history:
     description: Get user's recent searches
     operationId: getSearchHistory
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -351,7 +351,7 @@ search-history:
     description: Clear user's search history
     operationId: clearSearchHistory
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -371,7 +371,7 @@ search-suggestions:
     description: Get search query suggestions based on input
     operationId: getSearchSuggestions
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path

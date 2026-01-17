@@ -8,7 +8,7 @@ presence:
     description: Get the current user's presence status
     operationId: getCurrentPresence
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     responses:
       '200':
         description: Current presence
@@ -24,7 +24,7 @@ presence:
     description: Update current user's presence status
     operationId: updatePresence
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     requestBody:
       required: true
       content:
@@ -47,7 +47,7 @@ user-presence:
     description: Get presence status for a specific user
     operationId: getUserPresence
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: userId
         in: path
@@ -77,7 +77,7 @@ bulk-presence:
     description: Get presence for multiple users at once
     operationId: getBulkPresence
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     requestBody:
       required: true
       content:
@@ -109,7 +109,7 @@ channel-presence:
     description: Get online members and typing indicators for a channel
     operationId: getChannelPresence
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -139,7 +139,7 @@ typing:
     description: Indicate user is typing in a channel/thread
     operationId: setTyping
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     requestBody:
       required: true
       content:
@@ -165,7 +165,7 @@ typing-stop:
     description: Clear typing indicator
     operationId: stopTyping
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     requestBody:
       required: true
       content:
@@ -191,7 +191,7 @@ presence-subscribe:
     description: Subscribe to real-time presence updates for users
     operationId: subscribePresence
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     requestBody:
       required: true
       content:
@@ -218,7 +218,7 @@ presence-unsubscribe:
     description: Unsubscribe from real-time presence updates
     operationId: unsubscribePresence
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     requestBody:
       required: true
       content:
@@ -243,7 +243,7 @@ activity-status:
     description: Get detailed activity status for current user
     operationId: getActivityStatus
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     responses:
       '200':
         description: Activity status
@@ -260,7 +260,7 @@ presence-preferences:
     description: Get user's presence visibility preferences
     operationId: getPresencePreferences
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     responses:
       '200':
         description: Presence preferences
@@ -276,7 +276,7 @@ presence-preferences:
     description: Update user's presence visibility preferences
     operationId: updatePresencePreferences
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     requestBody:
       required: true
       content:
@@ -299,7 +299,7 @@ heartbeat:
     description: Send activity heartbeat to maintain online status
     operationId: sendHeartbeat
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     requestBody:
       content:
         application/json:

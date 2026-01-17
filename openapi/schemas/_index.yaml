@@ -10,21 +10,27 @@ Timestamp:
 
 # User schemas
 User:
-  $ref: './user.yaml#/User'
+  $ref: './user.yaml#/UserResponse'
 UserProfile:
   $ref: './user.yaml#/UserProfile'
+UserSummary:
+  $ref: './user.yaml#/UserSummaryResponse'
 UserPreferences:
-  $ref: './user.yaml#/UserPreferences'
-UserStatus:
-  $ref: './user.yaml#/UserStatus'
+  $ref: './user.yaml#/PreferencesResponse'
+Profile:
+  $ref: './user.yaml#/ProfileResponse'
 
 # Auth schemas
 LoginRequest:
   $ref: './auth.yaml#/LoginRequest'
 LoginResponse:
-  $ref: './auth.yaml#/LoginResponse'
+  $ref: './auth.yaml#/AuthResponse'
+AuthResponse:
+  $ref: './auth.yaml#/AuthResponse'
 TokenPair:
-  $ref: './auth.yaml#/TokenPair'
+  $ref: './auth.yaml#/TokenResponse'
+TokenResponse:
+  $ref: './auth.yaml#/TokenResponse'
 RefreshTokenRequest:
   $ref: './auth.yaml#/RefreshTokenRequest'
 

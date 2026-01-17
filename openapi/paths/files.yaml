@@ -8,7 +8,7 @@ files:
     description: Get files shared in workspace
     operationId: listFiles
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -73,7 +73,7 @@ file-upload-init:
     description: Get a pre-signed URL for file upload
     operationId: initFileUpload
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -115,7 +115,7 @@ file-upload-complete:
     description: Mark file upload as complete after uploading to pre-signed URL
     operationId: completeFileUpload
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -151,7 +151,7 @@ file-by-id:
     description: Get file details by ID
     operationId: getFile
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -186,7 +186,7 @@ file-by-id:
     description: Update file metadata
     operationId: updateFile
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -221,7 +221,7 @@ file-by-id:
     description: Delete a file (uploader or admin)
     operationId: deleteFile
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -253,7 +253,7 @@ file-download:
     description: Get a temporary download URL for a file
     operationId: getFileDownloadUrl
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -296,7 +296,7 @@ file-share:
     description: Share a file with users, channels, or make public
     operationId: shareFile
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -332,7 +332,7 @@ file-shares:
     description: Get all shares for a file
     operationId: listFileShares
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -367,7 +367,7 @@ file-share-revoke:
     description: Revoke a file share
     operationId: revokeFileShare
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -399,7 +399,7 @@ storage-quota:
     description: Get workspace storage usage and limits
     operationId: getStorageQuota
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
@@ -423,7 +423,7 @@ external-links:
     description: Get external links shared in workspace
     operationId: listExternalLinks
     security:
-      - bearerAuth: []
+      - BearerAuth: []
     parameters:
       - name: workspaceId
         in: path
