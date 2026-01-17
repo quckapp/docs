@@ -28,6 +28,57 @@ Elixir/Phoenix service for real-time messaging with Apache Kafka event streaming
 - Message search
 - Event sourcing and replay
 
+## API Documentation
+
+### OpenAPI Spec
+
+- **OpenAPI Spec (JSON):** http://localhost:4003/api/openapi
+- **OpenAPI Spec (YAML):** http://localhost:4003/api/openapi.yaml
+
+### OpenApiSpex Configuration
+
+The message-service uses [OpenApiSpex](https://github.com/open-api-spex/open_api_spex) for OpenAPI documentation:
+
+```elixir
+defmodule MessageServiceWeb.ApiSpec do
+  alias OpenApiSpex.{Info, OpenApi, Paths, Server}
+
+  @behaviour OpenApi
+
+  @impl OpenApi
+  def spec do
+    %OpenApi{
+      info: %Info{
+        title: "QuckApp Message Service API",
+        version: "1.0.0",
+        description: "Real-time messaging with Kafka event streaming"
+      },
+      servers: [
+        %Server{url: "http://localhost:4003", description: "Local Development"},
+        %Server{url: "https://api.quckapp.com/messages", description: "Production"}
+      ],
+      paths: Paths.from_router(MessageServiceWeb.Router)
+    }
+    |> OpenApiSpex.resolve_schema_modules()
+  end
+end
+```
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Messages | Message CRUD operations |
+| Reactions | Message reactions |
+| Read Receipts | Read receipt management |
+| Threads | Threaded conversations |
+| Attachments | File attachments |
+
+### Security
+
+- **Authentication:** JWT Bearer token via `Authorization` header
+- **WebSocket:** Phoenix Channels with token authentication
+
 ## Architecture
 
 ```

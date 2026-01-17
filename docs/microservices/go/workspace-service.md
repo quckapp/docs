@@ -52,3 +52,42 @@ type Workspace struct {
     UpdatedAt   time.Time `json:"updatedAt"`
 }
 ```
+
+## API Documentation
+
+### Swagger UI & OpenAPI
+
+- **Swagger UI:** http://localhost:5004/swagger/index.html
+- **OpenAPI Spec:** http://localhost:5004/swagger/doc.json
+
+### Swag Configuration
+
+The workspace-service uses [swaggo/swag](https://github.com/swaggo/swag) for OpenAPI documentation:
+
+```go
+// @title QuckApp Workspace Service API
+// @version 1.0.0
+// @description Workspace management and settings service
+// @host localhost:5004
+// @BasePath /api
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+func main() {
+    // ...
+}
+```
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Workspaces | Workspace CRUD operations |
+| Members | Workspace member management |
+| Invitations | Workspace invitation system |
+| Settings | Workspace settings and configuration |
+
+### Security
+
+- **Authentication:** JWT Bearer token via `Authorization` header
+- **Rate Limiting:** 1000 requests/minute per workspace

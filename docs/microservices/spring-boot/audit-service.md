@@ -84,3 +84,49 @@ public void handleAuditEvent(AuditEvent event) {
     }
 }
 ```
+
+## API Documentation
+
+### Swagger UI & OpenAPI
+
+- **Swagger UI:** http://localhost:8084/swagger-ui.html
+- **OpenAPI Spec (JSON):** http://localhost:8084/v3/api-docs
+- **OpenAPI Spec (YAML):** http://localhost:8084/v3/api-docs.yaml
+
+### SpringDoc Configuration
+
+The audit-service uses SpringDoc OpenAPI for API documentation:
+
+```java
+@OpenAPIDefinition(
+    info = @Info(
+        title = "QuckApp Audit Service API",
+        version = "1.0.0",
+        description = "Comprehensive audit logging and compliance tracking"
+    ),
+    servers = {
+        @Server(url = "http://localhost:8084", description = "Local Development"),
+        @Server(url = "https://api.quckapp.com/audit", description = "Production")
+    }
+)
+@SecuritySchemes({
+    @SecurityScheme(name = "bearerAuth", type = HTTP, scheme = "bearer", bearerFormat = "JWT"),
+    @SecurityScheme(name = "apiKey", type = APIKEY, in = HEADER, parameterName = "X-API-Key")
+})
+public class OpenApiConfig { }
+```
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Audit Logs | Query and retrieve audit logs |
+| Search | Search audit logs with filters |
+| Reports | Generate compliance reports |
+| Export | Export audit data for compliance |
+
+### Security
+
+- **Admin access:** JWT Bearer token with `ADMIN` role required
+- **Internal calls:** Use `X-API-Key` header for service-to-service communication
+- All audit endpoints are read-only (logs are written via Kafka events)

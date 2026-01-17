@@ -976,6 +976,56 @@ GET /api/presence/channel/{channelId}/typing
 Authorization: Bearer {token}
 ```
 
+## API Documentation
+
+### OpenAPI Spec
+
+- **OpenAPI Spec (JSON):** http://localhost:4001/api/openapi
+- **OpenAPI Spec (YAML):** http://localhost:4001/api/openapi.yaml
+
+### OpenApiSpex Configuration
+
+The presence-service uses [OpenApiSpex](https://github.com/open-api-spex/open_api_spex) for OpenAPI documentation:
+
+```elixir
+defmodule PresenceServiceWeb.ApiSpec do
+  alias OpenApiSpex.{Info, OpenApi, Paths, Server}
+
+  @behaviour OpenApi
+
+  @impl OpenApi
+  def spec do
+    %OpenApi{
+      info: %Info{
+        title: "QuckApp Presence Service API",
+        version: "1.0.0",
+        description: "Real-time user presence and status tracking"
+      },
+      servers: [
+        %Server{url: "http://localhost:4001", description: "Local Development"},
+        %Server{url: "https://api.quckapp.com/presence", description: "Production"}
+      ],
+      paths: Paths.from_router(PresenceServiceWeb.Router)
+    }
+    |> OpenApiSpex.resolve_schema_modules()
+  end
+end
+```
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Presence | User presence and status operations |
+| Typing | Typing indicator management |
+| Channels | Channel viewer tracking |
+| Bulk | Batch presence operations |
+
+### Security
+
+- **Authentication:** JWT Bearer token via `Authorization` header
+- **WebSocket:** Phoenix Channels with token authentication
+
 ## Monitoring & Metrics
 
 ### Prometheus Metrics

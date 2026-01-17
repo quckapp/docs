@@ -43,3 +43,46 @@ class AnalyticsEvent(BaseModel):
     properties: Dict[str, Any]
     timestamp: datetime
 ```
+
+## API Documentation
+
+### Swagger UI & OpenAPI
+
+- **Swagger UI:** http://localhost:5007/docs
+- **ReDoc:** http://localhost:5007/redoc
+- **OpenAPI Spec:** http://localhost:5007/openapi.json
+
+### FastAPI Configuration
+
+The analytics-service uses FastAPI's built-in OpenAPI support:
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI(
+    title="QuckApp Analytics Service API",
+    version="1.0.0",
+    description="Usage analytics and metrics service",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
+)
+
+# Security scheme
+from fastapi.security import HTTPBearer
+security = HTTPBearer()
+```
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Events | Event tracking and retrieval |
+| Metrics | Usage metrics and statistics |
+| Dashboard | Dashboard data aggregation |
+| Reports | Custom report generation |
+
+### Security
+
+- **Authentication:** JWT Bearer token via `Authorization` header
+- **Rate Limiting:** 1000 requests/minute per API key

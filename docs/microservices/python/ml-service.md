@@ -271,6 +271,38 @@ Content-Type: application/json
 }
 ```
 
+## API Documentation
+
+### Swagger UI & OpenAPI
+
+- **Swagger UI:** http://localhost:5008/docs
+- **ReDoc:** http://localhost:5008/redoc
+- **OpenAPI Spec:** http://localhost:5008/openapi.json
+
+### FastAPI Configuration
+
+```python
+app = FastAPI(
+    title="QuckApp ML Service API",
+    version="1.0.0",
+    description="Machine learning predictions and model serving"
+)
+```
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Recommendations | User recommendations |
+| Spam Detection | Content spam checking |
+| Sentiment | Sentiment analysis |
+| Models | Model management |
+
+### Security
+
+- **Authentication:** API Key for service-to-service communication
+- **Rate Limiting:** 100 requests/second per model endpoint
+
 ## Cloud Integration
 
 ### Multi-Cloud Support

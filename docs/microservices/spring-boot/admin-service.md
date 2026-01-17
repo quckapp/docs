@@ -43,3 +43,51 @@ GET  /api/admin/stats
 GET  /api/admin/config
 PUT  /api/admin/config
 ```
+
+## API Documentation
+
+### Swagger UI & OpenAPI
+
+- **Swagger UI:** http://localhost:8085/swagger-ui.html
+- **OpenAPI Spec (JSON):** http://localhost:8085/v3/api-docs
+- **OpenAPI Spec (YAML):** http://localhost:8085/v3/api-docs.yaml
+
+### SpringDoc Configuration
+
+The admin-service uses SpringDoc OpenAPI for API documentation:
+
+```java
+@OpenAPIDefinition(
+    info = @Info(
+        title = "QuckApp Admin Service API",
+        version = "1.0.0",
+        description = "Administrative operations and system management"
+    ),
+    servers = {
+        @Server(url = "http://localhost:8085", description = "Local Development"),
+        @Server(url = "https://api.quckapp.com/admin", description = "Production")
+    }
+)
+@SecurityScheme(
+    name = "bearerAuth",
+    type = SecuritySchemeType.HTTP,
+    scheme = "bearer",
+    bearerFormat = "JWT"
+)
+public class OpenApiConfig { }
+```
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| User Management | Ban, unban, and role management |
+| Reports | Content report handling and moderation |
+| System | System configuration and statistics |
+| Bulk Operations | Batch administrative actions |
+
+### Security
+
+All admin endpoints require:
+- Valid JWT token with `ADMIN` role
+- Rate limiting: 100 requests/minute per admin user

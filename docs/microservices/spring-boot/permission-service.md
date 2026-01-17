@@ -86,3 +86,48 @@ m = g(r.sub, p.sub, r.dom) && r.dom == p.dom && keyMatch2(r.obj, p.obj) && r.act
 { "admin", "*", "analytics", "read", "allow" }
 { "admin", "*", "settings", "update", "allow" }
 ```
+
+## API Documentation
+
+### Swagger UI & OpenAPI
+
+- **Swagger UI:** http://localhost:8083/swagger-ui.html
+- **OpenAPI Spec (JSON):** http://localhost:8083/v3/api-docs
+- **OpenAPI Spec (YAML):** http://localhost:8083/v3/api-docs.yaml
+
+### SpringDoc Configuration
+
+The permission-service uses SpringDoc OpenAPI for API documentation:
+
+```java
+@OpenAPIDefinition(
+    info = @Info(
+        title = "QuckApp Permission Service API",
+        version = "1.0.0",
+        description = "RBAC service using Casbin for role-based and attribute-based access control"
+    ),
+    servers = {
+        @Server(url = "http://localhost:8083", description = "Local Development"),
+        @Server(url = "https://api.quckapp.com/permissions", description = "Production")
+    }
+)
+@SecuritySchemes({
+    @SecurityScheme(name = "bearerAuth", type = HTTP, scheme = "bearer", bearerFormat = "JWT"),
+    @SecurityScheme(name = "apiKey", type = APIKEY, in = HEADER, parameterName = "X-API-Key")
+})
+public class OpenApiConfig { }
+```
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Permission Checks | Check user permissions for resources |
+| Role Management | CRUD operations for roles |
+| User Roles | Assign and revoke user roles |
+| Policies | Manage Casbin policies |
+
+### Security
+
+- **Internal calls:** Use `X-API-Key` header for service-to-service communication
+- **External calls:** JWT Bearer token with appropriate permissions

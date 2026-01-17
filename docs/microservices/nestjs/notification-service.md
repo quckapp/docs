@@ -45,6 +45,45 @@ interface NotificationPayload {
 }
 ```
 
+## API Documentation
+
+### Swagger UI & OpenAPI
+
+- **Swagger UI:** http://localhost:3001/api/docs
+- **OpenAPI Spec:** http://localhost:3001/api/docs-json
+
+### NestJS Swagger Configuration
+
+The notification-service uses `@nestjs/swagger` for OpenAPI documentation:
+
+```typescript
+const config = new DocumentBuilder()
+  .setTitle('QuckApp Notification Service API')
+  .setDescription('Push notifications, email, and SMS delivery')
+  .setVersion('1.0')
+  .addBearerAuth()
+  .addTag('Notifications', 'Notification delivery')
+  .addTag('Preferences', 'User notification preferences')
+  .addTag('Templates', 'Notification template management')
+  .build();
+
+SwaggerModule.setup('api/docs', app, document);
+```
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Notifications | Notification delivery and management |
+| Preferences | User notification preferences |
+| Templates | Notification template CRUD |
+| Devices | Device token management (FCM, APNs) |
+
+### Security
+
+- **Authentication:** JWT Bearer token or API Key for internal services
+- **Rate Limiting:** Per-user notification rate limits
+
 ## Kafka Consumer
 
 ```typescript

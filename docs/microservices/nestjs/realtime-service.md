@@ -38,3 +38,41 @@ NestJS WebSocket gateway for real-time communication.
 'presence_update': { userId: string, status: string }
 'typing': { userId: string, channelId: string }
 ```
+
+## API Documentation
+
+### Swagger UI & OpenAPI
+
+- **Swagger UI:** http://localhost:4000/api/docs
+- **OpenAPI Spec:** http://localhost:4000/api/docs-json
+- **WebSocket:** Socket.IO at http://localhost:4000
+
+### NestJS Swagger Configuration
+
+The realtime-service uses `@nestjs/swagger` for REST API documentation:
+
+```typescript
+const config = new DocumentBuilder()
+  .setTitle('QuckApp Realtime Service API')
+  .setDescription('WebSocket gateway for real-time communication')
+  .setVersion('1.0')
+  .addBearerAuth()
+  .addTag('Connections', 'Connection management')
+  .addTag('Rooms', 'Room operations')
+  .build();
+
+SwaggerModule.setup('api/docs', app, document);
+```
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Connections | WebSocket connection management |
+| Rooms | Room/channel operations |
+| Broadcast | Event broadcasting |
+
+### Security
+
+- **WebSocket:** Token authentication on connect
+- **REST API:** JWT Bearer token via `Authorization` header

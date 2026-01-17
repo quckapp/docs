@@ -1286,6 +1286,56 @@ GET /api/calls/{callId}/recording
 Authorization: Bearer {token}
 ```
 
+## API Documentation
+
+### OpenAPI Spec
+
+- **OpenAPI Spec (JSON):** http://localhost:4002/api/openapi
+- **OpenAPI Spec (YAML):** http://localhost:4002/api/openapi.yaml
+
+### OpenApiSpex Configuration
+
+The call-service uses [OpenApiSpex](https://github.com/open-api-spex/open_api_spex) for OpenAPI documentation:
+
+```elixir
+defmodule CallServiceWeb.ApiSpec do
+  alias OpenApiSpex.{Info, OpenApi, Paths, Server}
+
+  @behaviour OpenApi
+
+  @impl OpenApi
+  def spec do
+    %OpenApi{
+      info: %Info{
+        title: "QuckApp Call Service API",
+        version: "1.0.0",
+        description: "Voice and video call management with WebRTC"
+      },
+      servers: [
+        %Server{url: "http://localhost:4002", description: "Local Development"},
+        %Server{url: "https://api.quckapp.com/calls", description: "Production"}
+      ],
+      paths: Paths.from_router(CallServiceWeb.Router)
+    }
+    |> OpenApiSpex.resolve_schema_modules()
+  end
+end
+```
+
+### API Tags
+
+| Tag | Description |
+|-----|-------------|
+| Calls | Call initiation, management, and termination |
+| Recording | Call recording management |
+| Signaling | WebRTC signaling operations |
+| Group Calls | Multi-participant call operations |
+
+### Security
+
+- **Authentication:** JWT Bearer token via `Authorization` header
+- **WebRTC:** TURN credentials with time-limited tokens
+
 ## Environment Variables
 
 ```bash
