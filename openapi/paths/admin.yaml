@@ -1,0 +1,756 @@
+# Admin API Paths
+# Base path: /api/auth/v1/admin
+# All endpoints require admin privileges
+
+# ==================== User Management ====================
+
+admin-users:
+  get:
+    tags:
+      - Admin
+    summary: List all users
+    description: Get a paginated list of all users in the system
+    operationId: adminListUsers
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 0
+      - name: size
+        in: query
+        schema:
+          type: integer
+          default: 20
+          maximum: 100
+    responses:
+      '200':
+        description: Paginated list of users
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: array
+                  items:
+                    $ref: '../schemas/admin.yaml#/AdminUser'
+                totalElements:
+                  type: integer
+                totalPages:
+                  type: integer
+                number:
+                  type: integer
+                size:
+                  type: integer
+      '403':
+        description: Admin access required
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+admin-user-by-id:
+  get:
+    tags:
+      - Admin
+    summary: Get user details
+    description: Get detailed information about a specific user
+    operationId: adminGetUser
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/admin.yaml#/AdminUserDetail'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+admin-user-suspend:
+  post:
+    tags:
+      - Admin
+    summary: Suspend a user
+    description: Suspend a user account. Terminates all active sessions.
+    operationId: adminSuspendUser
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - reason
+            properties:
+              reason:
+                type: string
+                description: Reason for suspension
+    responses:
+      '200':
+        description: User suspended successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+admin-user-activate:
+  post:
+    tags:
+      - Admin
+    summary: Activate a user
+    description: Activate a suspended or inactive user account
+    operationId: adminActivateUser
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User activated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+
+admin-user-lock:
+  post:
+    tags:
+      - Admin
+    summary: Lock a user account
+    description: Temporarily lock a user account for a specified duration
+    operationId: adminLockUser
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - reason
+            properties:
+              reason:
+                type: string
+              lockHours:
+                type: integer
+                default: 24
+                description: Lock duration in hours
+    responses:
+      '200':
+        description: User account locked
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+                lockedUntil:
+                  type: string
+                  format: date-time
+
+admin-user-unlock:
+  post:
+    tags:
+      - Admin
+    summary: Unlock a user account
+    description: Remove lock from a user account
+    operationId: adminUnlockUser
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User account unlocked
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+
+admin-user-status:
+  put:
+    tags:
+      - Admin
+    summary: Update user status
+    description: Update the status of a user account
+    operationId: adminUpdateUserStatus
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+            properties:
+              status:
+                type: string
+                enum: [ACTIVE, INACTIVE, SUSPENDED, PENDING_VERIFICATION]
+    responses:
+      '200':
+        description: User status updated
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+                status:
+                  type: string
+
+admin-user-force-password-change:
+  post:
+    tags:
+      - Admin
+    summary: Force password change
+    description: Force a user to change their password on next login
+    operationId: adminForcePasswordChange
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Password change will be required
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+
+# ==================== Role Management ====================
+
+admin-roles:
+  get:
+    tags:
+      - Admin
+    summary: List all roles
+    description: Get a list of all roles in the system
+    operationId: adminListRoles
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: List of roles
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/admin.yaml#/Role'
+  post:
+    tags:
+      - Admin
+    summary: Create a new role
+    description: Create a new role with optional permissions
+    operationId: adminCreateRole
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/admin.yaml#/CreateRoleRequest'
+    responses:
+      '200':
+        description: Role created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/admin.yaml#/Role'
+      '400':
+        description: Invalid request or role already exists
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+admin-role-by-id:
+  get:
+    tags:
+      - Admin
+    summary: Get role details
+    description: Get detailed information about a specific role including permissions
+    operationId: adminGetRole
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: roleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Role details with permissions
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/admin.yaml#/RoleWithPermissions'
+  put:
+    tags:
+      - Admin
+    summary: Update a role
+    description: Update an existing role
+    operationId: adminUpdateRole
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: roleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/admin.yaml#/UpdateRoleRequest'
+    responses:
+      '200':
+        description: Role updated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/admin.yaml#/Role'
+  delete:
+    tags:
+      - Admin
+    summary: Delete a role
+    description: Delete a role. Role must not be assigned to any users.
+    operationId: adminDeleteRole
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: roleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Role deleted
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      '400':
+        description: Role is still in use
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+# ==================== Role Permissions ====================
+
+admin-role-permissions:
+  post:
+    tags:
+      - Admin
+    summary: Add permissions to role
+    description: Add one or more permissions to a role
+    operationId: adminAddPermissionsToRole
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: roleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+    responses:
+      '200':
+        description: Permissions added
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/admin.yaml#/RoleWithPermissions'
+
+admin-role-permission-remove:
+  delete:
+    tags:
+      - Admin
+    summary: Remove permission from role
+    description: Remove a permission from a role
+    operationId: adminRemovePermissionFromRole
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: roleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: permissionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Permission removed from role
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+
+# ==================== User Roles ====================
+
+admin-user-roles:
+  get:
+    tags:
+      - Admin
+    summary: Get user roles
+    description: Get all roles assigned to a user
+    operationId: adminGetUserRoles
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User roles and permissions
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                roles:
+                  type: array
+                  items:
+                    $ref: '../schemas/admin.yaml#/UserRole'
+                permissions:
+                  type: array
+                  items:
+                    type: string
+  post:
+    tags:
+      - Admin
+    summary: Assign role to user
+    description: Assign a role to a user
+    operationId: adminAssignRoleToUser
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - roleId
+            properties:
+              roleId:
+                type: string
+                format: uuid
+              expiresAt:
+                type: string
+                format: date-time
+                description: Optional expiration date for the role assignment
+    responses:
+      '200':
+        description: Role assigned
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/admin.yaml#/UserRole'
+
+admin-user-role-revoke:
+  delete:
+    tags:
+      - Admin
+    summary: Revoke role from user
+    description: Remove a role from a user
+    operationId: adminRevokeRoleFromUser
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: roleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Role revoked
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+                roleId:
+                  type: string
+                  format: uuid
+
+# ==================== Permission Management ====================
+
+admin-permissions:
+  get:
+    tags:
+      - Admin
+    summary: List all permissions
+    description: Get a list of all permissions in the system
+    operationId: adminListPermissions
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: resource
+        in: query
+        schema:
+          type: string
+        description: Filter by resource type
+    responses:
+      '200':
+        description: List of permissions
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/admin.yaml#/Permission'
+  post:
+    tags:
+      - Admin
+    summary: Create a new permission
+    description: Create a new permission
+    operationId: adminCreatePermission
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/admin.yaml#/CreatePermissionRequest'
+    responses:
+      '200':
+        description: Permission created
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/admin.yaml#/Permission'
+      '400':
+        description: Permission already exists
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+admin-permission-by-id:
+  get:
+    tags:
+      - Admin
+    summary: Get permission details
+    description: Get detailed information about a specific permission
+    operationId: adminGetPermission
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: permissionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Permission details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/admin.yaml#/Permission'
+  delete:
+    tags:
+      - Admin
+    summary: Delete a permission
+    description: Delete a permission. Permission must not be assigned to any roles.
+    operationId: adminDeletePermission
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: permissionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Permission deleted
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+
+# ==================== Statistics ====================
+
+admin-stats:
+  get:
+    tags:
+      - Admin
+    summary: Get admin statistics
+    description: Get system-wide statistics for administrative overview
+    operationId: adminGetStats
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Admin statistics
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                totalUsers:
+                  type: integer
+                totalRoles:
+                  type: integer
+                totalPermissions:
+                  type: integer

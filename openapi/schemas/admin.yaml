@@ -1,0 +1,198 @@
+# Admin Schemas
+
+AdminUser:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    email:
+      type: string
+      format: email
+    status:
+      type: string
+      enum: [ACTIVE, INACTIVE, SUSPENDED, PENDING_VERIFICATION]
+    emailVerified:
+      type: boolean
+    twoFactorEnabled:
+      type: boolean
+    locked:
+      type: boolean
+    lockedUntil:
+      type: string
+      format: date-time
+    createdAt:
+      type: string
+      format: date-time
+    lastLoginAt:
+      type: string
+      format: date-time
+
+AdminUserDetail:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    email:
+      type: string
+      format: email
+    externalId:
+      type: string
+    status:
+      type: string
+      enum: [ACTIVE, INACTIVE, SUSPENDED, PENDING_VERIFICATION]
+    emailVerified:
+      type: boolean
+    twoFactorEnabled:
+      type: boolean
+    locked:
+      type: boolean
+    lockedUntil:
+      type: string
+      format: date-time
+    failedLoginAttempts:
+      type: integer
+    forcePasswordChange:
+      type: boolean
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+    lastLoginAt:
+      type: string
+      format: date-time
+    lastLoginIp:
+      type: string
+    passwordChangedAt:
+      type: string
+      format: date-time
+    roles:
+      type: array
+      items:
+        $ref: '#/UserRole'
+
+Role:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+    description:
+      type: string
+    isSystem:
+      type: boolean
+    createdAt:
+      type: string
+      format: date-time
+
+RoleWithPermissions:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+    description:
+      type: string
+    isSystem:
+      type: boolean
+    createdAt:
+      type: string
+      format: date-time
+    permissions:
+      type: array
+      items:
+        $ref: '#/Permission'
+
+CreateRoleRequest:
+  type: object
+  required:
+    - name
+  properties:
+    name:
+      type: string
+      minLength: 1
+      maxLength: 100
+    description:
+      type: string
+      maxLength: 500
+    permissionIds:
+      type: array
+      items:
+        type: string
+        format: uuid
+
+UpdateRoleRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 1
+      maxLength: 100
+    description:
+      type: string
+      maxLength: 500
+
+UserRole:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    userId:
+      type: string
+      format: uuid
+    roleId:
+      type: string
+      format: uuid
+    roleName:
+      type: string
+    assignedAt:
+      type: string
+      format: date-time
+    assignedBy:
+      type: string
+      format: uuid
+    expiresAt:
+      type: string
+      format: date-time
+
+Permission:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    resource:
+      type: string
+    action:
+      type: string
+    description:
+      type: string
+    createdAt:
+      type: string
+      format: date-time
+
+CreatePermissionRequest:
+  type: object
+  required:
+    - resource
+    - action
+  properties:
+    resource:
+      type: string
+      minLength: 1
+      maxLength: 100
+    action:
+      type: string
+      minLength: 1
+      maxLength: 100
+    description:
+      type: string
+      maxLength: 500

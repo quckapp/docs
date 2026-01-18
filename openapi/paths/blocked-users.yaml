@@ -1,0 +1,380 @@
+# Blocked Users API Paths
+# Base path: /api/auth/v1/blocked-users
+
+# ==================== Block/Unblock Operations ====================
+
+blocked-users:
+  get:
+    tags:
+      - Blocked Users
+    summary: Get blocked users list
+    description: Get a list of all users you have blocked with their profile information
+    operationId: getBlockedUsers
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: List of blocked users
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                blockedCount:
+                  type: integer
+                blockedUsers:
+                  type: array
+                  items:
+                    $ref: '../schemas/users.yaml#/UserProfileSummary'
+  post:
+    tags:
+      - Blocked Users
+    summary: Block a user
+    description: Block a user. Blocked users cannot send messages or interact with you.
+    operationId: blockUser
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userId
+            properties:
+              userId:
+                type: string
+                format: uuid
+                description: ID of the user to block
+    responses:
+      '200':
+        description: User blocked successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                blockedUserId:
+                  type: string
+                  format: uuid
+      '400':
+        description: Invalid request or cannot block yourself
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+      '404':
+        description: User to block not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+  delete:
+    tags:
+      - Blocked Users
+    summary: Unblock all users
+    description: Remove all users from your blocked list
+    operationId: unblockAllUsers
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: All users unblocked
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                unblockedCount:
+                  type: integer
+
+blocked-user-by-id:
+  delete:
+    tags:
+      - Blocked Users
+    summary: Unblock a user
+    description: Remove a user from your blocked list
+    operationId: unblockUser
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: blockedUserId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User unblocked successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                unblockedUserId:
+                  type: string
+                  format: uuid
+      '404':
+        description: User not in blocked list
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+# ==================== List Operations ====================
+
+blocked-user-ids:
+  get:
+    tags:
+      - Blocked Users
+    summary: Get blocked user IDs
+    description: Get a list of user IDs you have blocked (lightweight endpoint)
+    operationId: getBlockedUserIds
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: List of blocked user IDs
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                blockedCount:
+                  type: integer
+                blockedUserIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+
+blocked-users-count:
+  get:
+    tags:
+      - Blocked Users
+    summary: Get blocked users count
+    description: Get the count of users you have blocked
+    operationId: getBlockedUsersCount
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Blocked users count
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                blockedCount:
+                  type: integer
+
+# ==================== Check Block Status ====================
+
+check-blocked:
+  get:
+    tags:
+      - Blocked Users
+    summary: Check if user is blocked
+    description: Check if a specific user is in your blocked list
+    operationId: checkBlocked
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: targetUserId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Block status
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                targetUserId:
+                  type: string
+                  format: uuid
+                isBlocked:
+                  type: boolean
+
+check-mutual-blocked:
+  get:
+    tags:
+      - Blocked Users
+    summary: Check mutual block status
+    description: Check if either you or the target user has blocked the other
+    operationId: checkMutualBlocked
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: targetUserId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Mutual block status
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                targetUserId:
+                  type: string
+                  format: uuid
+                youBlockedThem:
+                  type: boolean
+                theyBlockedYou:
+                  type: boolean
+                anyBlocked:
+                  type: boolean
+
+check-batch-blocked:
+  post:
+    tags:
+      - Blocked Users
+    summary: Check block status for multiple users
+    description: Check block status for a batch of user IDs
+    operationId: checkBatchBlocked
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userIds
+            properties:
+              userIds:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+    responses:
+      '200':
+        description: Batch block status
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                checkedCount:
+                  type: integer
+                blockedUserIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                blockedCount:
+                  type: integer
+
+# ==================== Bulk Operations ====================
+
+block-multiple:
+  post:
+    tags:
+      - Blocked Users
+    summary: Block multiple users
+    description: Block multiple users at once
+    operationId: blockMultipleUsers
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userIds
+            properties:
+              userIds:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+    responses:
+      '200':
+        description: Bulk block result
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                successCount:
+                  type: integer
+                failedCount:
+                  type: integer
+
+unblock-multiple:
+  post:
+    tags:
+      - Blocked Users
+    summary: Unblock multiple users
+    description: Unblock multiple users at once
+    operationId: unblockMultipleUsers
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userIds
+            properties:
+              userIds:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+    responses:
+      '200':
+        description: Bulk unblock result
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                successCount:
+                  type: integer
+                failedCount:
+                  type: integer

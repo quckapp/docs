@@ -1,0 +1,371 @@
+# Devices API Paths
+# Base path: /api/auth/v1/devices
+
+# ==================== Linked Devices ====================
+
+device-link:
+  post:
+    tags:
+      - Devices
+    summary: Link a device
+    description: Register a new device or update existing device info. Used for push notifications via FCM.
+    operationId: linkDevice
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/devices.yaml#/LinkDeviceRequest'
+    responses:
+      '200':
+        description: Device linked successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/devices.yaml#/LinkedDevice'
+      '400':
+        description: Invalid request
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+devices:
+  get:
+    tags:
+      - Devices
+    summary: Get linked devices
+    description: Get all devices linked to the current user's account
+    operationId: getLinkedDevices
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: List of linked devices
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                deviceCount:
+                  type: integer
+                devices:
+                  type: array
+                  items:
+                    $ref: '../schemas/devices.yaml#/LinkedDevice'
+
+device-by-id:
+  get:
+    tags:
+      - Devices
+    summary: Get device details
+    description: Get details of a specific linked device
+    operationId: getDevice
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: deviceId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Device details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/devices.yaml#/LinkedDevice'
+      '404':
+        description: Device not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+  delete:
+    tags:
+      - Devices
+    summary: Unlink a device
+    description: Remove a device from the account. This will stop push notifications to this device.
+    operationId: unlinkDevice
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: deviceId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Device unlinked
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                deviceId:
+                  type: string
+      '404':
+        description: Device not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+device-activity:
+  put:
+    tags:
+      - Devices
+    summary: Update device activity
+    description: Update the last activity timestamp for a device
+    operationId: updateDeviceActivity
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: deviceId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Activity updated
+
+# ==================== FCM Token Management ====================
+
+device-fcm-token:
+  put:
+    tags:
+      - Devices
+    summary: Update FCM token
+    description: Update the Firebase Cloud Messaging token for push notifications
+    operationId: updateFcmToken
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: deviceId
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - fcmToken
+            properties:
+              fcmToken:
+                type: string
+                description: Firebase Cloud Messaging token
+    responses:
+      '200':
+        description: FCM token updated
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                deviceId:
+                  type: string
+  delete:
+    tags:
+      - Devices
+    summary: Remove FCM token
+    description: Remove the FCM token from a device (disable push notifications)
+    operationId: removeFcmToken
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: deviceId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: FCM token removed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                deviceId:
+                  type: string
+
+# ==================== Trusted Devices ====================
+
+trusted-devices:
+  get:
+    tags:
+      - Devices
+    summary: Get trusted devices
+    description: Get all devices marked as trusted (can bypass 2FA)
+    operationId: getTrustedDevices
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: List of trusted devices
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                trustedDeviceCount:
+                  type: integer
+                devices:
+                  type: array
+                  items:
+                    $ref: '../schemas/devices.yaml#/TrustedDevice'
+  post:
+    tags:
+      - Devices
+    summary: Trust current device
+    description: Mark the current device as trusted. Trusted devices may bypass 2FA for a period.
+    operationId: trustDevice
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/devices.yaml#/TrustDeviceRequest'
+    responses:
+      '200':
+        description: Device trusted
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/devices.yaml#/TrustedDevice'
+      '400':
+        description: Invalid request
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+  delete:
+    tags:
+      - Devices
+    summary: Revoke all trusted devices
+    description: Remove trusted status from all devices
+    operationId: revokeAllTrustedDevices
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: All trusted devices revoked
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                revokedCount:
+                  type: integer
+
+trusted-device-by-id:
+  delete:
+    tags:
+      - Devices
+    summary: Revoke device trust
+    description: Remove trusted status from a device
+    operationId: revokeTrust
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: deviceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Device trust revoked
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                deviceId:
+                  type: string
+
+trusted-device-check:
+  get:
+    tags:
+      - Devices
+    summary: Check if device is trusted
+    description: Check if a specific device fingerprint is trusted
+    operationId: checkDeviceTrusted
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: fingerprint
+        in: query
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Trust status
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fingerprint:
+                  type: string
+                trusted:
+                  type: boolean
+
+# ==================== Statistics ====================
+
+device-stats:
+  get:
+    tags:
+      - Devices
+    summary: Get device statistics
+    description: Get statistics about linked and trusted devices
+    operationId: getDeviceStats
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Device statistics
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                linkedDeviceCount:
+                  type: integer
+                trustedDeviceCount:
+                  type: integer
+                devicesWithFcmToken:
+                  type: integer
+                devicesByType:
+                  type: object
+                  additionalProperties:
+                    type: integer

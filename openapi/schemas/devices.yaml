@@ -1,0 +1,110 @@
+# Device Schemas
+
+LinkDeviceRequest:
+  type: object
+  required:
+    - deviceId
+  properties:
+    deviceId:
+      type: string
+      description: Unique device identifier
+    deviceName:
+      type: string
+      description: Human-readable device name
+    deviceType:
+      type: string
+      enum: [MOBILE, TABLET, DESKTOP, WEB, OTHER]
+      description: Type of device
+    osName:
+      type: string
+      description: Operating system name
+    osVersion:
+      type: string
+      description: Operating system version
+    appVersion:
+      type: string
+      description: Application version
+    fcmToken:
+      type: string
+      description: Firebase Cloud Messaging token for push notifications
+
+LinkedDevice:
+  type: object
+  properties:
+    deviceId:
+      type: string
+    userId:
+      type: string
+      format: uuid
+    deviceName:
+      type: string
+    deviceType:
+      type: string
+      enum: [MOBILE, TABLET, DESKTOP, WEB, OTHER]
+    osName:
+      type: string
+    osVersion:
+      type: string
+    appVersion:
+      type: string
+    hasFcmToken:
+      type: boolean
+    lastActiveAt:
+      type: string
+      format: date-time
+    createdAt:
+      type: string
+      format: date-time
+
+TrustDeviceRequest:
+  type: object
+  required:
+    - deviceFingerprint
+  properties:
+    deviceFingerprint:
+      type: string
+      description: Unique device fingerprint
+    deviceName:
+      type: string
+    deviceType:
+      type: string
+    osName:
+      type: string
+    browserName:
+      type: string
+    trustDurationDays:
+      type: integer
+      minimum: 1
+      maximum: 90
+      default: 30
+      description: How many days to trust the device (default 30, max 90)
+
+TrustedDevice:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    deviceFingerprint:
+      type: string
+    deviceName:
+      type: string
+    deviceType:
+      type: string
+    osName:
+      type: string
+    browserName:
+      type: string
+    trusted:
+      type: boolean
+    trustedAt:
+      type: string
+      format: date-time
+    lastUsedAt:
+      type: string
+      format: date-time
+    expiresAt:
+      type: string
+      format: date-time
+    expired:
+      type: boolean

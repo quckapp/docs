@@ -1,0 +1,565 @@
+# Internal API Paths
+# Base path: /api/auth/v1/internal
+# Service-to-service communication endpoints
+# All endpoints require API Key authentication via X-API-Key header
+
+# ==================== Token Introspection ====================
+
+token-introspect:
+  post:
+    tags:
+      - Internal
+    summary: Introspect JWT token
+    description: Validate and decode a JWT token, returning user info and claims. Used by other services to validate incoming requests.
+    operationId: introspectToken
+    security:
+      - ApiKeyAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - token
+            properties:
+              token:
+                type: string
+                description: JWT token to introspect
+    responses:
+      '200':
+        description: Token introspection result
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                active:
+                  type: boolean
+                userId:
+                  type: string
+                  format: uuid
+                email:
+                  type: string
+                  format: email
+                externalId:
+                  type: string
+                sessionId:
+                  type: string
+                  format: uuid
+                tokenType:
+                  type: string
+                issuedAt:
+                  type: string
+                  format: date-time
+                expiresAt:
+                  type: string
+                  format: date-time
+                twoFactorEnabled:
+                  type: boolean
+                emailVerified:
+                  type: boolean
+                reason:
+                  type: string
+                  description: Reason if token is not active
+      '401':
+        description: Invalid API key
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+# ==================== User Validation ====================
+
+user-validate:
+  get:
+    tags:
+      - Internal
+    summary: Validate user exists and is active
+    description: Quick check if a user ID is valid and the account is active
+    operationId: validateUser
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User validation result
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                valid:
+                  type: boolean
+                userId:
+                  type: string
+                  format: uuid
+                email:
+                  type: string
+                  format: email
+                externalId:
+                  type: string
+                status:
+                  type: string
+                reason:
+                  type: string
+
+users-validate-batch:
+  post:
+    tags:
+      - Internal
+    summary: Batch validate multiple users
+    description: Validate multiple user IDs in a single request
+    operationId: validateUsersBatch
+    security:
+      - ApiKeyAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userIds
+            properties:
+              userIds:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+    responses:
+      '200':
+        description: Batch validation result
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                totalRequested:
+                  type: integer
+                validCount:
+                  type: integer
+                invalidCount:
+                  type: integer
+                results:
+                  type: object
+                  additionalProperties:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                      userId:
+                        type: string
+                      email:
+                        type: string
+                      externalId:
+                        type: string
+                      status:
+                        type: string
+                      reason:
+                        type: string
+
+# ==================== User Lookup ====================
+
+user-by-email:
+  get:
+    tags:
+      - Internal
+    summary: Get user by email
+    description: Look up user ID and basic info by email address
+    operationId: getUserByEmail
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: email
+        in: path
+        required: true
+        schema:
+          type: string
+          format: email
+    responses:
+      '200':
+        description: User found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalUserResponse'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+user-by-external-id:
+  get:
+    tags:
+      - Internal
+    summary: Get user by external ID
+    description: Look up user by their external ID (from user service)
+    operationId: getUserByExternalId
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: externalId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: User found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalUserResponse'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+users-lookup-batch:
+  post:
+    tags:
+      - Internal
+    summary: Batch lookup users
+    description: Look up multiple users by their IDs
+    operationId: lookupUsersBatch
+    security:
+      - ApiKeyAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userIds
+            properties:
+              userIds:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+    responses:
+      '200':
+        description: User lookup results
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/InternalUserResponse'
+
+# ==================== Session Management ====================
+
+user-sessions-count:
+  get:
+    tags:
+      - Internal
+    summary: Get user's active session count
+    description: Returns the number of active sessions for a user
+    operationId: getUserSessionCount
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Session count
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                activeSessions:
+                  type: integer
+
+user-sessions-terminate-all:
+  post:
+    tags:
+      - Internal
+    summary: Terminate all user sessions
+    description: Force logout a user from all devices. Use for security incidents or account compromise.
+    operationId: terminateAllUserSessions
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              reason:
+                type: string
+    responses:
+      '200':
+        description: All sessions terminated
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+
+# ==================== Account Status ====================
+
+internal-user-lock:
+  post:
+    tags:
+      - Internal
+    summary: Lock user account
+    description: Temporarily lock a user account for a specified duration
+    operationId: lockUserAccount
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - durationMinutes
+              - reason
+            properties:
+              durationMinutes:
+                type: integer
+                minimum: 1
+                maximum: 43200
+                description: Lock duration in minutes (max 30 days)
+              reason:
+                type: string
+    responses:
+      '200':
+        description: Account locked
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+                lockedUntil:
+                  type: string
+                  format: date-time
+
+internal-user-unlock:
+  post:
+    tags:
+      - Internal
+    summary: Unlock user account
+    description: Remove lock from a user account
+    operationId: unlockUserAccount
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Account unlocked
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+
+internal-user-status:
+  post:
+    tags:
+      - Internal
+    summary: Update user status
+    description: Change user account status (ACTIVE, INACTIVE, SUSPENDED)
+    operationId: updateUserStatus
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+            properties:
+              status:
+                type: string
+                enum: [ACTIVE, INACTIVE, SUSPENDED, PENDING_VERIFICATION]
+    responses:
+      '200':
+        description: Status updated
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+                status:
+                  type: string
+
+# ==================== Security Events ====================
+
+security-report-suspicious:
+  post:
+    tags:
+      - Internal
+    summary: Report suspicious activity
+    description: Report suspicious activity for a user account. May trigger security measures.
+    operationId: reportSuspiciousActivity
+    security:
+      - ApiKeyAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userId
+              - activityType
+              - sourceService
+            properties:
+              userId:
+                type: string
+                format: uuid
+              activityType:
+                type: string
+                description: Type of suspicious activity
+              sourceService:
+                type: string
+                description: Service reporting the activity
+              details:
+                type: string
+              ipAddress:
+                type: string
+    responses:
+      '200':
+        description: Activity reported
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+                activityType:
+                  type: string
+
+# ==================== Health Check ====================
+
+internal-health:
+  get:
+    tags:
+      - Internal
+    summary: Internal health check
+    description: Check if auth service is healthy and responsive
+    operationId: internalHealthCheck
+    security:
+      - ApiKeyAuth: []
+    responses:
+      '200':
+        description: Service healthy
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                service:
+                  type: string
+                timestamp:
+                  type: string
+                  format: date-time
+
+components:
+  schemas:
+    InternalUserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        externalId:
+          type: string
+        status:
+          type: string
+        emailVerified:
+          type: boolean
+        twoFactorEnabled:
+          type: boolean
+        locked:
+          type: boolean
+        lockedUntil:
+          type: string
+          format: date-time
+        lastLoginAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time

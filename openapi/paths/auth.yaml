@@ -844,3 +844,514 @@ phone-resend-otp:
           application/json:
             schema:
               $ref: '../schemas/auth.yaml#/OtpResponse'
+
+# ==================== Extended 2FA Endpoints ====================
+
+2fa-status:
+  get:
+    tags:
+      - MFA
+    summary: Get 2FA status
+    description: Check if two-factor authentication is enabled for the current user
+    operationId: get2FAStatus
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: 2FA status
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+                hasBackupCodes:
+                  type: boolean
+                backupCodesCount:
+                  type: integer
+                setupPending:
+                  type: boolean
+
+2fa-setup-cancel:
+  post:
+    tags:
+      - MFA
+    summary: Cancel 2FA setup
+    description: Cancel a pending 2FA setup before it's enabled
+    operationId: cancel2FASetup
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Setup cancelled
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/MessageResponse'
+      '400':
+        description: 2FA already enabled
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+2fa-backup-codes-count:
+  get:
+    tags:
+      - MFA
+    summary: Get remaining backup codes count
+    description: Returns the number of unused backup codes remaining
+    operationId: getBackupCodesCount
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Backup codes count
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                remainingCodes:
+                  type: integer
+                lowCodesWarning:
+                  type: boolean
+                message:
+                  type: string
+      '400':
+        description: 2FA not enabled
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+2fa-verify:
+  post:
+    tags:
+      - MFA
+    summary: Verify 2FA code
+    description: Verify a TOTP code without performing any action. Useful for testing setup.
+    operationId: verify2FACode
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/TwoFactorVerifyRequest'
+    responses:
+      '200':
+        description: Verification result
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                valid:
+                  type: boolean
+                message:
+                  type: string
+      '400':
+        description: 2FA not enabled
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+2fa-recover:
+  post:
+    tags:
+      - MFA
+    summary: Use backup code for recovery
+    description: Use a backup code when authenticator app is unavailable. Each backup code can only be used once.
+    operationId: useBackupCode
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - backupCode
+            properties:
+              backupCode:
+                type: string
+                pattern: '^\d{4}-\d{4}$'
+                description: Backup code in format XXXX-XXXX
+    responses:
+      '200':
+        description: Backup code accepted
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                remainingCodes:
+                  type: integer
+      '400':
+        description: Invalid backup code
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+# ==================== Extended Token Endpoints ====================
+
+token-info:
+  get:
+    tags:
+      - Token
+    summary: Get current token info
+    description: Get information about the current access token
+    operationId: getTokenInfo
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Token information
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                email:
+                  type: string
+                  format: email
+                sessionId:
+                  type: string
+                  format: uuid
+                tokenType:
+                  type: string
+                issuedAt:
+                  type: string
+                  format: date-time
+                expiresAt:
+                  type: string
+                  format: date-time
+                valid:
+                  type: boolean
+                remainingSeconds:
+                  type: integer
+
+token-active:
+  get:
+    tags:
+      - Token
+    summary: List active refresh tokens
+    description: Get a list of all active (non-revoked, non-expired) refresh tokens for the current user
+    operationId: getActiveTokens
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Active tokens list
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                activeTokenCount:
+                  type: integer
+                tokens:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      deviceId:
+                        type: string
+                      deviceName:
+                        type: string
+                      ipAddress:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      expiresAt:
+                        type: string
+                        format: date-time
+                      oauthProvider:
+                        type: string
+
+token-count:
+  get:
+    tags:
+      - Token
+    summary: Get active token count
+    description: Returns the number of active refresh tokens for the current user
+    operationId: getTokenCount
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Token count
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                activeTokens:
+                  type: integer
+
+token-history:
+  get:
+    tags:
+      - Token
+    summary: Get token history
+    description: Get history of all refresh tokens (including revoked) for the current user
+    operationId: getTokenHistory
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 20
+          maximum: 100
+    responses:
+      '200':
+        description: Token history
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                totalTokens:
+                  type: integer
+                entries:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      deviceId:
+                        type: string
+                      deviceName:
+                        type: string
+                      ipAddress:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      expiresAt:
+                        type: string
+                        format: date-time
+                      revoked:
+                        type: boolean
+                      revokedAt:
+                        type: string
+                        format: date-time
+                      revokedReason:
+                        type: string
+                      oauthProvider:
+                        type: string
+
+# ==================== Extended Session Endpoints ====================
+
+sessions-active:
+  get:
+    tags:
+      - Sessions
+    summary: Get active sessions only
+    description: Returns only currently active sessions for the authenticated user
+    operationId: getActiveSessions
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Active sessions
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/auth.yaml#/ActiveSession'
+
+session-by-id:
+  get:
+    tags:
+      - Sessions
+    summary: Get specific session details
+    description: Returns detailed information about a specific session
+    operationId: getSessionById
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Session details
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/ActiveSession'
+      '404':
+        description: Session not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+sessions-count:
+  get:
+    tags:
+      - Sessions
+    summary: Get active session count
+    description: Returns the number of active sessions for the current user
+    operationId: getSessionCount
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Session count
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                activeSessions:
+                  type: integer
+
+session-activities:
+  get:
+    tags:
+      - Sessions
+    summary: Get session activity history
+    description: Returns the activity log for a specific session
+    operationId: getSessionActivities
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Session activities
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/auth.yaml#/SessionActivity'
+      '404':
+        description: Session not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+user-activities:
+  get:
+    tags:
+      - Sessions
+    summary: Get all session activities for current user
+    description: Returns paginated activity log across all sessions
+    operationId: getUserActivities
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 0
+      - name: size
+        in: query
+        schema:
+          type: integer
+          default: 20
+          maximum: 100
+    responses:
+      '200':
+        description: User activities
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: array
+                  items:
+                    $ref: '../schemas/auth.yaml#/SessionActivity'
+                totalElements:
+                  type: integer
+                totalPages:
+                  type: integer
+                number:
+                  type: integer
+                size:
+                  type: integer
+
+session-trust:
+  put:
+    tags:
+      - Sessions
+    summary: Mark session as trusted
+    description: Marks a session as trusted device, which may affect security checks
+    operationId: trustSession
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Session marked as trusted
+      '404':
+        description: Session not found
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+sessions-terminate-other:
+  delete:
+    tags:
+      - Sessions
+    summary: Terminate all other sessions
+    description: Terminates all sessions except the current one (logout everywhere else)
+    operationId: terminateOtherSessions
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: All other sessions terminated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/MessageResponse'
