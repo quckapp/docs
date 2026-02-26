@@ -9,7 +9,7 @@ REST API endpoints for the consolidated Elixir Realtime Service.
 ## Base URL
 
 ```
-https://api.QuckApp.dev/api/realtime
+https://api.QuckApp.dev/api/v1/realtime
 ```
 
 ## Health Endpoints
@@ -65,7 +65,7 @@ GET /health/live
 ### Invite User to Call
 
 ```http
-POST /api/calls/:call_id/invite
+POST /api/v1/calls/:call_id/invite
 Content-Type: application/json
 Authorization: Bearer {token}
 
@@ -87,7 +87,7 @@ Authorization: Bearer {token}
 ### Get Call Participants
 
 ```http
-GET /api/calls/:call_id/participants
+GET /api/v1/calls/:call_id/participants
 Authorization: Bearer {token}
 ```
 
@@ -112,7 +112,7 @@ Authorization: Bearer {token}
 ### Get ICE Servers Configuration
 
 ```http
-GET /api/calls/:call_id/ice-servers
+GET /api/v1/calls/:call_id/ice-servers
 Authorization: Bearer {token}
 ```
 
@@ -141,7 +141,7 @@ Authorization: Bearer {token}
 ### Start Recording
 
 ```http
-POST /api/calls/:call_id/recording/start
+POST /api/v1/calls/:call_id/recording/start
 Authorization: Bearer {token}
 ```
 
@@ -157,7 +157,7 @@ Authorization: Bearer {token}
 ### Stop Recording
 
 ```http
-POST /api/calls/:call_id/recording/stop
+POST /api/v1/calls/:call_id/recording/stop
 Authorization: Bearer {token}
 ```
 
@@ -173,7 +173,7 @@ Authorization: Bearer {token}
 ### Get Recording Status
 
 ```http
-GET /api/calls/:call_id/recording/status
+GET /api/v1/calls/:call_id/recording/status
 Authorization: Bearer {token}
 ```
 
@@ -191,7 +191,7 @@ Authorization: Bearer {token}
 ### List Recordings
 
 ```http
-GET /api/recordings?conversation_id={conversation_id}&limit=20&offset=0
+GET /api/v1/recordings?conversation_id={conversation_id}&limit=20&offset=0
 Authorization: Bearer {token}
 ```
 
@@ -219,21 +219,21 @@ Authorization: Bearer {token}
 ### Get Recording Details
 
 ```http
-GET /api/recordings/:recording_id
+GET /api/v1/recordings/:recording_id
 Authorization: Bearer {token}
 ```
 
 ### Delete Recording
 
 ```http
-DELETE /api/recordings/:recording_id
+DELETE /api/v1/recordings/:recording_id
 Authorization: Bearer {token}
 ```
 
 ### Get Download URL
 
 ```http
-GET /api/recordings/:recording_id/download
+GET /api/v1/recordings/:recording_id/download
 Authorization: Bearer {token}
 ```
 
@@ -253,7 +253,7 @@ Authorization: Bearer {token}
 ### Create Huddle
 
 ```http
-POST /api/huddles
+POST /api/v1/huddles
 Content-Type: application/json
 Authorization: Bearer {token}
 
@@ -281,14 +281,14 @@ Authorization: Bearer {token}
 ### Get Huddle
 
 ```http
-GET /api/huddles/:huddle_id
+GET /api/v1/huddles/:huddle_id
 Authorization: Bearer {token}
 ```
 
 ### Invite to Huddle
 
 ```http
-POST /api/huddles/:huddle_id/invite
+POST /api/v1/huddles/:huddle_id/invite
 Content-Type: application/json
 Authorization: Bearer {token}
 
@@ -300,14 +300,14 @@ Authorization: Bearer {token}
 ### Join Huddle
 
 ```http
-POST /api/huddles/:huddle_id/join
+POST /api/v1/huddles/:huddle_id/join
 Authorization: Bearer {token}
 ```
 
 ### Leave Huddle
 
 ```http
-POST /api/huddles/:huddle_id/leave
+POST /api/v1/huddles/:huddle_id/leave
 Authorization: Bearer {token}
 ```
 
@@ -318,7 +318,7 @@ Authorization: Bearer {token}
 ### Get User Presence
 
 ```http
-GET /api/presence/:user_id
+GET /api/v1/presence/:user_id
 Authorization: Bearer {token}
 ```
 
@@ -342,7 +342,7 @@ Authorization: Bearer {token}
 ### Get Online Users
 
 ```http
-GET /api/presence/online?workspace_id={workspace_id}&limit=50
+GET /api/v1/presence/online?workspace_id={workspace_id}&limit=50
 Authorization: Bearer {token}
 ```
 
@@ -361,7 +361,7 @@ Authorization: Bearer {token}
 ### Get Typing Users
 
 ```http
-GET /api/presence/typing/:conversation_id
+GET /api/v1/presence/typing/:conversation_id
 Authorization: Bearer {token}
 ```
 
@@ -380,7 +380,7 @@ Authorization: Bearer {token}
 ### Register Device
 
 ```http
-POST /api/devices
+POST /api/v1/devices
 Content-Type: application/json
 Authorization: Bearer {token}
 
@@ -409,7 +409,7 @@ Authorization: Bearer {token}
 ### List Devices
 
 ```http
-GET /api/devices
+GET /api/v1/devices
 Authorization: Bearer {token}
 ```
 
@@ -432,7 +432,7 @@ Authorization: Bearer {token}
 ### Update Device Token
 
 ```http
-PUT /api/devices/:device_id/token
+PUT /api/v1/devices/:device_id/token
 Content-Type: application/json
 Authorization: Bearer {token}
 
@@ -444,14 +444,14 @@ Authorization: Bearer {token}
 ### Unregister Device
 
 ```http
-DELETE /api/devices/:device_id
+DELETE /api/v1/devices/:device_id
 Authorization: Bearer {token}
 ```
 
 ### Device Heartbeat
 
 ```http
-POST /api/devices/:device_id/heartbeat
+POST /api/v1/devices/:device_id/heartbeat
 Authorization: Bearer {token}
 ```
 
@@ -462,7 +462,7 @@ Authorization: Bearer {token}
 ### Get ICE Configuration
 
 ```http
-GET /api/signaling/ice-config
+GET /api/v1/signaling/ice-config
 Authorization: Bearer {token}
 ```
 
@@ -499,7 +499,7 @@ Authorization: Bearer {token}
 ### Generate TURN Credentials
 
 ```http
-POST /api/signaling/turn-credentials
+POST /api/v1/signaling/turn-credentials
 Authorization: Bearer {token}
 ```
 

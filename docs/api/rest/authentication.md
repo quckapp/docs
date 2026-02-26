@@ -9,8 +9,8 @@ The Authentication API provides comprehensive endpoints for user authentication,
 **Base URL:** `http://localhost:8081/api/auth`
 
 **API Documentation:**
-- **Swagger UI:** http://localhost:8081/api/auth/swagger-ui.html
-- **OpenAPI Spec:** http://localhost:8081/api/auth/v3/api-docs
+- **Swagger UI:** http://localhost:8081/api/v3/auth/swagger-ui.html
+- **OpenAPI Spec:** http://localhost:8081/api/v3/auth/api-docs
 
 ## Authentication Methods
 

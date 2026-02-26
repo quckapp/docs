@@ -32,8 +32,8 @@ Elixir/Phoenix service for real-time messaging with Apache Kafka event streaming
 
 ### OpenAPI Spec
 
-- **OpenAPI Spec (JSON):** http://localhost:4003/api/openapi
-- **OpenAPI Spec (YAML):** http://localhost:4003/api/openapi.yaml
+- **OpenAPI Spec (JSON):** http://localhost:4003/api/v1/openapi
+- **OpenAPI Spec (YAML):** http://localhost:4003/api/v1/openapi.yaml
 
 ### OpenApiSpex Configuration
 

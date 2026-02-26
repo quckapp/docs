@@ -43,8 +43,8 @@ NestJS WebSocket gateway for real-time communication.
 
 ### Swagger UI & OpenAPI
 
-- **Swagger UI:** http://localhost:4000/api/docs
-- **OpenAPI Spec:** http://localhost:4000/api/docs-json
+- **Swagger UI:** http://localhost:4000/api/v1/docs
+- **OpenAPI Spec:** http://localhost:4000/api/v1/docs-json
 - **WebSocket:** Socket.IO at http://localhost:4000
 
 ### NestJS Swagger Configuration

@@ -74,7 +74,7 @@ const categories: DocCategory[] = [
       {
         title: 'API Documentation',
         description: 'Endpoints, request/response formats',
-        link: '/docs/api/overview',
+        link: '/docs/api/v1/overview',
       },
       {
         title: 'Code Standards',

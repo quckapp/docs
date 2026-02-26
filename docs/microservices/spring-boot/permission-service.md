@@ -27,25 +27,25 @@ Spring Boot RBAC service using Casbin for role-based and attribute-based access 
 
 ```http
 # Permission checks
-POST /api/permissions/check
-POST /api/permissions/batch-check
+POST /api/v1/permissions/check
+POST /api/v1/permissions/batch-check
 
 # Role management
-GET    /api/roles
-POST   /api/roles
-GET    /api/roles/{roleId}
-PUT    /api/roles/{roleId}
-DELETE /api/roles/{roleId}
+GET    /api/v1/roles
+POST   /api/v1/roles
+GET    /api/v1/roles/{roleId}
+PUT    /api/v1/roles/{roleId}
+DELETE /api/v1/roles/{roleId}
 
 # User roles
-GET    /api/users/{userId}/roles
-POST   /api/users/{userId}/roles
-DELETE /api/users/{userId}/roles/{roleId}
+GET    /api/v1/users/{userId}/roles
+POST   /api/v1/users/{userId}/roles
+DELETE /api/v1/users/{userId}/roles/{roleId}
 
 # Policies
-GET    /api/policies
-POST   /api/policies
-DELETE /api/policies/{policyId}
+GET    /api/v1/policies
+POST   /api/v1/policies
+DELETE /api/v1/policies/{policyId}
 ```
 
 ## Casbin Model
@@ -92,8 +92,8 @@ m = g(r.sub, p.sub, r.dom) && r.dom == p.dom && keyMatch2(r.obj, p.obj) && r.act
 ### Swagger UI & OpenAPI
 
 - **Swagger UI:** http://localhost:8083/swagger-ui.html
-- **OpenAPI Spec (JSON):** http://localhost:8083/v3/api-docs
-- **OpenAPI Spec (YAML):** http://localhost:8083/v3/api-docs.yaml
+- **OpenAPI Spec (JSON):** http://localhost:8083/v3/api/v1-docs
+- **OpenAPI Spec (YAML):** http://localhost:8083/v3/api/v1-docs.yaml
 
 ### SpringDoc Configuration
 

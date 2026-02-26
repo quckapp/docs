@@ -11,7 +11,7 @@ Development documents help engineers **build and maintain** QuckApp. These docum
 | Document | Purpose | Primary Audience |
 |----------|---------|------------------|
 | [Technical Design Document](./technical-design) | Detailed module/component designs | Engineers |
-| [API Documentation](../api/overview) | API specifications | All developers |
+| [API Documentation](../api/v1/overview) | API specifications | All developers |
 | [Code Standards](./code-standards) | Coding guidelines | All developers |
 | [Development Setup](../getting-started) | Local environment setup | New developers |
 
@@ -73,20 +73,20 @@ Development documents help engineers **build and maintain** QuckApp. These docum
 ## API Documentation
 
 ### REST API
-- [Authentication](../api/rest/authentication)
-- [Users](../api/rest/users)
-- [Workspaces](../api/rest/workspaces)
-- [Channels](../api/rest/channels)
-- [Messages](../api/rest/messages)
-- [Calls](../api/rest/calls)
-- [Files](../api/rest/files)
-- [Search](../api/rest/search)
+- [Authentication](../api/v1/rest/authentication)
+- [Users](../api/v1/rest/users)
+- [Workspaces](../api/v1/rest/workspaces)
+- [Channels](../api/v1/rest/channels)
+- [Messages](../api/v1/rest/messages)
+- [Calls](../api/v1/rest/calls)
+- [Files](../api/v1/rest/files)
+- [Search](../api/v1/rest/search)
 
 ### WebSocket API
-- [WebSocket API](../api/websocket)
+- [WebSocket API](../api/v1/websocket)
 
 ### gRPC API
-- [gRPC API](../api/grpc)
+- [gRPC API](../api/v1/grpc)
 
 ## Development Tools
 
@@ -136,5 +136,5 @@ Development documents help engineers **build and maintain** QuckApp. These docum
 
 - [Architecture Overview](../architecture/overview)
 - [Microservices](../microservices/overview)
-- [API Documentation](../api/overview)
+- [API Documentation](../api/v1/overview)
 - [DevOps](../devops/overview)

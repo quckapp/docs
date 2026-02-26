@@ -38,7 +38,7 @@ QuckApp is built on a **polyglot microservices architecture** using the best lan
 - [Getting Started](./getting-started) - Set up your development environment
 - [Architecture Overview](./architecture/overview) - Understand the system design
 - [Microservices](./microservices/overview) - Explore all 32 services
-- [API Reference](./api/overview) - REST, WebSocket, and gRPC APIs
+- [API Reference](./api/v1/overview) - REST, WebSocket, and gRPC APIs
 
 ## Technology Stack
 

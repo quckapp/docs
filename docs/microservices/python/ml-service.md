@@ -228,7 +228,7 @@ endpoint = client.serving_endpoints.create(
 ### Recommendations
 
 ```http
-POST /api/ml/recommendations
+POST /api/v1/ml/recommendations
 Content-Type: application/json
 
 {
@@ -244,7 +244,7 @@ Content-Type: application/json
 ### Spam Detection
 
 ```http
-POST /api/ml/spam-check
+POST /api/v1/ml/spam-check
 Content-Type: application/json
 
 {
@@ -260,7 +260,7 @@ Content-Type: application/json
 ### Sentiment Analysis
 
 ```http
-POST /api/ml/sentiment
+POST /api/v1/ml/sentiment
 Content-Type: application/json
 
 {

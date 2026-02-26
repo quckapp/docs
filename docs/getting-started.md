@@ -262,4 +262,4 @@ docker-compose logs mysql
 
 - Read the [Architecture Overview](./architecture/overview) to understand the system design
 - Explore the [Microservices](./microservices/overview) documentation
-- Check the [API Reference](./api/overview) for endpoint details
+- Check the [API Reference](./api/v1/overview) for endpoint details

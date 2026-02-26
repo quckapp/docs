@@ -1025,7 +1025,7 @@ func (c *IndexerConsumer) processMessage(ctx context.Context, msg kafka.Message)
 ### Search Messages
 
 ```http
-POST /api/search/messages
+POST /api/v1/search/messages
 Content-Type: application/json
 Authorization: Bearer {token}
 
@@ -1080,28 +1080,28 @@ Authorization: Bearer {token}
 ### Search Users
 
 ```http
-GET /api/search/users?q=john&workspace_id=ws-123&size=10
+GET /api/v1/search/users?q=john&workspace_id=ws-123&size=10
 Authorization: Bearer {token}
 ```
 
 ### Search Channels
 
 ```http
-GET /api/search/channels?q=engineering&workspace_id=ws-123
+GET /api/v1/search/channels?q=engineering&workspace_id=ws-123
 Authorization: Bearer {token}
 ```
 
 ### Autocomplete
 
 ```http
-GET /api/search/autocomplete?q=joh&type=users&size=5
+GET /api/v1/search/autocomplete?q=joh&type=users&size=5
 Authorization: Bearer {token}
 ```
 
 ### Reindex
 
 ```http
-POST /api/search/reindex
+POST /api/v1/search/reindex
 Content-Type: application/json
 Authorization: Bearer {admin-token}
 

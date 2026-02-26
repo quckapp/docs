@@ -16,8 +16,8 @@ Explore QuckApp APIs using interactive Swagger UI documentation. These pages pro
 
 | Service | Description | OpenAPI Spec |
 |---------|-------------|--------------|
-| [Auth Service](./auth-service) | Authentication, tokens, OAuth2, 2FA | [JSON](/api/auth-service.json) |
-| [User Service](./user-service) | User management, profiles, preferences | [JSON](/api/user-service.json) |
+| [Auth Service](./auth-service) | Authentication, tokens, OAuth2, 2FA | [JSON](/api/v1/auth-service.json) |
+| [User Service](./user-service) | User management, profiles, preferences | [JSON](/api/v1/user-service.json) |
 
 ## Using the API Explorer
 

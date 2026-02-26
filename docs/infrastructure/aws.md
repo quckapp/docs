@@ -276,7 +276,7 @@ cloudfront:
     - path: /media/*
       cache_ttl: 86400
       compress: true
-    - path: /api/*
+    - path: /api/v1/*
       cache_ttl: 0
       forward_headers: all
 

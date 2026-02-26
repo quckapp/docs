@@ -11,7 +11,7 @@ Spring Boot authentication and authorization microservice handling JWT, OAuth2, 
 | Property | Value |
 |----------|-------|
 | **Port** | 8081 |
-| **Context Path** | `/api/auth` |
+| **Context Path** | `/api/v1/auth` |
 | **Database** | MySQL 8.0 |
 | **Cache** | Redis 7 |
 | **Message Queue** | Apache Kafka |
@@ -162,7 +162,7 @@ com.quckapp.auth/
 
 ## API Endpoints
 
-**Base URL:** `http://localhost:8081/api/auth`
+**Base URL:** `http://localhost:8081/api/v1/auth`
 
 ### Authentication (`/v1`)
 
@@ -401,7 +401,7 @@ public AuthResponse login(LoginRequest request) { ... }
 ### Register
 
 ```bash
-curl -X POST http://localhost:8081/api/auth/v1/register \
+curl -X POST http://localhost:8081/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -412,7 +412,7 @@ curl -X POST http://localhost:8081/api/auth/v1/register \
 ### Login
 
 ```bash
-curl -X POST http://localhost:8081/api/auth/v1/login \
+curl -X POST http://localhost:8081/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -442,12 +442,12 @@ curl -X POST http://localhost:8081/api/auth/v1/login \
 
 ```bash
 # Request OTP
-curl -X POST http://localhost:8081/api/auth/v1/auth/phone/request-otp \
+curl -X POST http://localhost:8081/api/v1/auth/phone/request-otp \
   -H "Content-Type: application/json" \
   -d '{"phoneNumber": "+1234567890"}'
 
 # Login with OTP
-curl -X POST http://localhost:8081/api/auth/v1/auth/phone/login \
+curl -X POST http://localhost:8081/api/v1/auth/phone/login \
   -H "Content-Type: application/json" \
   -d '{
     "phoneNumber": "+1234567890",
@@ -458,7 +458,7 @@ curl -X POST http://localhost:8081/api/auth/v1/auth/phone/login \
 ### Refresh Token
 
 ```bash
-curl -X POST http://localhost:8081/api/auth/v1/token/refresh \
+curl -X POST http://localhost:8081/api/v1/auth/token/refresh \
   -H "Content-Type: application/json" \
   -d '{"refreshToken": "your-refresh-token"}'
 ```
@@ -514,19 +514,19 @@ auth-service:
 ### Health Check
 
 ```bash
-curl http://localhost:8081/api/auth/actuator/health
+curl http://localhost:8081/api/v3/auth/actuator/health
 ```
 
 ### Metrics
 
-Prometheus metrics available at: `http://localhost:8081/api/auth/actuator/prometheus`
+Prometheus metrics available at: `http://localhost:8081/api/v3/auth/actuator/prometheus`
 
 ### API Documentation
 
-- **Swagger UI:** http://localhost:8081/api/auth/swagger-ui.html
-- **OpenAPI Spec (JSON):** http://localhost:8081/api/auth/v3/api-docs
-- **OpenAPI Spec (YAML):** http://localhost:8081/api/auth/v3/api-docs.yaml
-- **Full API Reference:** [Authentication API](/docs/api/rest/authentication)
+- **Swagger UI:** http://localhost:8081/api/v3/auth/swagger-ui.html
+- **OpenAPI Spec (JSON):** http://localhost:8081/api/v3/auth/api-docs
+- **OpenAPI Spec (YAML):** http://localhost:8081/api/v3/auth/api-docs.yaml
+- **Full API Reference:** [Authentication API](/docs/api/v1/rest/authentication)
 
 #### Swagger Configuration
 
@@ -540,8 +540,8 @@ The auth-service uses SpringDoc OpenAPI with comprehensive configuration in `Ope
         description = "Authentication & Authorization Service..."
     ),
     servers = {
-        @Server(url = "/api/auth", description = "Auth Service Base Path"),
-        @Server(url = "http://localhost:8081/api/auth", description = "Local Development"),
+        @Server(url = "/api/v1/auth", description = "Auth Service Base Path"),
+        @Server(url = "http://localhost:8081/api/v1/auth", description = "Local Development"),
         @Server(url = "https://api.quckapp.com/auth", description = "Production")
     }
 )

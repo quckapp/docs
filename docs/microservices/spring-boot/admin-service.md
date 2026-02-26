@@ -28,20 +28,20 @@ Spring Boot service for administrative operations and system management.
 
 ```http
 # User Management
-GET    /api/admin/users
-POST   /api/admin/users/{id}/ban
-POST   /api/admin/users/{id}/unban
-PUT    /api/admin/users/{id}/role
+GET    /api/v1/admin/users
+POST   /api/v1/admin/users/{id}/ban
+POST   /api/v1/admin/users/{id}/unban
+PUT    /api/v1/admin/users/{id}/role
 
 # Reports
-GET    /api/admin/reports
-PUT    /api/admin/reports/{id}/resolve
-DELETE /api/admin/reports/{id}
+GET    /api/v1/admin/reports
+PUT    /api/v1/admin/reports/{id}/resolve
+DELETE /api/v1/admin/reports/{id}
 
 # System
-GET  /api/admin/stats
-GET  /api/admin/config
-PUT  /api/admin/config
+GET  /api/v1/admin/stats
+GET  /api/v1/admin/config
+PUT  /api/v1/admin/config
 ```
 
 ## API Documentation
@@ -49,8 +49,8 @@ PUT  /api/admin/config
 ### Swagger UI & OpenAPI
 
 - **Swagger UI:** http://localhost:8085/swagger-ui.html
-- **OpenAPI Spec (JSON):** http://localhost:8085/v3/api-docs
-- **OpenAPI Spec (YAML):** http://localhost:8085/v3/api-docs.yaml
+- **OpenAPI Spec (JSON):** http://localhost:8085/v3/api/v1-docs
+- **OpenAPI Spec (YAML):** http://localhost:8085/v3/api/v1-docs.yaml
 
 ### SpringDoc Configuration
 
@@ -65,7 +65,7 @@ The admin-service uses SpringDoc OpenAPI for API documentation:
     ),
     servers = {
         @Server(url = "http://localhost:8085", description = "Local Development"),
-        @Server(url = "https://api.quckapp.com/admin", description = "Production")
+        @Server(url = "https:/api.quckapp.com/admin", description = "Production")
     }
 )
 @SecurityScheme(

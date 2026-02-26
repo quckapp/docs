@@ -26,10 +26,10 @@ Go service for media processing and transcoding.
 ## API Endpoints
 
 ```http
-POST /api/media/upload
-GET  /api/media/{id}
-GET  /api/media/{id}/thumbnail
-DELETE /api/media/{id}
+POST /api/v1/media/upload
+GET  /api/v1/media/{id}
+GET  /api/v1/media/{id}/thumbnail
+DELETE /api/v1/media/{id}
 ```
 
 ## API Documentation
@@ -48,7 +48,7 @@ The media-service uses [swaggo/swag](https://github.com/swaggo/swag) for OpenAPI
 // @version 1.0.0
 // @description Media processing and transcoding service
 // @host localhost:5001
-// @BasePath /api
+// @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization

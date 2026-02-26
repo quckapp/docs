@@ -252,7 +252,7 @@ location /api/v1 {
     limit_req zone=api_limit burst=50 nodelay;
 }
 
-location /api/auth {
+location /api/v1/auth {
     limit_req zone=auth_limit burst=20 nodelay;
 }
 ```

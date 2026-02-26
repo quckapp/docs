@@ -31,7 +31,7 @@ The bookmark-service uses [swaggo/swag](https://github.com/swaggo/swag) for Open
 // @version 1.0.0
 // @description Saved items and pins management
 // @host localhost:5010
-// @BasePath /api
+// @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization

@@ -287,56 +287,56 @@ GET /health/live
 ### Call Management
 
 ```http
-POST   /api/calls/:call_id/invite
-GET    /api/calls/:call_id/participants
-GET    /api/calls/:call_id/ice-servers
+POST   /api/v1/calls/:call_id/invite
+GET    /api/v1/calls/:call_id/participants
+GET    /api/v1/calls/:call_id/ice-servers
 ```
 
 ### Call Recording
 
 ```http
-POST   /api/calls/:call_id/recording/start
-POST   /api/calls/:call_id/recording/stop
-GET    /api/calls/:call_id/recording/status
-GET    /api/recordings
-GET    /api/recordings/:recording_id
-DELETE /api/recordings/:recording_id
-GET    /api/recordings/:recording_id/download
+POST   /api/v1/calls/:call_id/recording/start
+POST   /api/v1/calls/:call_id/recording/stop
+GET    /api/v1/calls/:call_id/recording/status
+GET    /api/v1/recordings
+GET    /api/v1/recordings/:recording_id
+DELETE /api/v1/recordings/:recording_id
+GET    /api/v1/recordings/:recording_id/download
 ```
 
 ### Huddles
 
 ```http
-POST   /api/huddles
-GET    /api/huddles/:huddle_id
-POST   /api/huddles/:huddle_id/invite
-POST   /api/huddles/:huddle_id/join
-POST   /api/huddles/:huddle_id/leave
+POST   /api/v1/huddles
+GET    /api/v1/huddles/:huddle_id
+POST   /api/v1/huddles/:huddle_id/invite
+POST   /api/v1/huddles/:huddle_id/join
+POST   /api/v1/huddles/:huddle_id/leave
 ```
 
 ### Presence
 
 ```http
-GET    /api/presence/:user_id
-GET    /api/presence/online
-GET    /api/presence/typing/:conversation_id
+GET    /api/v1/presence/:user_id
+GET    /api/v1/presence/online
+GET    /api/v1/presence/typing/:conversation_id
 ```
 
 ### Device Management
 
 ```http
-POST   /api/devices                    # Register device
-GET    /api/devices                    # List user devices
-PUT    /api/devices/:device_id/token   # Update push token
-DELETE /api/devices/:device_id         # Unregister device
-POST   /api/devices/:device_id/heartbeat
+POST   /api/v1/devices                    # Register device
+GET    /api/v1/devices                    # List user devices
+PUT    /api/v1/devices/:device_id/token   # Update push token
+DELETE /api/v1/devices/:device_id         # Unregister device
+POST   /api/v1/devices/:device_id/heartbeat
 ```
 
 ### WebRTC Signaling
 
 ```http
-GET    /api/signaling/ice-config       # Get ICE server configuration
-POST   /api/signaling/turn-credentials # Generate TURN credentials
+GET    /api/v1/signaling/ice-config       # Get ICE server configuration
+POST   /api/v1/signaling/turn-credentials # Generate TURN credentials
 ```
 
 ## WebSocket Channels

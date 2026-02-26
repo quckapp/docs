@@ -1247,7 +1247,7 @@ class QuckAppCall {
 ### Initiate Call
 
 ```http
-POST /api/calls
+POST /api/v1/calls
 Content-Type: application/json
 Authorization: Bearer {token}
 
@@ -1261,7 +1261,7 @@ Authorization: Bearer {token}
 ### Get Call Info
 
 ```http
-GET /api/calls/{callId}
+GET /api/v1/calls/{callId}
 Authorization: Bearer {token}
 ```
 
@@ -1275,14 +1275,14 @@ Authorization: Bearer {token}
 ### Get Call History
 
 ```http
-GET /api/calls?workspace_id={workspaceId}&limit=20&offset=0
+GET /api/v1/calls?workspace_id={workspaceId}&limit=20&offset=0
 Authorization: Bearer {token}
 ```
 
 ### Get Call Recording
 
 ```http
-GET /api/calls/{callId}/recording
+GET /api/v1/calls/{callId}/recording
 Authorization: Bearer {token}
 ```
 
@@ -1290,8 +1290,8 @@ Authorization: Bearer {token}
 
 ### OpenAPI Spec
 
-- **OpenAPI Spec (JSON):** http://localhost:4002/api/openapi
-- **OpenAPI Spec (YAML):** http://localhost:4002/api/openapi.yaml
+- **OpenAPI Spec (JSON):** http://localhost:4002/api/v1/openapi
+- **OpenAPI Spec (YAML):** http://localhost:4002/api/v1/openapi.yaml
 
 ### OpenApiSpex Configuration
 

@@ -26,11 +26,11 @@ Python/FastAPI service for usage analytics and metrics.
 ## API Endpoints
 
 ```http
-GET  /api/analytics/events
-POST /api/analytics/events
-GET  /api/analytics/metrics
-GET  /api/analytics/dashboard
-GET  /api/analytics/reports
+GET  /api/v1/analytics/events
+POST /api/v1/analytics/events
+GET  /api/v1/analytics/metrics
+GET  /api/v1/analytics/dashboard
+GET  /api/v1/analytics/reports
 ```
 
 ## Event Schema

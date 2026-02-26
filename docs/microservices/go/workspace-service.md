@@ -26,15 +26,15 @@ Go service for workspace management and settings.
 ## API Endpoints
 
 ```http
-GET    /api/workspaces
-POST   /api/workspaces
-GET    /api/workspaces/{id}
-PUT    /api/workspaces/{id}
-DELETE /api/workspaces/{id}
-GET    /api/workspaces/{id}/members
-POST   /api/workspaces/{id}/members
-DELETE /api/workspaces/{id}/members/{userId}
-POST   /api/workspaces/{id}/invite
+GET    /api/v1/workspaces
+POST   /api/v1/workspaces
+GET    /api/v1/workspaces/{id}
+PUT    /api/v1/workspaces/{id}
+DELETE /api/v1/workspaces/{id}
+GET    /api/v1/workspaces/{id}/members
+POST   /api/v1/workspaces/{id}/members
+DELETE /api/v1/workspaces/{id}/members/{userId}
+POST   /api/v1/workspaces/{id}/invite
 ```
 
 ## Data Model
@@ -69,7 +69,7 @@ The workspace-service uses [swaggo/swag](https://github.com/swaggo/swag) for Ope
 // @version 1.0.0
 // @description Workspace management and settings service
 // @host localhost:5004
-// @BasePath /api
+// @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization

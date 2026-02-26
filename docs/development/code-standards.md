@@ -440,5 +440,5 @@ Closes #123
 ## Related Documentation
 
 - [Technical Design](./technical-design) - Implementation details
-- [API Documentation](../api/overview) - API specifications
+- [API Documentation](../api/v1/overview) - API specifications
 - [Security](../architecture/security) - Security architecture

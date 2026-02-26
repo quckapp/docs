@@ -49,8 +49,8 @@ interface NotificationPayload {
 
 ### Swagger UI & OpenAPI
 
-- **Swagger UI:** http://localhost:3001/api/docs
-- **OpenAPI Spec:** http://localhost:3001/api/docs-json
+- **Swagger UI:** http://localhost:3001/api/v1/docs
+- **OpenAPI Spec:** http://localhost:3001/api/v1/docs-json
 
 ### NestJS Swagger Configuration
 

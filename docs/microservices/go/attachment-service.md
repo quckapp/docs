@@ -31,7 +31,7 @@ The attachment-service uses [swaggo/swag](https://github.com/swaggo/swag) for Op
 // @version 1.0.0
 // @description Message attachments management
 // @host localhost:5012
-// @BasePath /api
+// @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization

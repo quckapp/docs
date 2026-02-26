@@ -11,7 +11,7 @@ The development environment serves as the integration testing ground where all f
 | Aspect | Configuration |
 |--------|---------------|
 | **URL** | `https://dev.QuckApp.com` |
-| **API** | `https://api.dev.QuckApp.com` |
+| **API** | `https:/api.dev.QuckApp.com` |
 | **Purpose** | Integration testing, feature validation |
 | **Data** | Synthetic test data |
 | **Deployment** | Automatic on commit to `develop` branch |
@@ -94,7 +94,7 @@ data:
   LOG_LEVEL: "debug"
 
   # URLs
-  API_URL: "https://api.dev.QuckApp.com"
+  API_URL: "https:/api.dev.QuckApp.com"
   WS_URL: "wss://ws.dev.QuckApp.com"
   CDN_URL: "https://cdn.dev.QuckApp.com"
 
@@ -167,7 +167,7 @@ jobs:
 
       - name: Run smoke tests
         run: |
-          ./scripts/smoke-tests.sh https://api.dev.QuckApp.com
+          ./scripts/smoke-tests.sh https:/api.dev.QuckApp.com
 
       - name: Notify Slack
         if: always()

@@ -6,7 +6,7 @@ sidebar_position: 2
 
 The Users API provides endpoints for user management, profiles, preferences, and search functionality.
 
-**Base URL:** `http://localhost:8082/api/users`
+**Base URL:** `http://localhost:8082/api/v1/users`
 
 **API Documentation:**
 - **Swagger UI:** http://localhost:8082/swagger-ui.html
@@ -31,7 +31,7 @@ X-Service-Name: <service_name>
 ### Create User
 
 ```http
-POST /api/users
+POST /api/v1/users
 ```
 
 Creates a new user in the system. This endpoint is typically called by the auth-service after successful registration.
@@ -88,7 +88,7 @@ Creates a new user in the system. This endpoint is typically called by the auth-
 ### Get User by ID
 
 ```http
-GET /api/users/{id}
+GET /api/v1/users/{id}
 ```
 
 **Path Parameters:**
@@ -121,7 +121,7 @@ GET /api/users/{id}
 ### Get User by Email
 
 ```http
-GET /api/users/email/{email}
+GET /api/v1/users/email/{email}
 ```
 
 **Path Parameters:**
@@ -132,7 +132,7 @@ GET /api/users/email/{email}
 ### Get User by Username
 
 ```http
-GET /api/users/username/{username}
+GET /api/v1/users/username/{username}
 ```
 
 **Path Parameters:**
@@ -143,7 +143,7 @@ GET /api/users/username/{username}
 ### Update User
 
 ```http
-PUT /api/users/{id}
+PUT /api/v1/users/{id}
 ```
 
 **Path Parameters:**
@@ -188,7 +188,7 @@ PUT /api/users/{id}
 ### Deactivate User
 
 ```http
-DELETE /api/users/{id}
+DELETE /api/v1/users/{id}
 ```
 
 Soft-deletes a user by setting their status to DEACTIVATED.
@@ -213,7 +213,7 @@ Soft-deletes a user by setting their status to DEACTIVATED.
 ### Suspend User
 
 ```http
-POST /api/users/{id}/suspend
+POST /api/v1/users/{id}/suspend
 ```
 
 Suspends a user account. Suspended users cannot access the system until reactivated.
@@ -238,7 +238,7 @@ Suspends a user account. Suspended users cannot access the system until reactiva
 ### Search Users
 
 ```http
-GET /api/users/search
+GET /api/v1/users/search
 ```
 
 Search for users by query string with optional filtering and pagination.
@@ -253,7 +253,7 @@ Search for users by query string with optional filtering and pagination.
 
 **Example Request:**
 ```http
-GET /api/users/search?query=john&status=ACTIVE&page=0&size=20
+GET /api/v1/users/search?query=john&status=ACTIVE&page=0&size=20
 ```
 
 **Response (200 OK):**
@@ -295,7 +295,7 @@ GET /api/users/search?query=john&status=ACTIVE&page=0&size=20
 ### Get Users by IDs
 
 ```http
-POST /api/users/batch
+POST /api/v1/users/batch
 ```
 
 Retrieve multiple users by their IDs in a single request. Useful for populating user data in lists.
@@ -344,7 +344,7 @@ Users not found will be silently omitted from the response.
 ### Get User Profile
 
 ```http
-GET /api/users/{id}/profile
+GET /api/v1/users/{id}/profile
 ```
 
 Retrieve extended profile information for a user.
@@ -379,7 +379,7 @@ Retrieve extended profile information for a user.
 ### Update User Profile
 
 ```http
-PATCH /api/users/{id}/profile
+PATCH /api/v1/users/{id}/profile
 ```
 
 Update profile fields. Only provided fields will be updated.
@@ -447,7 +447,7 @@ Update profile fields. Only provided fields will be updated.
 ### Get User Preferences
 
 ```http
-GET /api/users/{id}/preferences
+GET /api/v1/users/{id}/preferences
 ```
 
 Retrieve user notification, display, and privacy preferences.
@@ -494,7 +494,7 @@ Retrieve user notification, display, and privacy preferences.
 ### Update User Preferences
 
 ```http
-PATCH /api/users/{id}/preferences
+PATCH /api/v1/users/{id}/preferences
 ```
 
 Update preference fields. Only provided fields will be updated.

@@ -26,8 +26,8 @@ Elixir service for SSE/WebSocket event distribution.
 
 ### OpenAPI Spec
 
-- **OpenAPI Spec (JSON):** http://localhost:4006/api/openapi
-- **OpenAPI Spec (YAML):** http://localhost:4006/api/openapi.yaml
+- **OpenAPI Spec (JSON):** http://localhost:4006/api/v1/openapi
+- **OpenAPI Spec (YAML):** http://localhost:4006/api/v1/openapi.yaml
 
 ### OpenApiSpex Configuration
 

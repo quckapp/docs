@@ -31,7 +31,7 @@ The cdn-service uses [swaggo/swag](https://github.com/swaggo/swag) for OpenAPI d
 // @version 1.0.0
 // @description Content delivery and caching service
 // @host localhost:5013
-// @BasePath /api
+// @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization

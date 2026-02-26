@@ -429,7 +429,7 @@ AuthorizationUrlResponse:
     authorizationUrl:
       type: string
       format: uri
-      example: "https://accounts.google.com/o/oauth2/v2/auth?..."
+      example: "https://accounts.google.com/o/oauth2/v1/auth?..."
     redirectUri:
       type: string
       format: uri

@@ -39,7 +39,7 @@ The file-service uses [swaggo/swag](https://github.com/swaggo/swag) for OpenAPI 
 // @version 1.0.0
 // @description File storage and management service
 // @host localhost:5002
-// @BasePath /api
+// @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization

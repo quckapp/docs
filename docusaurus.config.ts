@@ -111,10 +111,10 @@ const config: Config = {
         {
           title: 'API Reference',
           items: [
-            { label: 'REST API', to: '/docs/api/rest/' },
-            { label: 'WebSocket API', to: '/docs/api/websocket/' },
-            { label: 'gRPC API', to: '/docs/api/grpc/' },
-            { label: 'Swagger UI', to: '/docs/api/swagger/' },
+            { label: 'REST API', to: '/docs/api/v1/rest/' },
+            { label: 'WebSocket API', to: '/docs/api/v1/websocket/' },
+            { label: 'gRPC API', to: '/docs/api/v1/grpc/' },
+            { label: 'Swagger UI', to: '/docs/api/v1/swagger/' },
           ],
         },
         {

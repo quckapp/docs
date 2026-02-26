@@ -29,12 +29,12 @@ NestJS API Gateway for request routing, authentication, and response aggregation
 ```typescript
 // Service routing
 const routes = {
-  '/api/auth/*': 'http://auth-service:8081',
-  '/api/users/*': 'http://user-service:8082',
-  '/api/workspaces/*': 'http://workspace-service:5004',
-  '/api/channels/*': 'http://channel-service:5005',
-  '/api/messages/*': 'http://message-service:4003',
-  '/api/presence/*': 'http://presence-service:4001',
+  '/api/v3/auth/*': 'http://auth-service:8081',
+  '/api/v1/users/*': 'http://user-service:8082',
+  '/api/v1/workspaces/*': 'http://workspace-service:5004',
+  '/api/v1/channels/*': 'http://channel-service:5005',
+  '/api/v1/messages/*': 'http://message-service:4003',
+  '/api/v1/presence/*': 'http://presence-service:4001',
 };
 ```
 
@@ -52,7 +52,7 @@ app.use(jwtValidator);
 
 ### Swagger UI & OpenAPI
 
-- **Swagger UI:** http://localhost:3000/api/docs
+- **Swagger UI:** http://localhost:3000/api/v1/docs
 - **OpenAPI Spec:** Available via Swagger UI export
 
 ### Swagger Configuration

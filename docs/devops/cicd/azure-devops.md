@@ -1076,7 +1076,7 @@ checks:
 
   - type: invokeAzureFunction
     settings:
-      function: 'https://quckapp-gates.azurewebsites.net/api/check-incident'
+      function: 'https://quckapp-gates.azurewebsites.net/api/v1/check-incident'
       key: '$(GATE_FUNCTION_KEY)'
       successCriteria: 'eq(root[''hasActiveIncidents''], false)'
 ```

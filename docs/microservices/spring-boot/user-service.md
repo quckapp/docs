@@ -30,54 +30,54 @@ Spring Boot service for user profile management, settings, and user-related oper
 ### Users
 
 ```http
-GET    /api/users
-GET    /api/users/{id}
-POST   /api/users
-PUT    /api/users/{id}
-DELETE /api/users/{id}
-GET    /api/users/search?q={query}
-GET    /api/users/me
+GET    /api/v1/users
+GET    /api/v1/users/{id}
+POST   /api/v1/users
+PUT    /api/v1/users/{id}
+DELETE /api/v1/users/{id}
+GET    /api/v1/users/search?q={query}
+GET    /api/v1/users/me
 ```
 
 ### Profile
 
 ```http
-GET  /api/users/{id}/profile
-PUT  /api/users/{id}/profile
-POST /api/users/{id}/avatar
+GET  /api/v1/users/{id}/profile
+PUT  /api/v1/users/{id}/profile
+POST /api/v1/users/{id}/avatar
 ```
 
 ### Settings
 
 ```http
-GET  /api/users/{id}/settings
-PUT  /api/users/{id}/settings
-PUT  /api/users/{id}/settings/notifications
-PUT  /api/users/{id}/settings/privacy
+GET  /api/v1/users/{id}/settings
+PUT  /api/v1/users/{id}/settings
+PUT  /api/v1/users/{id}/settings/notifications
+PUT  /api/v1/users/{id}/settings/privacy
 ```
 
 ### Blocking
 
 ```http
-GET    /api/users/{id}/blocked
-POST   /api/users/{id}/block
-DELETE /api/users/{id}/unblock/{blockedId}
+GET    /api/v1/users/{id}/blocked
+POST   /api/v1/users/{id}/block
+DELETE /api/v1/users/{id}/unblock/{blockedId}
 ```
 
 ### Contacts
 
 ```http
-GET  /api/users/{id}/contacts
-POST /api/users/{id}/contacts/sync
+GET  /api/v1/users/{id}/contacts
+POST /api/v1/users/{id}/contacts/sync
 ```
 
 ### Devices
 
 ```http
-GET    /api/users/{id}/devices
-POST   /api/users/{id}/devices
-DELETE /api/users/{id}/devices/{deviceId}
-POST   /api/users/{id}/fcm-token
+GET    /api/v1/users/{id}/devices
+POST   /api/v1/users/{id}/devices
+DELETE /api/v1/users/{id}/devices/{deviceId}
+POST   /api/v1/users/{id}/fcm-token
 ```
 
 ## Data Models
@@ -280,13 +280,13 @@ The Swagger UI organizes endpoints into logical groups:
 
 | Group | Endpoints | Description |
 |-------|-----------|-------------|
-| **0. All Endpoints** | `/api/**` | Complete API view |
-| **1. Users** | `/api/users`, `/api/users/{id}` | Core user CRUD operations |
-| **2. Profile** | `/api/users/{id}/profile` | Profile management (bio, avatar, social links) |
-| **3. Preferences** | `/api/users/{id}/preferences` | User preferences (notifications, theme, privacy) |
-| **4. Search** | `/api/users/search`, `/api/users/email/**`, `/api/users/username/**` | User search and discovery |
-| **5. Batch** | `/api/users/batch` | Batch operations for multiple users |
-| **6. Admin** | `/api/users/{id}/suspend`, `/api/users/{id}/activate` | Administrative operations |
+| **0. All Endpoints** | `/api/v1/**` | Complete API view |
+| **1. Users** | `/api/v1/users`, `/api/v1/users/{id}` | Core user CRUD operations |
+| **2. Profile** | `/api/v1/users/{id}/profile` | Profile management (bio, avatar, social links) |
+| **3. Preferences** | `/api/v1/users/{id}/preferences` | User preferences (notifications, theme, privacy) |
+| **4. Search** | `/api/v1/users/search`, `/api/v1/users/email/**`, `/api/v1/users/username/**` | User search and discovery |
+| **5. Batch** | `/api/v1/users/batch` | Batch operations for multiple users |
+| **6. Admin** | `/api/v1/users/{id}/suspend`, `/api/v1/users/{id}/activate` | Administrative operations |
 
 ### Security Schemes
 

@@ -123,8 +123,8 @@ configMapGenerator:
       - CORS_ORIGINS=https://dev.quckapp.com
 
 images:
-  - name: quckapp/api
-    newName: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/quckapp/api
+  - name: quckapp/api/v1
+    newName: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/quckapp/api/v1
     newTag: dev-latest
 ```
 
@@ -375,8 +375,8 @@ configMapGenerator:
       - RATE_LIMIT_MAX_REQUESTS=500
 
 images:
-  - name: quckapp/api
-    newName: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/quckapp/api
+  - name: quckapp/api/v1
+    newName: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/quckapp/api/v1
     newTag: v1.0.0  # Pinned version in production
 ```
 
@@ -544,7 +544,7 @@ jobs:
       - name: Deploy
         run: |
           cd k8s/overlays/${{ github.event.inputs.environment }}
-          kustomize edit set image quckapp/api=*:${{ github.event.inputs.image_tag }}
+          kustomize edit set image quckapp/api/v1=*:${{ github.event.inputs.image_tag }}
           kubectl apply -k .
           kubectl rollout status deployment/${{ github.event.inputs.environment }}-quckapp-api \
             -n quckapp-${{ github.event.inputs.environment }} \

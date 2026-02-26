@@ -25,7 +25,7 @@ Authorization: Bearer <access_token>
 ### Obtaining Tokens
 
 ```http
-POST /api/auth/login
+POST /api/v3/auth/login
 Content-Type: application/json
 
 {

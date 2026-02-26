@@ -18,14 +18,14 @@ Go service for channel management and memberships.
 ## API Endpoints
 
 ```http
-GET    /api/channels
-POST   /api/channels
-GET    /api/channels/{id}
-PUT    /api/channels/{id}
-DELETE /api/channels/{id}
-GET    /api/channels/{id}/members
-POST   /api/channels/{id}/join
-POST   /api/channels/{id}/leave
+GET    /api/v1/channels
+POST   /api/v1/channels
+GET    /api/v1/channels/{id}
+PUT    /api/v1/channels/{id}
+DELETE /api/v1/channels/{id}
+GET    /api/v1/channels/{id}/members
+POST   /api/v1/channels/{id}/join
+POST   /api/v1/channels/{id}/leave
 ```
 
 ## API Documentation
@@ -44,7 +44,7 @@ The channel-service uses [swaggo/swag](https://github.com/swaggo/swag) for OpenA
 // @version 1.0.0
 // @description Channel management and memberships service
 // @host localhost:5005
-// @BasePath /api
+// @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization

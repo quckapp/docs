@@ -1,5 +1,5 @@
 # Admin API Paths
-# Base path: /api/auth/v1/admin
+# Base path: /api/v1/auth/admin
 # All endpoints require admin privileges
 
 # ==================== User Management ====================

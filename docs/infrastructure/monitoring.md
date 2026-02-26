@@ -356,7 +356,7 @@ import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core'
 const sdk = new NodeSDK({
   serviceName: 'backend-service',
   traceExporter: new JaegerExporter({
-    endpoint: 'http://jaeger:14268/api/traces'
+    endpoint: 'http://jaeger:14268/api/v1/traces'
   }),
   instrumentations: [
     new HttpInstrumentation(),
@@ -393,7 +393,7 @@ import (
 func initTracer() (*trace.TracerProvider, error) {
     exporter, err := jaeger.New(
         jaeger.WithCollectorEndpoint(
-            jaeger.WithEndpoint("http://jaeger:14268/api/traces"),
+            jaeger.WithEndpoint("http://jaeger:14268/api/v1/traces"),
         ),
     )
     if err != nil {

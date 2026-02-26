@@ -1,5 +1,5 @@
 # Blocked Users API Paths
-# Base path: /api/auth/v1/blocked-users
+# Base path: /api/v1/auth/blocked-users
 
 # ==================== Block/Unblock Operations ====================
 

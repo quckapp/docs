@@ -1,5 +1,5 @@
 # Internal API Paths
-# Base path: /api/auth/v1/internal
+# Base path: /api/v1/auth/internal
 # Service-to-service communication endpoints
 # All endpoints require API Key authentication via X-API-Key header
 

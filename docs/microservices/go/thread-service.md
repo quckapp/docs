@@ -31,7 +31,7 @@ The thread-service uses [swaggo/swag](https://github.com/swaggo/swag) for OpenAP
 // @version 1.0.0
 // @description Thread conversations and replies management
 // @host localhost:5009
-// @BasePath /api
+// @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization

@@ -311,7 +311,7 @@ spec:
     - host: api.quckapp.dev
       http:
         paths:
-          - path: /api
+          - path: /api/v1
             pathType: Prefix
             backend:
               service:

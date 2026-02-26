@@ -120,7 +120,7 @@ paths:
   # Reference: ./paths/_index.yaml
 
   # ============================================
-  # Auth Service Endpoints (Base: /api/auth/v1)
+  # Auth Service Endpoints (Base: /api/v1/auth)
   # ============================================
 
   # Registration & Login
@@ -232,7 +232,7 @@ paths:
     $ref: './paths/auth.yaml#/session-trust'
 
   # ============================================
-  # Devices Endpoints (Base: /api/auth/v1/devices)
+  # Devices Endpoints (Base: /api/v1/auth/devices)
   # ============================================
 
   /auth/v1/devices/link:
@@ -255,7 +255,7 @@ paths:
     $ref: './paths/devices.yaml#/device-stats'
 
   # ============================================
-  # Blocked Users Endpoints (Base: /api/auth/v1/blocked-users)
+  # Blocked Users Endpoints (Base: /api/v1/auth/blocked-users)
   # ============================================
 
   /auth/v1/blocked-users:
@@ -278,7 +278,7 @@ paths:
     $ref: './paths/blocked-users.yaml#/unblock-multiple'
 
   # ============================================
-  # Admin Endpoints (Base: /api/auth/v1/admin)
+  # Admin Endpoints (Base: /api/v1/auth/admin)
   # ============================================
 
   /auth/v1/admin/users:
@@ -317,7 +317,7 @@ paths:
     $ref: './paths/admin.yaml#/admin-stats'
 
   # ============================================
-  # Internal Endpoints (Base: /api/auth/v1/internal)
+  # Internal Endpoints (Base: /api/v1/auth/internal)
   # ============================================
 
   /auth/v1/internal/token/introspect:
@@ -348,7 +348,7 @@ paths:
     $ref: './paths/internal.yaml#/internal-health'
 
   # ============================================
-  # User Service Endpoints (Base: /api/users)
+  # User Service Endpoints (Base: /api/v1/users)
   # ============================================
 
   # User Management

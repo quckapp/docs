@@ -27,12 +27,12 @@ Spring Boot service for comprehensive audit logging and compliance tracking.
 ## API Endpoints
 
 ```http
-GET  /api/audit/logs
-GET  /api/audit/logs/{id}
-GET  /api/audit/logs/user/{userId}
-GET  /api/audit/logs/search
-GET  /api/audit/reports/compliance
-POST /api/audit/export
+GET  /api/v1/audit/logs
+GET  /api/v1/audit/logs/{id}
+GET  /api/v1/audit/logs/user/{userId}
+GET  /api/v1/audit/logs/search
+GET  /api/v1/audit/reports/compliance
+POST /api/v1/audit/export
 ```
 
 ## Audit Event Types
@@ -90,8 +90,8 @@ public void handleAuditEvent(AuditEvent event) {
 ### Swagger UI & OpenAPI
 
 - **Swagger UI:** http://localhost:8084/swagger-ui.html
-- **OpenAPI Spec (JSON):** http://localhost:8084/v3/api-docs
-- **OpenAPI Spec (YAML):** http://localhost:8084/v3/api-docs.yaml
+- **OpenAPI Spec (JSON):** http://localhost:8084/v3/api/v1-docs
+- **OpenAPI Spec (YAML):** http://localhost:8084/v3/api/v1-docs.yaml
 
 ### SpringDoc Configuration
 

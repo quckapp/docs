@@ -171,7 +171,7 @@ resource "aws_cloudfront_distribution" "media" {
 
   # API routes - no caching
   ordered_cache_behavior {
-    path_pattern           = "/api/*"
+    path_pattern           = "/api/v1/*"
     allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods         = ["GET", "HEAD"]
     target_origin_id       = "API-Gateway"

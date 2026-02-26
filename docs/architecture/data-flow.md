@@ -56,7 +56,7 @@ How data moves through QuckApp's microservices architecture.
 **Example: User Login**
 
 ```
-1. Client sends POST /api/auth/login with credentials
+1. Client sends POST /api/v3/auth/login with credentials
 2. Auth Service validates credentials against MySQL
 3. Auth Service generates JWT and refresh token
 4. Session stored in Redis

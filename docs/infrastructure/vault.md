@@ -372,7 +372,7 @@ import (
     "fmt"
 
     "github.com/hashicorp/vault/api"
-    "github.com/hashicorp/vault/api/auth/approle"
+    "github.com/hashicorp/vault/api/v3/auth/approle"
 )
 
 type Client struct {

@@ -109,8 +109,8 @@ ZRANGEBYSCORE workspace:ws-uuid:online (NOW-300) +inf
 
 ```redis
 # Fixed window counter
-INCR rate:192.168.1.1:/api/messages
-EXPIRE rate:192.168.1.1:/api/messages 60
+INCR rate:192.168.1.1:/api/v1/messages
+EXPIRE rate:192.168.1.1:/api/v1/messages 60
 
 # Sliding window log
 ZADD rate:user-uuid:messages 1705312200 "req-uuid-1"

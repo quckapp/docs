@@ -244,7 +244,7 @@ data:
   KAFKA_BROKERS: "kafka-0.kafka:9092,kafka-1.kafka:9092,kafka-2.kafka:9092"
   REDIS_CLUSTER: "redis-cluster.QuckApp-infra:6379"
   CONSUL_HOST: "consul.QuckApp-infra:8500"
-  JAEGER_ENDPOINT: "http://jaeger.QuckApp-monitoring:14268/api/traces"
+  JAEGER_ENDPOINT: "http://jaeger.QuckApp-monitoring:14268/api/v1/traces"
 ```
 
 ### Secret (sealed)

@@ -894,7 +894,7 @@ spec:
 ### Get User Presence
 
 ```http
-GET /api/presence/users/{userId}
+GET /api/v1/presence/users/{userId}
 Authorization: Bearer {token}
 ```
 
@@ -917,7 +917,7 @@ Authorization: Bearer {token}
 ### Set User Status
 
 ```http
-PUT /api/presence/users/{userId}/status
+PUT /api/v1/presence/users/{userId}/status
 Content-Type: application/json
 Authorization: Bearer {token}
 
@@ -932,7 +932,7 @@ Authorization: Bearer {token}
 ### Get Online Users
 
 ```http
-GET /api/presence/workspace/{workspaceId}/online?limit=50&offset=0
+GET /api/v1/presence/workspace/{workspaceId}/online?limit=50&offset=0
 Authorization: Bearer {token}
 ```
 
@@ -953,7 +953,7 @@ Authorization: Bearer {token}
 ### Get Bulk Presence
 
 ```http
-POST /api/presence/bulk
+POST /api/v1/presence/bulk
 Content-Type: application/json
 Authorization: Bearer {token}
 
@@ -965,14 +965,14 @@ Authorization: Bearer {token}
 ### Get Channel Viewers
 
 ```http
-GET /api/presence/channel/{channelId}/viewers
+GET /api/v1/presence/channel/{channelId}/viewers
 Authorization: Bearer {token}
 ```
 
 ### Get Typing Users
 
 ```http
-GET /api/presence/channel/{channelId}/typing
+GET /api/v1/presence/channel/{channelId}/typing
 Authorization: Bearer {token}
 ```
 
@@ -980,8 +980,8 @@ Authorization: Bearer {token}
 
 ### OpenAPI Spec
 
-- **OpenAPI Spec (JSON):** http://localhost:4001/api/openapi
-- **OpenAPI Spec (YAML):** http://localhost:4001/api/openapi.yaml
+- **OpenAPI Spec (JSON):** http://localhost:4001/api/v1/openapi
+- **OpenAPI Spec (YAML):** http://localhost:4001/api/v1/openapi.yaml
 
 ### OpenApiSpex Configuration
 

@@ -27,7 +27,7 @@ Elixir service for audio rooms and live discussions.
 
 ### OpenAPI Spec
 
-- **OpenAPI Spec (JSON):** http://localhost:4005/api/openapi
+- **OpenAPI Spec (JSON):** http://localhost:4005/api/v1/v1/openapi
 - **OpenAPI Spec (YAML):** http://localhost:4005/api/openapi.yaml
 
 ### OpenApiSpex Configuration

@@ -31,7 +31,7 @@ The reminder-service uses [swaggo/swag](https://github.com/swaggo/swag) for Open
 // @version 1.0.0
 // @description Scheduled reminders and notifications
 // @host localhost:5011
-// @BasePath /api
+// @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
