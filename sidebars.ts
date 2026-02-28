@@ -153,6 +153,7 @@ const sidebars: SidebarsConfig = {
           items: [
             'devops/cicd/github-actions',
             'devops/cicd/azure-devops',
+            'devops/cicd/promotion-gates',
             'devops/cicd/secrets',
             'devops/cicd/service-configs',
             'devops/cicd/monitoring',
